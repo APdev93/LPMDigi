@@ -24,19 +24,17 @@
                         <div class="brand-title">LPMDigi</div>
                     </div>
                 </div>
-
-                <div class="nav-right">
-                    <button
-                        id="btnNewGroup"
-                        class="btn btn-icon"
-                        title="Tambah Kelompok">
-                        <i data-feather="plus"></i>
-                    </button>
-                </div>
             </header>
 
             <!-- MAIN -->
             <main class="container">
+                <section class="profile">
+                    <div class="profile-info">
+                        <div class="profile-name">Halo, <i id="name"></i></div>
+                        <div class="profile-role" id="branch"></div>
+                    </div>
+                </section>
+
                 <!-- DASHBOARD STATS -->
                 <section class="card stats-card" id="dashboard">
                     <div class="stats-grid">
@@ -87,13 +85,6 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">Daftar Kelompok</h2>
-                            <div class="card-actions">
-                                <button
-                                    id="openNewGroup"
-                                    class="btn btn-primary">
-                                    <i data-feather="plus"></i> Tambah Kelompok
-                                </button>
-                            </div>
                         </div>
 
                         <div id="groupsList" class="list"></div>

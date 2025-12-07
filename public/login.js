@@ -41,7 +41,7 @@ async function loginUser() {
         localStorage.setItem("username", username);
         localStorage.setItem("name", data.data.nama);
         localStorage.setItem("cabangID", data.data.unitKerja);
-        localStorage.setItem("unit", data.data.unitKerja);
+        localStorage.setItem("unit", data.data.branchName);
 
         window.location.href = "/";
     } catch (e) {

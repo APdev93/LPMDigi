@@ -1,4 +1,10 @@
 const STORAGE_KEY = localStorage.getItem("klp");
+const namaUnit = document.getElementById("branch");
+const namaUser = document.getElementById("name");
+
+namaUnit.innerText =
+    localStorage.getItem("cabangID") + " " + localStorage.getItem("unit") || "";
+namaUser.innerText = localStorage.getItem("name") || "";
 
 function showLoading() {
     document.getElementById("loadingIndicator").style.display = "flex";
