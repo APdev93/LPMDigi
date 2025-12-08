@@ -373,49 +373,58 @@ function renderGroupDetail(groupId) {
                 nas.classList.add("payed");
             }
             nas.innerHTML = `
-        <div style="min-width:56%">
-          <div style="font-weight:700">${escapeHtml(n.nama)}</div>
-          <div style="margin-top:6px;color:var(--muted)">
-            Tagihan: Rp ${rupiah(n.tagihan)} •
-            Status: <strong>${
-                n.status === "cash"
-                    ? "Cash"
-                    : n.status === "tf"
-                    ? "Transfer"
-                    : "Belum Stor"
-            }</strong>
-          </div>
-        </div>
+<div class="nasabah-item">
 
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <label class="radio-card"><input type="radio" name="st${
-                n.id
-            }" value="cash" ${
-                n.status === "cash" ? "checked" : ""
-            } data-group="${k.id}" data-nasabah="${n.id}"> Cash</label>
-            <label class="radio-card"><input type="radio" name="st${
-                n.id
-            }" value="tf" ${n.status === "tf" ? "checked" : ""} data-group="${
-                k.id
-            }" data-nasabah="${n.id}"> Transfer</label>
-            <label class="radio-card"><input type="radio" name="st${
-                n.id
-            }" value="none" ${
-                n.status === "none" ? "checked" : ""
-            } data-group="${k.id}" data-nasabah="${n.id}"> Tidak Stor</label>
-          </div>
+  <div class="nasabah-info">
+    <div class="nama">${escapeHtml(n.nama)}</div>
 
-          <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px">
-            <button class="btn btn-edit" data-action="edit-n" data-id="${
-                n.id
-            }" data-group="${k.id}"><i data-feather="edit"></i></button>
-            <button class="btn btn-danger" data-action="del-n" data-id="${
-                n.id
-            }" data-group="${k.id}"><i data-feather="trash-2"></i></button>
-          </div>
-        </div>
-      `;
+    <div class="meta">
+      Tagihan: Rp ${rupiah(n.tagihan)} •
+      Status: <strong>${
+        n.status === "cash"
+          ? "Cash"
+          : n.status === "tf"
+          ? "Transfer"
+          : "Belum Stor"
+      }</strong>
+    </div>
+
+    <div class="angsuran-ke">
+      Ke: <strong>${n.ke}</strong>
+    </div>
+  </div>
+
+  <div class="nasabah-actions">
+    <div class="status-wrap">
+      <label class="radio-card">
+        <input type="radio" name="st${n.id}" value="cash" ${n.status === "cash" ? "checked" : ""} data-group="${k.id}" data-nasabah="${n.id}">
+        Cash
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="st${n.id}" value="tf" ${n.status === "tf" ? "checked" : ""} data-group="${k.id}" data-nasabah="${n.id}">
+        Transfer
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="st${n.id}" value="none" ${n.status === "none" ? "checked" : ""} data-group="${k.id}" data-nasabah="${n.id}">
+        Tidak Stor
+      </label>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-edit" data-action="edit-n" data-id="${n.id}" data-group="${k.id}">
+        <i data-feather="edit"></i>
+      </button>
+
+      <button class="btn btn-danger" data-action="del-n" data-id="${n.id}" data-group="${k.id}">
+        <i data-feather="trash-2"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+`;
             nasabahListEl.appendChild(nas);
         });
         feather.replace();

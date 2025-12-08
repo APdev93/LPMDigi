@@ -1,5 +1,16 @@
 const loginBtn = document.getElementById("btnLogin");
 
+const togglePassword = document.getElementById("togglePassword");
+const inputPassword = document.getElementById("inputPassword");
+
+togglePassword.addEventListener("click", () => {
+    const type = inputPassword.type === "password" ? "text" : "password";
+    inputPassword.type = type;
+
+    togglePassword.classList.toggle("active");
+});
+
+
 function showError(msg) {
     alert(msg);
 }
