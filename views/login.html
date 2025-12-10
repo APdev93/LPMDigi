@@ -14,13 +14,20 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				height: 100vh;
+				overflow: hidden;
 			}
 
 			.card {
+				margin-top: 50%;
+				margin-bottom: 50%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
 				background: #fff;
+				min-height: 400px;
 				padding: 30px;
-				width: 320px;
+				width: 90%;
 				border-radius: 20px;
 				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 			}
@@ -30,6 +37,12 @@
 					width: 90%;
 					padding: 25px;
 				}
+			}
+			
+			@media (width >= 800px) {
+			    .card {
+			        width: 450px;
+			    }
 			}
 
 			.title {
@@ -41,6 +54,7 @@
 			}
 
 			.form-group {
+				width: 100%;
 				margin-bottom: 18px;
 				display: flex;
 				flex-direction: column;
@@ -53,9 +67,9 @@
 			}
 
 			input {
-				padding: 12px;
-				border-radius: 15px;
-				border: 1px solid #ccc;
+				padding: 15px !important;
+				border-radius: 15px !important;
+				border: 1px solid #e6f1ff;
 				font-size: 15px;
 				outline: none;
 				width: 100%;
@@ -82,9 +96,10 @@
 
 			.btn-login {
 				width: 100%;
-				padding: 12px;
+				height: 50px;
+				border-radius: 50px;
 				border: none;
-				margin-top: 10px;
+				margin-top: 20px;
 				border-radius: 50px;
 				background: #1e75d9;
 				color: #fff;
@@ -99,25 +114,35 @@
 		<title>LPM Digi - Login</title>
 	</head>
 	<body>
-		<div id="app">
-			<div class="card">
-				<h2 class="title">Selamat Datang</h2>
+		<div class="card">
+			<h2 class="title">Selamat Datang</h2>
 
-				<div class="form-group">
-					<label>Username</label>
-					<input id="inputUserName" type="text" placeholder="Masukan username" />
-				</div>
+			<div class="form-group">
+				<label>Username</label>
+				<input
+					id="inputUserName"
+					type="text"
+					placeholder="Masukan username"
+					autocapitalize="words"
+				/>
+			</div>
 
-				<div class="form-group">
-					<label>Password</label>
-					<div class="password-wrapper">
-						<input id="inputPassword" type="password" placeholder="Masukan password" />
-						<i id="togglePassword" data-feather="eye" class="toggle-eye"></i>
+			<div class="form-group">
+				<label>Password</label>
+				<div class="password-wrapper">
+					<input
+						id="inputPassword"
+						type="password"
+						placeholder="Masukan password"
+						autocapitalize="words"
+					/>
+					<div id="togglePassword" class="toggle-eye">
+						<i data-feather="eye"></i>
 					</div>
 				</div>
-
-				<button class="btn-login" id="btnLogin">Login</button>
 			</div>
+
+			<button class="btn-login" id="btnLogin">Login</button>
 		</div>
 
 		<div id="loadingIndicator" class="loader-container" style="display: none">
