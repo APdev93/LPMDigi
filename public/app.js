@@ -13,6 +13,32 @@ function hideLoading() {
 	document.getElementById("loadingIndicator").style.display = "none";
 }
 
+function successAlert(msg) {
+	Swal.fire({
+		title: "Berhasil!",
+		text: msg,
+		icon: "success",
+		confirmButtonText: "Oke",
+		customClass: {
+			popup: "swal-success-popup",
+			confirmButton: "swal-success-btn"
+		}
+	});
+}
+
+function errorAlert(msg) {
+	Swal.fire({
+		title: "Gagal!",
+		text: msg,
+		icon: "error",
+		confirmButtonText: "Mengerti",
+		customClass: {
+			popup: "swal-err-popup",
+			confirmButton: "swal-err-btn"
+		}
+	});
+}
+
 function getKodeHariNow() {
 	let day = new Date().getDay(); // 0 = Minggu, 1 = Senin, ... 6 = Sabtu
 
@@ -62,7 +88,7 @@ async function getNasabah() {
 		let data = await response.json();
 		return data.data;
 	} catch (error) {
-		alert("ERROR: " + (error.response?.data || error.message));
+		errorAlert("ERROR: " + (error.response?.data || error.message));
 	}
 }
 
@@ -128,7 +154,7 @@ function syncData() {
 	} finally {
 		hideLoading();
 
-		alert("berhasil sinkronisasi");
+		successAlert("berhasil sinkronisasi");
 
 		location.reload();
 	}
@@ -137,14 +163,27 @@ function syncData() {
 const clearBtn = document.getElementById("clearBtn");
 
 clearBtn.addEventListener("click", () => {
-	const konfirmasi = confirm("Yakin ingin menghapus semua data?");
-	if (konfirmasi) {
-		localStorage.clear();
-		alert("Data berhasil dihapus");
-		location.reload();
-	} else {
-		alert("Penghapusan dibatalkan");
-	}
+	Swal.fire({
+		title: "Yakin ingin menghapus data?",
+		showDenyButton: true,
+		showCancelButton: true,
+		customClass: {
+			popup: "swal-success-popup",
+			confirmButton: "swal-success-btn",
+			cancelButton: "swal-err-btn",
+			denyButton: "swal-deny-btn"
+		},
+		confirmButtonText: "Ya",
+		denyButtonText: `Tidak`
+	}).then((result) => {
+		if (result.isConfirmed) {
+			localStorage.clear();
+			successAlert("Berhasil menghapus data");
+			location.reload();
+		} else if (result.isDenied) {
+			Swal.fire("Data tidak dihapus", "", "info");
+		}
+	});
 });
 
 function saveData(data) {
@@ -452,7 +491,7 @@ function addNasabahToGroup(groupId, nama, tagihan, status = "none") {
 		rill: 0,
 		ke: 0,
 		idProduk: "",
-		id: genId("n_"),
+		id: genId(localStorage.getItem("cabangID")),
 		nama: nama,
 		tagihan: Number(tagihan) || 0,
 		status
@@ -699,16 +738,13 @@ function renderAll() {
 async function init() {
 	let auth = localStorage.getItem("auth");
 	if (!auth) {
-		localStorage.setItem("isSync", false);
+		localStorage.setItem("isSync", "0");
 		// redirect to login
 		window.location.href = "/login";
 		return;
 	}
 
-	console.log("STORAGE_KEY:", STORAGE_KEY);
-	console.log("state sebelum load:", state);
-
-	if (localStorage.getItem("isSync") !== "true") {
+	if (localStorage.getItem("isSync") !== "1") {
 		try {
 			showLoading();
 			let dataKelompok = await getKelompok();
@@ -721,12 +757,12 @@ async function init() {
 			console.log(state);
 		} catch (error) {
 			hideLoading();
-			alert("Gagal sinkronisasi: " + error.message);
+			errorAlert("Gagal sinkronisasi: " + error.message);
 		} finally {
-			localStorage.setItem("isSync", true);
+			localStorage.setItem("isSync", "1");
 			hideLoading();
 		}
-		alert("sync berhasil");
+		successAlert("sync berhasil");
 	}
 
 	state = loadLocal();

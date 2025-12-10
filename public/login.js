@@ -11,7 +11,16 @@ togglePassword.addEventListener("click", () => {
 });
 
 function showError(msg) {
-	alert(msg);
+	Swal.fire({
+		title: "Login Gagal!",
+		text: msg,
+		icon: "error",
+		confirmButtonText: "Mengerti",
+		customClass: {
+			popup: "swal-err-popup",
+			confirmButton: "swal-err-btn"
+		}
+	});
 }
 
 function showLoading() {
