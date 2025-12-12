@@ -141,7 +141,7 @@ function getTotalAngsuran(idProduk) {
 function filterNasabahAngsuranTerakhir(dataset) {
 	const hasil = { kelompok: [] };
 
-	dataset?.kelompok?.forEach((k) => {
+	dataset.kelompok.forEach((k) => {
 		const nasabahFiltered = k.nasabah.filter((n) => {
 			const total = getTotalAngsuran(n.idProduk);
 			return n.ke === total;
@@ -289,18 +289,18 @@ const btnDeleteGroup = document.getElementById("btnDeleteGroup");
 const btnCekDo = document.getElementById("btnCekDo");
 
 btnCekDo.addEventListener("click", () => {
+	showLoading();
 	if (stateType === "normal") {
-		showLoading();
 		let data = filterNasabahAngsuranTerakhir(state);
+		console.log(data);
 		localStorage.setItem("stateType", "cekDO");
 		state = data;
-		hideLoading();
 	} else {
-		showLoading();
 		state = localStorage.getItem(STORAGE_KEY);
 		localStorage.setItem("stateType", "normal");
-		hideLoading();
 	}
+	hideLoading();
+	window.location.reload();
 });
 
 /* ===== RENDER: DASHBOARD & GROUP LIST ===== */
@@ -794,7 +794,7 @@ async function init() {
 	if (!auth) {
 		localStorage.setItem("isSync", "0");
 		// redirect to login
-		window.location.href = "/login";
+		//window.location.href = "/login";
 		return;
 	}
 
