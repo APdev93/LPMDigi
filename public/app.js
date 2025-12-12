@@ -127,7 +127,7 @@ function loadLocal() {
 		let filtered;
 
 		if (hariSekarang >= 6) {
-			filtered = filterNasabahAngsuranTerakhir(state);
+			filtered = filterNasabahAngsuranTerakhir(data);
 		} else {
 			filtered = data.kelompok.filter((k) => k.hariPertemuan === String(hariSekarang));
 		}
