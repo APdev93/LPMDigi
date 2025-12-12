@@ -1,4 +1,4 @@
-const STORAGE_KEY = localStorage.getItem("klp");
+const STORAGE_KEY = "kelompok";
 const namaUnit = document.getElementById("branch");
 const namaUser = document.getElementById("name");
 
@@ -133,6 +133,31 @@ function loadLocal() {
 	}
 }
 
+function getTotalAngsuran(idProduk) {
+	const match = idProduk.match(/\d+$/);
+	return match ? parseInt(match[0]) : 0;
+}
+
+function filterNasabahAngsuranTerakhir(dataset) {
+	const hasil = { kelompok: [] };
+
+	dataset?.kelompok?.forEach((k) => {
+		const nasabahFiltered = k.nasabah.filter((n) => {
+			const total = getTotalAngsuran(n.idProduk);
+			return n.ke === total;
+		});
+
+		if (nasabahFiltered.length > 0) {
+			hasil.kelompok.push({
+				nama: k.nama,
+				nasabah: nasabahFiltered
+			});
+		}
+	});
+
+	return hasil;
+}
+
 function calcPresencePercentage(state) {
 	let total = 0;
 	let hadir = 0;
@@ -217,7 +242,8 @@ function qs(name) {
 
 /* ===== INITIAL APP STATE ===== */
 
-let state = null;
+let state = {};
+let stateType = localStorage.getItem("stateType");
 
 let currentGroupId = null;
 
@@ -260,6 +286,22 @@ const backToGroups = document.getElementById("backToGroups");
 const btnAddNasabah = document.getElementById("btnAddNasabah");
 const btnEditGroup = document.getElementById("btnEditGroup");
 const btnDeleteGroup = document.getElementById("btnDeleteGroup");
+const btnCekDo = document.getElementById("btnCekDo");
+
+btnCekDo.addEventListener("click", () => {
+	if (stateType === "normal") {
+		showLoading();
+		let data = filterNasabahAngsuranTerakhir(state);
+		localStorage.setItem("stateType", "cekDO");
+		state = data;
+		hideLoading();
+	} else {
+		showLoading();
+		state = localStorage.getItem(STORAGE_KEY);
+		localStorage.setItem("stateType", "normal");
+		hideLoading();
+	}
+});
 
 /* ===== RENDER: DASHBOARD & GROUP LIST ===== */
 function calcAllTotals() {

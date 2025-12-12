@@ -3,11 +3,11 @@ const togglePassword = document.getElementById("togglePassword");
 const inputPassword = document.getElementById("inputPassword");
 
 togglePassword.addEventListener("click", () => {
-    const type = inputPassword.type === "password" ? "text" : "password";
-    inputPassword.type = type;
+	const type = inputPassword.type === "password" ? "text" : "password";
+	inputPassword.type = type;
 
-    togglePassword.innerHTML = `<i data-feather="${type === "password" ? "eye" : "eye-off"}"></i>`;
-    feather.replace();
+	togglePassword.innerHTML = `<i data-feather="${type === "password" ? "eye" : "eye-off"}"></i>`;
+	feather.replace();
 });
 
 function showError(msg) {
@@ -61,6 +61,7 @@ async function loginUser() {
 		localStorage.setItem("name", data.data.nama);
 		localStorage.setItem("cabangID", data.data.unitKerja);
 		localStorage.setItem("unit", data.data.branchName);
+		localStorage.setItem("stateType", "normal");
 
 		window.location.href = "/";
 	} catch (e) {
