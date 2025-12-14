@@ -110,6 +110,7 @@ function loadData(kelompokData, nasabahData) {
 				idProduk: n.idProduk,
 				id: n.id,
 				nama: n.nama,
+				flapond: n.flapond,
 				tagihan: n.jumlahAngsuran,
 				status: n.status || "none"
 			});
@@ -354,7 +355,7 @@ function renderGroups() {
 		cardTitle.innerText = "Daftar PKM";
 	}
 
-	if (state.kelompok.length === 0) {
+	if (state.kelompok.length <= 0) {
 		groupsListEl.innerHTML = `<div class="empty">Tidak ada penagihan hari ini.</div>`;
 		return;
 	}
@@ -382,7 +383,7 @@ function renderGroups() {
           <div class="kelompok-meta">
             <span class="badge">Cash: Rp ${rupiah(cash)}</span>
             <span class="badge">TF: Rp ${rupiah(tf)}</span>
-            <span class="badge">Nasabah: ${k.nasabah.length}</span>
+            <span class="badge">NoA: ${k.nasabah.length}</span>
           </div>
         </div>
       </div>
@@ -406,7 +407,7 @@ function renderGroups() {
 /* ===== GROUP DETAIL RENDER ===== */
 function renderGroupDetail(groupId) {
 	const k = state.kelompok.find((x) => x.id === groupId);
-	if (!k) return alert("Kelompok tidak ditemukan");
+	if (!k) return errorAlert("Kelompok tidak ditemukan");
 
 	currentGroupId = groupId;
 	groupTitleEl.innerText = k.nama;
@@ -449,63 +450,68 @@ function renderGroupDetail(groupId) {
 	if (k.nasabah.length === 0) {
 		nasabahListEl.innerHTML = `<div class="empty">Belum ada nasabah di kelompok ini.</div>`;
 	} else {
-		k.nasabah.forEach((n) => {
+		k.nasabah.forEach((n, i) => {
 			const nas = document.createElement("div");
 			nas.className = "list-item";
 			if (n.status !== "none") {
 				nas.classList.add("payed");
 			}
 			nas.innerHTML = `
-<div class="nasabah-item">
+<div class="nasabah-card light">
 
-  <div class="nasabah-info">
-    <div class="nama">${escapeHtml(n.nama)}</div>
+  <div class="nasabah-main">
+    <div class="nasabah-left">
+      <div class="pill pill-no">${i + 1}</div>
 
-    <div class="meta">
-      Tagihan: Rp ${rupiah(n.tagihan)} •
-      Status: <strong>${
-			n.status === "cash" ? "Cash" : n.status === "tf" ? "Transfer" : "Belum Stor"
-		}</strong>
+      <div class="pill pill-name">${escapeHtml(n.nama)}</div>
+
+      <div class="pill">
+        plafond: <strong>Rp ${rupiah(n.plafond || 0)}</strong>
+      </div>
+
+      <div class="pill">
+        tagihan: <strong>Rp ${rupiah(n.tagihan)}</strong>
+      </div>
+
+      <div class="pill">
+        ke: <strong>${n.ke}</strong>
+      </div>
+
+      <div class="kode-produk">${escapeHtml(n.kode || "N/A")}</div>
     </div>
 
-    <div class="angsuran-ke">
-      Ke: <strong>${n.ke}</strong>
+    <div class="nasabah-right">
+      <label class="status-pill">
+        <input type="radio" name="st${n.id}" value="cash" ${
+			n.status === "cash" ? "checked" : ""
+		} data-group="${k.id}" data-nasabah="${n.id}">
+        <span class="dot"></span> Cash
+      </label>
+
+      <label class="status-pill">
+        <input type="radio" name="st${n.id}" value="tf" ${
+			n.status === "tf" ? "checked" : ""
+		} data-group="${k.id}" data-nasabah="${n.id}">
+        <span class="dot"></span> Transfer
+      </label>
+
+      <label class="status-pill">
+        <input type="radio" name="st${n.id}" value="none" ${
+			n.status === "none" ? "checked" : ""
+		} data-group="${k.id}" data-nasabah="${n.id}">
+        <span class="dot"></span> Belum
+      </label>
     </div>
   </div>
 
   <div class="nasabah-actions">
-    <div class="status-wrap">
-      <label class="radio-card">
-        <input type="radio" name="st${n.id}" value="cash" ${
-			n.status === "cash" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
-        Cash
-      </label>
+    <button class="btn btn-edit" data-action="edit-n" data-id="${n.id}" data-group="${k.id}">
+      <i data-feather="edit"></i>
+    </button>
 
-      <label class="radio-card">
-        <input type="radio" name="st${n.id}" value="tf" ${
-			n.status === "tf" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
-        Transfer
-      </label>
-
-      <label class="radio-card">
-        <input type="radio" name="st${n.id}" value="none" ${
-			n.status === "none" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
-        Tidak Stor
-      </label>
-    </div>
-
-    <div class="btn-wrap">
-      <button class="btn btn-edit" data-action="edit-n" data-id="${n.id}" data-group="${k.id}">
-        <i data-feather="edit"></i>
-      </button>
-
-      <button class="btn btn-danger" data-action="del-n" data-id="${n.id}" data-group="${k.id}">
-        <i data-feather="trash-2"></i>
-      </button>
-    </div>
+    <button class="btn btn-danger" data-action="del-n" data-id="${n.id}" data-group="${k.id}">
+      <i data-feather="trash-2"></i>
+    </button>
   </div>
 
 </div>
