@@ -466,7 +466,7 @@ function renderGroupDetail(groupId) {
       <div class="pill pill-name">${escapeHtml(n.nama)}</div>
 
       <div class="pill">
-        plafond: <strong>Rp ${rupiah(n.plafond || 0)}</strong>
+        plafond: <strong>Rp ${rupiah(n.flapond)}</strong>
       </div>
 
       <div class="pill">
