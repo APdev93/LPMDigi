@@ -355,6 +355,10 @@ body {
 /* list item */
 .list-item {
 	display: flex;
+	padding-top: 13px;
+	padding-bottom: 13px;
+	padding-right: 8px;
+	padding-left: 8px;
 	justify-content: space-between;
 	align-items: center;
 	border-bottom: 1px solid rgba(34, 86, 191, 0.04);
