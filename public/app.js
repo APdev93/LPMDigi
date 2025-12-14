@@ -477,7 +477,7 @@ function renderGroupDetail(groupId) {
         ke: <strong>${n.ke}</strong>
       </div>
 
-      <div class="kode-produk">${escapeHtml(n.kode || "N/A")}</div>
+      <div class="kode-produk">${escapeHtml(n.idProduk || "N/A")}</div>
     </div>
 
     <div class="nasabah-right">
