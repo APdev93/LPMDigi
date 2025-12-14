@@ -147,6 +147,7 @@ body {
 
 /* action buttons */
 .nasabah-actions {
+    margin-top: 3px;
 	display: flex;
 	gap: 8px;
 	justify-content: flex-end;
