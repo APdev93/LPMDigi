@@ -1,7 +1,7 @@
 const STORAGE_KEY = "kelompok";
 const namaUnit = document.getElementById("branch");
 const namaUser = document.getElementById("name");
-const cabangID = document.getElementById("cabangID")
+const cabangID = localStorage.getItem("cabangID")
 
 namaUnit.innerText = cabangID + "-" + localStorage.getItem("unit") || "";
 namaUser.innerText = localStorage.getItem("name") || "";
@@ -240,7 +240,7 @@ function saveData(data) {
 }
 
 function genId(prefix = "") {
-	return prefix + Date.now().toString(36) + Math.floor(Math.random() * 900).toString(36);
+	return prefix + Math.floor(10000 + Math.random() * 90000).toString();
 }
 
 function rupiah(n) {
