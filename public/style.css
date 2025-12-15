@@ -147,7 +147,7 @@ body {
 
 /* action buttons */
 .nasabah-actions {
-    margin-top: 3px;
+	margin-top: 3px;
 	display: flex;
 	gap: 8px;
 	justify-content: flex-end;
@@ -438,6 +438,14 @@ body {
 	background: white;
 	border: 1px solid rgba(45, 140, 255, 0.12);
 	color: var(--blue);
+}
+
+.group-header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	align-items:  center;
 }
 
 /* radio cards */
