@@ -1,8 +1,9 @@
 const STORAGE_KEY = "kelompok";
 const namaUnit = document.getElementById("branch");
 const namaUser = document.getElementById("name");
+const cabangID = document.getElementById("cabangID")
 
-namaUnit.innerText = localStorage.getItem("cabangID") + " " + localStorage.getItem("unit") || "";
+namaUnit.innerText = cabangID + "-" + localStorage.getItem("unit") || "";
 namaUser.innerText = localStorage.getItem("name") || "";
 
 function showLoading() {
