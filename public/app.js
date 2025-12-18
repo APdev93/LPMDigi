@@ -529,7 +529,7 @@ function renderGroupDetail(groupId) {
 
 /* ===== CRUD: Kelompok ===== */
 function addGroup(name) {
-	state.kelompok.push({ id: genId(cabangID), nama: name, nasabah: [] });
+	state.kelompok.push({ id: genId(cabangID), hariPertemuan: getKodeHariNow(), nama: name, nasabah: [] });
 	saveData(state);
 	renderAll();
 }
