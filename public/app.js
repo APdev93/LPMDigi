@@ -1,7 +1,7 @@
 const STORAGE_KEY = "kelompok";
 const namaUnit = document.getElementById("branch");
 const namaUser = document.getElementById("name");
-const cabangID = localStorage.getItem("cabangID")
+const cabangID = localStorage.getItem("cabangID");
 
 namaUnit.innerText = cabangID + "-" + localStorage.getItem("unit") || "";
 namaUser.innerText = localStorage.getItem("name") || "";
@@ -529,7 +529,12 @@ function renderGroupDetail(groupId) {
 
 /* ===== CRUD: Kelompok ===== */
 function addGroup(name) {
-	state.kelompok.push({ id: genId(cabangID), hariPertemuan: getKodeHariNow(), nama: name, nasabah: [] });
+	state.kelompok.push({
+		id: genId(cabangID),
+		hariPertemuan: getKodeHariNow().toString(),
+		nama: name,
+		nasabah: []
+	});
 	saveData(state);
 	renderAll();
 }
