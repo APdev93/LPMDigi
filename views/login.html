@@ -1,161 +1,171 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<link rel="icon" sizes="32x32" type="image/png" href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png">
-<link rel="shortcut icon" href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png">
-		<link rel="stylesheet" href="/style.css" type="text/css" media="all" />
-		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				background: #1e75d9;
-				font-family: Arial, sans-serif;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				overflow: hidden;
-			}
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link
+            rel="icon"
+            sizes="32x32"
+            type="image/png"
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+        <link
+            rel="shortcut icon"
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+        <link rel="stylesheet" href="/style.css" type="text/css" media="all" />
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background: #1e75d9;
+                font-family: Arial, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
 
-			.card {
-				margin-top: 50%;
-				margin-bottom: 50%;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				background: #fff;
-				min-height: 400px;
-				padding: 30px;
-				width: 90%;
-				border-radius: 20px;
-				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-			}
+            .card {
+                margin-top: 50%;
+                margin-bottom: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: #fff;
+                min-height: 400px;
+                padding: 30px;
+                width: 90%;
+                border-radius: 20px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
 
-			@media (max-width: 380px) {
-				.card {
-					width: 90%;
-					padding: 25px;
-				}
-			}
-			
-			@media (width >= 800px) {
-			    .card {
-			        width: 450px;
-			    }
-			}
+            @media (max-width: 380px) {
+                .card {
+                    width: 90%;
+                    padding: 25px;
+                }
+            }
 
-			.title {
-				text-align: center;
-				margin-bottom: 25px;
-				color: #1e75d9;
-				font-size: 24px;
-				font-weight: 700;
-			}
+            @media (width >= 800px) {
+                .card {
+                    width: 450px;
+                }
+            }
 
-			.form-group {
-				width: 100%;
-				margin-bottom: 18px;
-				display: flex;
-				flex-direction: column;
-			}
+            .title {
+                text-align: center;
+                margin-bottom: 25px;
+                color: #1e75d9;
+                font-size: 24px;
+                font-weight: 700;
+            }
 
-			label {
-				font-size: 14px;
-				margin-bottom: 6px;
-				color: #333;
-			}
+            .form-group {
+                width: 100%;
+                margin-bottom: 18px;
+                display: flex;
+                flex-direction: column;
+            }
 
-			input {
-				padding: 15px !important;
-				border-radius: 15px !important;
-				border: 1px solid #e6f1ff;
-				font-size: 15px;
-				outline: none;
-				width: 100%;
-			}
+            label {
+                font-size: 14px;
+                margin-bottom: 6px;
+                color: #333;
+            }
 
-			input:focus {
-				border-color: #1e75d9;
-			}
+            input {
+                padding: 15px !important;
+                border-radius: 15px !important;
+                border: 1px solid #e6f1ff;
+                font-size: 15px;
+                outline: none;
+                width: 100%;
+            }
 
-			.password-wrapper {
-				position: relative;
-				display: flex;
-				align-items: center;
-			}
+            input:focus {
+                border-color: #1e75d9;
+            }
 
-			.toggle-eye {
-				position: absolute;
-				right: 12px;
-				cursor: pointer;
-				width: 22px;
-				height: 22px;
-				color: #555;
-			}
+            .password-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
 
-			.btn-login {
-				width: 100%;
-				height: 50px;
-				border-radius: 50px;
-				border: none;
-				margin-top: 20px;
-				border-radius: 50px;
-				background: #1e75d9;
-				color: #fff;
-				font-size: 16px;
-				cursor: pointer;
-			}
+            .toggle-eye {
+                position: absolute;
+                right: 12px;
+                cursor: pointer;
+                width: 22px;
+                height: 22px;
+                color: #555;
+            }
 
-			.btn-login:hover {
-				opacity: 0.9;
-			}
-		</style>
-		<title>LPM Digi - Login</title>
-	</head>
-	<body>
-		<div class="card">
-			<h2 class="title">Selamat Datang</h2>
+            .btn-login {
+                width: 100%;
+                height: 50px;
+                border-radius: 50px;
+                border: none;
+                margin-top: 20px;
+                border-radius: 50px;
+                background: #1e75d9;
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+            }
 
-			<div class="form-group">
-				<label>Username</label>
-				<input
-					id="inputUserName"
-					type="text"
-					placeholder="Masukan username"
-					autocapitalize="words"
-				/>
-			</div>
+            .btn-login:hover {
+                opacity: 0.9;
+            }
+        </style>
+        <title>LPM Digi - Login</title>
+    </head>
+    <body>
+        <div class="card">
+            <img
+                src="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
+                alt="logo"
+                style="margin-bottom: 20px" />
 
-			<div class="form-group">
-				<label>Password</label>
-				<div class="password-wrapper">
-					<input
-						id="inputPassword"
-						type="password"
-						placeholder="Masukan password"
-						autocapitalize="words"
-					/>
-					<div id="togglePassword" class="toggle-eye">
-						<i data-feather="eye"></i>
-					</div>
-				</div>
-			</div>
+            <div class="form-group">
+                <label>Username</label>
+                <input
+                    id="inputUserName"
+                    type="text"
+                    placeholder="Masukan username"
+                    autocapitalize="words" />
+            </div>
 
-			<button class="btn-login" id="btnLogin">Login</button>
-		</div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input
+                        id="inputPassword"
+                        type="password"
+                        placeholder="Masukan password"
+                        autocapitalize="words" />
+                    <div id="togglePassword" class="toggle-eye">
+                        <i data-feather="eye"></i>
+                    </div>
+                </div>
+            </div>
 
-		<div id="loadingIndicator" class="loader-container" style="display: none">
-			<div class="loader"></div>
-		</div>
-		<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-		<script>
-			feather.replace();
-		</script>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		<script src="/app.js" type="text/javascript" charset="utf-8"></script>
-		<script src="/login.js" type="text/javascript" charset="utf-8"></script>
-	</body>
+            <button class="btn-login" id="btnLogin">Login</button>
+        </div>
+
+        <div
+            id="loadingIndicator"
+            class="loader-container"
+            style="display: none">
+            <div class="loader"></div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+        <script>
+            feather.replace();
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/app.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/login.js" type="text/javascript" charset="utf-8"></script>
+    </body>
 </html>
