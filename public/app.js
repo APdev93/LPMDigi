@@ -380,6 +380,10 @@ function renderGroups() {
 		div.setAttribute("data-action", "open");
 		div.setAttribute("data-id", k.id);
 
+		let nasBelum = k.nasabah.filter((n) => n.status === "none");
+		if (nasBelum <= 0) {
+			div.classList.add("payed");
+		}
 		div.innerHTML = `
       <div class="list-left">
         <div>
@@ -388,6 +392,7 @@ function renderGroups() {
             <span class="badge">Cash: Rp ${rupiah(cash)}</span>
             <span class="badge">TF: Rp ${rupiah(tf)}</span>
             <span class="badge">NoA: ${k.nasabah.length}</span>
+            <span class="badge">Sisa NoA: ${nasBelum.length}</span>
           </div>
         </div>
       </div>
