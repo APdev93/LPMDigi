@@ -646,7 +646,7 @@ function addGroupFromData(id) {
 	let group = allGroupData.kelompok.find((k) => k.id === id);
 
 	group.hariPertemuan = getKodeHariNow().toString();
-	state.push(group);
+	state.kelompok.push(group);
 	saveData(state);
 	renderAll();
 }
