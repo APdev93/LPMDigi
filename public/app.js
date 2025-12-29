@@ -801,6 +801,7 @@ function renderGroupOption(data) {
 }
 
 function openNewGroupModal() {
+	let selectGroup = document.getElementById("selectGroup");
 	let inputGroupNameGroup = document.getElementById("inputGroupNameGroup");
 
 	modalGroupTitle.innerText = "Tambah Kelompok";
@@ -808,7 +809,7 @@ function openNewGroupModal() {
 	inputGroupNameGroup.style.display = "none";
 	saveGroupBtn.removeAttribute("data-edit");
 
-	selectGroupWrapper.style.display = "block";
+	selectGroup.style.display = "block";
 
 	renderGroupOption(state.kelompok);
 
