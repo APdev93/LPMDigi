@@ -75,7 +75,7 @@ app.get("/collect-list/:cabang/:username", async (req, res) => {
         let data = response.data.data
             .filter((item) => item.StatusPAR === "NO")
             .map((item) => ({
-                id: item.ClientID,
+                id: item.AccountID,
                 IdKelompok: item.GroupID,
                 namaKelompok: item.GroupName,
                 idProduk: item.ProductID,
