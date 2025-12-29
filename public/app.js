@@ -119,6 +119,7 @@ function loadData(kelompokData, nasabahData) {
 			});
 		}
 	});
+	localStorage.setItem("semuaKelompok", JSON.stringify({ kelompok }));
 	localStorage.setItem(STORAGE_KEY, JSON.stringify({ kelompok }));
 	return { kelompok };
 }
@@ -642,7 +643,7 @@ function closeModal(modalEl) {
 }
 
 function addGroupFromData(id) {
-	let allGroupData = JSON.parse(localStorage.getItem("kelompok"));
+	let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
 	let group = allGroupData.kelompok.find((k) => k.id === id);
 
 	group.hariPertemuan = getKodeHariNow().toString();
@@ -805,7 +806,7 @@ function renderGroupOption(data) {
 function openNewGroupModal() {
 	let selectGroup = document.getElementById("selectGroup");
 	let inputGroupNameGroup = document.getElementById("inputGroupNameGroup");
-	let allGroupData = JSON.parse(localStorage.getItem("kelompok"));
+	let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
 
 	modalGroupTitle.innerText = "Tambah Kelompok";
 	inputGroupName.value = "";
