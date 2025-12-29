@@ -642,11 +642,12 @@ function closeModal(modalEl) {
 }
 
 function addGroupFromData(id) {
-	let group = state.kelompok.find((k) => k.id === id);
+	let allGroupData = JSON.parse(localStorage.getItem("kelompok"));
+	let group = allGroupData.kelompok.find((k) => k.id === id);
 
 	group.hariPertemuan = getKodeHariNow().toString();
-
-	saveData(group);
+	state.push(group);
+	saveData(state);
 	renderAll();
 }
 
@@ -791,6 +792,7 @@ function bindEvents() {
 
 const selectGroupData = document.getElementById("selectGroupData");
 function renderGroupOption(data) {
+	selectGroupData.innerHTML = `<option value="">-- Pilih Grup --</option>`;
 	data.forEach((k) => {
 		selectGroupData.innerHTML += `
     <option value="${k.id}">
@@ -803,6 +805,7 @@ function renderGroupOption(data) {
 function openNewGroupModal() {
 	let selectGroup = document.getElementById("selectGroup");
 	let inputGroupNameGroup = document.getElementById("inputGroupNameGroup");
+	let allGroupData = JSON.parse(localStorage.getItem("kelompok"));
 
 	modalGroupTitle.innerText = "Tambah Kelompok";
 	inputGroupName.value = "";
@@ -811,7 +814,7 @@ function openNewGroupModal() {
 
 	selectGroup.style.display = "block";
 
-	renderGroupOption(state.kelompok);
+	renderGroupOption(allGroupData.kelompok);
 
 	openModal(modalGroup);
 }
