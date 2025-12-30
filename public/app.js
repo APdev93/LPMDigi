@@ -670,16 +670,19 @@ function bindEvents() {
 	closeGroupModal?.addEventListener("click", () => closeModal(modalGroup));
 	saveGroupBtn?.addEventListener("click", () => {
 		const editingId = saveGroupBtn.getAttribute("data-edit");
+		const name = inputGroupName.value.trim();
+		const selectedId = selectGroupData?.value;
 
 		if (editingId) {
-			const name = inputGroupName.value.trim();
-			if (!name) return alert("Isi nama kelompok");
+			if (!name) return errorAlert("Isi nama kelompok");
 			updateGroup(editingId, name);
 		} else {
-			const selectedId = selectGroupData.value;
-			if (!selectedId) return alert("Pilih data grup");
-
-			addGroupFromData(selectedId);
+			if (!name && !selectedId) return errorAlert("Isi nama kelompok");
+			if (!name) {
+				addGroup(name);
+			} else {
+				addGroupFromData(selectedId);
+			}
 		}
 
 		inputGroupName.value = "";
@@ -815,7 +818,7 @@ function openNewGroupModal() {
 
 	modalGroupTitle.innerText = "Tambah Kelompok";
 	inputGroupName.value = "";
-	inputGroupNameGroup.style.display = "none";
+	inputGroupNameGroup.style.display = "block";
 	saveGroupBtn.removeAttribute("data-edit");
 
 	selectGroup.style.display = "block";
