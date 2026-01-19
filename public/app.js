@@ -4,7 +4,7 @@ const namaUser = document.getElementById("name");
 const cabangID = localStorage.getItem("cabangID");
 const userName = document.getElementById("userName");
 
-userName.innerHTML = localStorage.getItem("username").toUpperCase() || "";
+userName.innerHTML = localStorage.getItem("username")?.toUpperCase() || "";
 namaUnit.innerText = cabangID + " - " + localStorage.getItem("unit") || "";
 namaUser.innerText = localStorage.getItem("name") || "";
 
