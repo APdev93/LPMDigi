@@ -22,6 +22,78 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+.nasabah-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.nasabah-table thead {
+    background: #f4f6f8;
+}
+
+.nasabah-table th,
+.nasabah-table td {
+    padding: 12px 14px;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.nasabah-table th {
+    font-weight: 600;
+    color: #374151;
+}
+
+.nasabah-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.nasabah-table tbody tr.payed {
+    background: #ecfdf5;
+}
+
+.nasabah-table tbody tr.payed td {
+    color: #065f46;
+    font-weight: 500;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pagination button {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #f3f4f6;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-size: 13px;
+    color: #4b5563;
+}
+
 .swal-success-popup {
     border-radius: 16px;
 }
@@ -514,7 +586,7 @@ select {
     font-size: 14px;
     color: #1f2937;
     outline: none;
-    transition: border-color .2s, box-shadow .2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input::placeholder {
@@ -524,7 +596,7 @@ input::placeholder {
 input:focus,
 select:focus {
     border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, .15);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
 }
 
 input:disabled,

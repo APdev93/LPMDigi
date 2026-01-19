@@ -1,234 +1,296 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width,initial-scale=1" />
-		<link
-			rel="icon"
-			sizes="32x32"
-			type="image/png"
-			href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
-		/>
-		<link
-			rel="shortcut icon"
-			href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
-		/>
-		<title>LPM Digi PNM</title>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <link
+            rel="icon"
+            sizes="32x32"
+            type="image/png"
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+        <link
+            rel="shortcut icon"
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+        <title>LPM Digi PNM</title>
 
-		<!-- module imports -->
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
-			rel="stylesheet"
-		/>
-		<script src="https://unpkg.com/feather-icons"></script>
+        <!-- module imports -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+            rel="stylesheet" />
+        <script src="https://unpkg.com/feather-icons"></script>
 
-		<script>
-			if ("serviceWorker" in navigator) {
-				navigator.serviceWorker.register("/sw.js");
-			}
-		</script>
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("/sw.js");
+            }
+        </script>
 
-		<!-- styles -->
-		<link rel="stylesheet" href="/style.css" />
-	</head>
-	<body>
-		<div id="app">
-			<!-- NAV / HEADER -->
-			<header class="navbar">
-				<div class="nav-left">
-					<div class="brand">
-						<div class="logo">PNM</div>
-						<div class="brand-title">LPMDigi</div>
-					</div>
-				</div>
-			</header>
+        <!-- styles -->
+        <link rel="stylesheet" href="/style.css" />
+    </head>
+    <body>
+        <div id="app">
+            <!-- NAV / HEADER -->
+            <header class="navbar">
+                <div class="nav-left">
+                    <div class="brand">
+                        <div class="logo">PNM</div>
+                        <div class="brand-title">LPMDigi</div>
+                    </div>
+                </div>
+            </header>
 
-			<!-- MAIN -->
-			<main class="container">
-				<section class="profile">
-					<div class="profile-info">
-						<div class="profile-name"><i id="name"></i></div>
-						<div class="profile-role" id="userName"></div>
-						<div class="profile-role" id="branch"></div>
-					</div>
-				</section>
+            <!-- MAIN -->
+            <main class="container">
+                <section class="profile">
+                    <div class="profile-info">
+                        <div class="profile-name"><i id="name"></i></div>
+                        <div class="profile-role" id="userName"></div>
+                        <div class="profile-role" id="branch"></div>
+                    </div>
+                </section>
 
-				<!-- DASHBOARD STATS -->
-				<section class="card stats-card" id="dashboard">
-					<div class="stats-grid">
-						<div class="stat">
-							<div class="stat-title">Total Run Off</div>
-							<div class="stat-value" id="totalUang">Rp 0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Total TF</div>
-							<div class="stat-value" id="totalTransfer">Rp 0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Total Uang</div>
-							<div class="stat-value" id="totalRill">Rp 0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Sisa Tagihan</div>
-							<div class="stat-value" id="totalBelum">Rp 0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Total NoA</div>
-							<div class="stat-value" id="totalNasabah">0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">NoA Done</div>
-							<div class="stat-value" id="nasSudahStor">0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Sisa NoA</div>
-							<div class="stat-value" id="nasBelumStor">0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Progress</div>
-							<div class="stat-value" id="progress">0</div>
-						</div>
-					</div>
+                <!-- DASHBOARD STATS -->
+                <section class="card stats-card" id="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat">
+                            <div class="stat-title">Total Run Off</div>
+                            <div class="stat-value" id="totalUang">Rp 0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Total TF</div>
+                            <div class="stat-value" id="totalTransfer">
+                                Rp 0
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Total Stor</div>
+                            <div class="stat-value" id="totalRill">Rp 0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Sisa Tagihan</div>
+                            <div class="stat-value" id="totalBelum">Rp 0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Total NoA</div>
+                            <div class="stat-value" id="totalNasabah">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">NoA Done</div>
+                            <div class="stat-value" id="nasSudahStor">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Sisa NoA</div>
+                            <div class="stat-value" id="nasBelumStor">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Progress</div>
+                            <div class="stat-value" id="progress">0</div>
+                        </div>
+                    </div>
 
-					<div class="btn-action-container">
-						<button class="btn-clear btn-danger" id="clearBtn">Clear Data</button>
-					</div>
-				</section>
+                    <div class="btn-action-container">
+                        <button class="btn-clear btn-danger" id="clearBtn">
+                            Clear Data
+                        </button>
+                    </div>
+                </section>
 
-				<!-- PAGE: LIST KELOMPOK -->
-				<section id="page-groups">
-					<div class="card">
-						<div class="card-header">
-							<div class="group-header">
-								<h2 class="card-title" id="cardTitle">Daftar Kelompok</h2>
+                <section id="page-Igroup">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="group-header">
+                                <h2 class="card-title" id="IcardTitle">
+                                    Daftar Nasabah Individu
+                                </h2>
+                            </div>
+                        </div>
 
-								<button id="btnNewGroup" class="btn btn-ghost">
-									<i data-feather="plus"></i> Tambah Kelompok
-								</button>
-							</div>
-						</div>
+                        <table class="nasabah-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kelompok</th>
+                                    <th>Nama</th>
+                                    <th>Tagihan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="iGroupsList"></tbody>
+                        </table>
 
-						<div id="groupsList" class="list"></div>
-					</div>
-				</section>
+                        <div class="pagination">
+                            <button id="prevBtn">Prev</button>
+                            <span id="pageInfo"></span>
+                            <button id="nextBtn">Next</button>
+                        </div>
+                    </div>
+                </section>
 
-				<!-- PAGE: DETAIL KELOMPOK (hidden until select) -->
-				<section id="page-group-detail" class="hidden">
-					<div class="card">
-						<div class="card-header">
-							<div>
-								<button id="backToGroups" class="btn btn-ghost">
-									<i data-feather="arrow-left"></i> Kembali
-								</button>
-							</div>
+                <!-- PAGE: LIST KELOMPOK -->
+                <section id="page-groups">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="group-header">
+                                <h2 class="card-title" id="cardTitle">
+                                    Daftar Kelompok
+                                </h2>
 
-							<div>
-								<h2 id="groupTitle" class="card-title">Kelompok</h2>
-								<div class="group-meta" id="groupMeta"></div>
-							</div>
+                                <button id="btnNewGroup" class="btn btn-ghost">
+                                    <i data-feather="plus"></i> Tambah Kelompok
+                                </button>
+                            </div>
+                        </div>
 
-							<div class="card-actions">
-								<button id="btnAddNasabah" class="btn btn-primary">
-									<i data-feather="user-plus"></i> Tambah Nasabah
-								</button>
-								<button
-									id="btnEditGroup"
-									class="btn btn-edit"
-									title="Edit Kelompok"
-								>
-									<i data-feather="edit-2"></i>
-								</button>
-								<button
-									id="btnDeleteGroup"
-									class="btn btn-danger"
-									title="Hapus Kelompok"
-								>
-									<i data-feather="trash-2"></i>
-								</button>
-							</div>
-						</div>
+                        <div id="groupsList" class="list"></div>
+                    </div>
+                </section>
 
-						<!-- rekap group -->
-						<div class="group-recap" id="groupRecap"></div>
+                <!-- PAGE: DETAIL KELOMPOK (hidden until select) -->
+                <section id="page-group-detail" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <button id="backToGroups" class="btn btn-ghost">
+                                    <i data-feather="arrow-left"></i> Kembali
+                                </button>
+                            </div>
 
-						<!-- list nasabah -->
-						<div id="nasabahList" class="list"></div>
-					</div>
-				</section>
-			</main>
-		</div>
+                            <div>
+                                <h2 id="groupTitle" class="card-title">
+                                    Kelompok
+                                </h2>
+                                <div class="group-meta" id="groupMeta"></div>
+                            </div>
 
-		<!-- MODAL: Tambah / Edit Kelompok -->
-		<div class="modal" id="modalGroup">
-			<div class="modal-box">
-				<h3 id="modalGroupTitle">Tambah Kelompok</h3>
-				<div class="form-group" id="inputGroupNameGroup">
-					<label>Nama Kelompok</label>
-					<input id="inputGroupName" type="text" placeholder="Nama kelompok baru" />
-				</div>
-				<div class="form-group" id="selectGroup">
-					<label>Pilih Data Kelompok</label>
-					<select id="selectGroupData">
-						<option value="">-- Pilih Kelompok --</option>
-					</select>
-				</div>
-				<div class="modal-actions">
-					<button id="saveGroupBtn" class="btn btn-primary">Simpan</button>
-					<button id="closeGroupModal" class="btn btn-ghost">Batal</button>
-				</div>
-			</div>
-		</div>
+                            <div class="card-actions">
+                                <button
+                                    id="btnAddNasabah"
+                                    class="btn btn-primary">
+                                    <i data-feather="user-plus"></i> Tambah
+                                    Nasabah
+                                </button>
+                                <button
+                                    id="btnEditGroup"
+                                    class="btn btn-edit"
+                                    title="Edit Kelompok">
+                                    <i data-feather="edit-2"></i>
+                                </button>
+                                <button
+                                    id="btnDeleteGroup"
+                                    class="btn btn-danger"
+                                    title="Hapus Kelompok">
+                                    <i data-feather="trash-2"></i>
+                                </button>
+                            </div>
+                        </div>
 
-		<!-- MODAL: Tambah Nasabah (reusable, bisa tambah terus) -->
-		<div class="modal" id="modalNasabah">
-			<div class="modal-box">
-				<h3 id="modalNasabahTitle">Tambah Nasabah</h3>
+                        <!-- rekap group -->
+                        <div class="group-recap" id="groupRecap"></div>
 
-				<div class="form-group">
-					<label>Nama Nasabah</label>
-					<input id="inputNasabahName" type="text" placeholder="Nama nasabah" />
-				</div>
+                        <!-- list nasabah -->
+                        <div id="nasabahList" class="list"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
 
-				<div class="form-group">
-					<label>Jumlah Tagihan (Rp)</label>
-					<input id="inputNasabahTagihan" type="number" placeholder="0" />
-				</div>
+        <!-- MODAL: Tambah / Edit Kelompok -->
+        <div class="modal" id="modalGroup">
+            <div class="modal-box">
+                <h3 id="modalGroupTitle">Tambah Kelompok</h3>
+                <div class="form-group" id="inputGroupNameGroup">
+                    <label>Nama Kelompok</label>
+                    <input
+                        id="inputGroupName"
+                        type="text"
+                        placeholder="Nama kelompok baru" />
+                </div>
+                <div class="form-group" id="selectGroup">
+                    <label>Pilih Data Kelompok</label>
+                    <select id="selectGroupData">
+                        <option value="">-- Pilih Kelompok --</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button id="saveGroupBtn" class="btn btn-primary">
+                        Simpan
+                    </button>
+                    <button id="closeGroupModal" class="btn btn-ghost">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
 
-				<div class="form-group">
-					<label>Status Awal</label>
-					<div class="radio-group">
-						<label class="radio-card"
-							><input name="status" type="radio" value="none" checked /> Tidak
-							Stor</label
-						>
-						<label class="radio-card"
-							><input name="status" type="radio" value="cash" /> Stor Cash</label
-						>
-						<label class="radio-card"
-							><input name="status" type="radio" value="tf" /> Stor Transfer</label
-						>
-					</div>
-				</div>
+        <!-- MODAL: Tambah Nasabah (reusable, bisa tambah terus) -->
+        <div class="modal" id="modalNasabah">
+            <div class="modal-box">
+                <h3 id="modalNasabahTitle">Tambah Nasabah</h3>
 
-				<div class="modal-actions">
-					<button id="saveNasabahBtn" class="btn btn-primary">Simpan & Tutup</button>
-					<button id="saveNasabahAgainBtn" class="btn btn-outline">
-						Simpan & Tambah Lagi
-					</button>
-					<button id="closeNasabahModal" class="btn btn-ghost">Batal</button>
-				</div>
-			</div>
-		</div>
+                <div class="form-group">
+                    <label>Nama Nasabah</label>
+                    <input
+                        id="inputNasabahName"
+                        type="text"
+                        placeholder="Nama nasabah" />
+                </div>
 
-		<div id="loadingIndicator" class="loader-container" style="display: none">
-			<div class="loader"></div>
-		</div>
+                <div class="form-group">
+                    <label>Jumlah Tagihan (Rp)</label>
+                    <input
+                        id="inputNasabahTagihan"
+                        type="number"
+                        placeholder="0" />
+                </div>
 
-		<!-- scripts -->
-		<script src="/app.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		<script>
-			feather.replace();
-		</script>
-	</body>
+                <div class="form-group">
+                    <label>Status Awal</label>
+                    <div class="radio-group">
+                        <label class="radio-card"
+                            ><input
+                                name="status"
+                                type="radio"
+                                value="none"
+                                checked />
+                            Tidak Stor</label
+                        >
+                        <label class="radio-card"
+                            ><input name="status" type="radio" value="cash" />
+                            Stor Cash</label
+                        >
+                        <label class="radio-card"
+                            ><input name="status" type="radio" value="tf" />
+                            Stor Transfer</label
+                        >
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="saveNasabahBtn" class="btn btn-primary">
+                        Simpan & Tutup
+                    </button>
+                    <button id="saveNasabahAgainBtn" class="btn btn-outline">
+                        Simpan & Tambah Lagi
+                    </button>
+                    <button id="closeNasabahModal" class="btn btn-ghost">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div
+            id="loadingIndicator"
+            class="loader-container"
+            style="display: none">
+            <div class="loader"></div>
+        </div>
+
+        <!-- scripts -->
+        <script src="/app.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            feather.replace();
+        </script>
+    </body>
 </html>
