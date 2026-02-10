@@ -398,6 +398,24 @@ function addFilter(ws) {
 	};
 }
 
+function addSummary(ws, dataLength) {
+	const lastRow = dataLength + 1;
+
+	ws["L1"] = { v: "REKAP", s: { font: { bold: true } } };
+
+	ws["L2"] = { v: "Total Tagihan (tanpa none)" };
+	ws["M2"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"<>none")` };
+
+	ws["L3"] = { v: "Total TF" };
+	ws["M3"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"tf")` };
+
+	ws["L4"] = { v: "Total Cash" };
+	ws["M4"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"cash")` };
+
+	ws["L5"] = { v: "Total Individu" };
+	ws["M5"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"individu")` };
+}
+
 btnDlData.addEventListener("click", () => {
 	let raw = localStorage.getItem("kelompok");
 	if (!raw) return errorAlert("Data Tidak ditemukan");
@@ -422,7 +440,7 @@ btnDlData.addEventListener("click", () => {
 				Plafon: rupiah(n.flapond),
 				Ke: n.ke,
 				Tagihan: rupiah(n.tagihan),
-				Status: n.status
+				Status: n.status.toUpperCase()
 			};
 
 			if (n.status === "cash" || n.status === "none" || n.status === "tf") pkm.push(row);
@@ -438,21 +456,22 @@ btnDlData.addEventListener("click", () => {
 		styleBody(wsPKM);
 		autoWidth(wsPKM, pkm);
 		addFilter(wsPKM);
+		addSummary(wsPKM, pkm.length);
 
 		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
 	}
 
 	if (individu.length) {
 		const wsInd = XLSX.utils.json_to_sheet(individu);
-	styleHeader(wsInd);
-	styleBody(wsInd);
-	autoWidth(wsInd, individu);
-	addFilter(wsInd);
+		styleHeader(wsInd);
+		styleBody(wsInd);
+		autoWidth(wsInd, individu);
+		addFilter(wsInd);
+		addSummary(wsInd, individu.length);
 
-	XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
+		XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
 	}
 
-	
 	XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
 });
 
