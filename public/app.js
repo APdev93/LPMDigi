@@ -329,7 +329,6 @@ const btnDlData = document.getElementById("downloadBtn");
 
 function getTanggal() {
 	const tanggal = new Date();
-
 	const hariNama = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
 	const hari = hariNama[tanggal.getDay()];
@@ -337,9 +336,7 @@ function getTanggal() {
 	const bln = String(tanggal.getMonth() + 1).padStart(2, "0");
 	const tahun = tanggal.getFullYear();
 
-	const hasil = `${hari}-${tgl}-${bln}-${tahun}`;
-
-	return hasil;
+	return `${hari}-${tgl}-${bln}-${tahun}`;
 }
 
 function autoWidth(ws, data) {
@@ -398,22 +395,41 @@ function addFilter(ws) {
 	};
 }
 
-function addSummary(ws, dataLength) {
-	const lastRow = dataLength + 1;
+function createRekapSheet(wb, data) {
+	let totalCash = 0;
+	let totalTF = 0;
+	let totalIndividu = 0;
 
-	ws["L1"] = { v: "REKAP", s: { font: { bold: true } } };
+	data.kelompok.forEach((k) => {
+		k.nasabah.forEach((n) => {
+			const tagihan = Number(n.tagihan || 0);
 
-	ws["L2"] = { v: "Total Tagihan (tanpa none)" };
-	ws["M2"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"<>none")` };
+			if (n.status === "cash") totalCash += tagihan;
+			if (n.status === "tf") totalTF += tagihan;
+			if (n.status === "individu") totalIndividu += tagihan;
+		});
+	});
 
-	ws["L3"] = { v: "Total TF" };
-	ws["M3"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"tf")` };
+	const rekapData = [
+		{
+			"Total Cash": totalCash,
+			"Total TF": totalTF,
+			"Total Individu": totalIndividu
+		}
+	];
 
-	ws["L4"] = { v: "Total Cash" };
-	ws["M4"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"cash")` };
+	const ws = XLSX.utils.json_to_sheet(rekapData);
 
-	ws["L5"] = { v: "Total Individu" };
-	ws["M5"] = { f: `SUMIFS(I2:I${lastRow},J2:J${lastRow},"individu")` };
+	ws["!cols"] = [
+		{ wch: 20 },
+		{ wch: 20 },
+		{ wch: 20 }
+	];
+
+	styleHeader(ws);
+	styleBody(ws);
+
+	XLSX.utils.book_append_sheet(wb, ws, "REKAP");
 }
 
 btnDlData.addEventListener("click", () => {
@@ -456,8 +472,6 @@ btnDlData.addEventListener("click", () => {
 		styleBody(wsPKM);
 		autoWidth(wsPKM, pkm);
 		addFilter(wsPKM);
-		addSummary(wsPKM, pkm.length);
-
 		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
 	}
 
@@ -467,10 +481,10 @@ btnDlData.addEventListener("click", () => {
 		styleBody(wsInd);
 		autoWidth(wsInd, individu);
 		addFilter(wsInd);
-		addSummary(wsInd, individu.length);
-
 		XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
 	}
+
+	createRekapSheet(wb, data);
 
 	XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
 });
