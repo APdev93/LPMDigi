@@ -412,19 +412,15 @@ function createRekapSheet(wb, data) {
 
 	const rekapData = [
 		{
-			"Total Cash": totalCash,
-			"Total TF": totalTF,
-			"Total Individu": totalIndividu
+			"Total Cash": rupiah(totalCash),
+			"Total TF": rupiah(totalTF),
+			"Total Individu": rupiah(totalIndividu)
 		}
 	];
 
 	const ws = XLSX.utils.json_to_sheet(rekapData);
 
-	ws["!cols"] = [
-		{ wch: 20 },
-		{ wch: 20 },
-		{ wch: 20 }
-	];
+	ws["!cols"] = [{ wch: 20 }, { wch: 20 }, { wch: 20 }];
 
 	styleHeader(ws);
 	styleBody(ws);
