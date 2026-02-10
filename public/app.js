@@ -388,6 +388,16 @@ function styleBody(ws) {
 	}
 }
 
+function addFilter(ws) {
+	const range = XLSX.utils.decode_range(ws["!ref"]);
+	const endCol = XLSX.utils.encode_col(range.e.c);
+	const endRow = range.e.r + 1;
+
+	ws["!autofilter"] = {
+		ref: `A1:${endCol}${endRow}`
+	};
+}
+
 btnDlData.addEventListener("click", () => {
 	let raw = localStorage.getItem("kelompok");
 	if (!raw) return errorAlert("Data Tidak ditemukan");
@@ -403,9 +413,8 @@ btnDlData.addEventListener("click", () => {
 	const individu = [];
 
 	data.kelompok.forEach((k) => {
-		k.nasabah.forEach((n, i) => {
+		k.nasabah.forEach((n) => {
 			const row = {
-				No: i + 1,
 				ID: n.id,
 				Kelompok: k.nama,
 				Nama: n.nama,
@@ -416,7 +425,7 @@ btnDlData.addEventListener("click", () => {
 				Status: n.status
 			};
 
-			if (n.status === "cash" || n.status === "none") pkm.push(row);
+			if (n.status === "cash" || n.status === "none" || n.status === "tf") pkm.push(row);
 			if (n.status === "individu") individu.push(row);
 		});
 	});
@@ -428,17 +437,22 @@ btnDlData.addEventListener("click", () => {
 		styleHeader(wsPKM);
 		styleBody(wsPKM);
 		autoWidth(wsPKM, pkm);
+		addFilter(wsPKM);
+
 		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
 	}
 
 	if (individu.length) {
 		const wsInd = XLSX.utils.json_to_sheet(individu);
-		styleHeader(wsInd);
-		styleBody(wsInd);
-		autoWidth(wsInd, individu);
-		XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
+	styleHeader(wsInd);
+	styleBody(wsInd);
+	autoWidth(wsInd, individu);
+	addFilter(wsInd);
+
+	XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
 	}
 
+	
 	XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
 });
 
