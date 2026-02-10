@@ -325,6 +325,122 @@ const btnAddNasabah = document.getElementById("btnAddNasabah");
 const btnEditGroup = document.getElementById("btnEditGroup");
 const btnDeleteGroup = document.getElementById("btnDeleteGroup");
 const btnCekDo = document.getElementById("btnCekDo");
+const btnDlData = document.getElementById("downloadBtn");
+
+function getTanggal() {
+	const tanggal = new Date();
+
+	const hariNama = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
+	const hari = hariNama[tanggal.getDay()];
+	const tgl = String(tanggal.getDate()).padStart(2, "0");
+	const bln = String(tanggal.getMonth() + 1).padStart(2, "0");
+	const tahun = tanggal.getFullYear();
+
+	const hasil = `${hari}-${tgl}-${bln}-${tahun}`;
+
+	return hasil;
+}
+
+function autoWidth(ws, data) {
+	const colWidths = Object.keys(data[0]).map((key) => ({
+		wch: Math.max(key.length, ...data.map((v) => String(v[key] || "").length)) + 2
+	}));
+	ws["!cols"] = colWidths;
+}
+
+function styleHeader(ws) {
+	const range = XLSX.utils.decode_range(ws["!ref"]);
+	for (let C = range.s.c; C <= range.e.c; ++C) {
+		const addr = XLSX.utils.encode_cell({ r: 0, c: C });
+		if (!ws[addr]) continue;
+
+		ws[addr].s = {
+			font: { bold: true },
+			alignment: { horizontal: "center", vertical: "center" },
+			fill: { fgColor: { rgb: "E2E8F0" } },
+			border: {
+				top: { style: "thin" },
+				bottom: { style: "thin" },
+				left: { style: "thin" },
+				right: { style: "thin" }
+			}
+		};
+	}
+}
+
+function styleBody(ws) {
+	const range = XLSX.utils.decode_range(ws["!ref"]);
+	for (let R = 1; R <= range.e.r; ++R) {
+		for (let C = range.s.c; C <= range.e.c; ++C) {
+			const addr = XLSX.utils.encode_cell({ r: R, c: C });
+			if (!ws[addr]) continue;
+
+			ws[addr].s = {
+				border: {
+					top: { style: "thin" },
+					bottom: { style: "thin" },
+					left: { style: "thin" },
+					right: { style: "thin" }
+				}
+			};
+		}
+	}
+}
+
+btnDlData.addEventListener("click", () => {
+	let raw = localStorage.getItem("kelompok");
+	if (!raw) return errorAlert("Data Tidak ditemukan");
+
+	let data;
+	try {
+		data = JSON.parse(raw);
+	} catch {
+		return errorAlert("Format Data tidak valid");
+	}
+
+	const pkm = [];
+	const individu = [];
+
+	data.kelompok.forEach((k) => {
+		k.nasabah.forEach((n, i) => {
+			const row = {
+				No: i + 1,
+				ID: n.id,
+				Kelompok: k.nama,
+				Nama: n.nama,
+				Produk: n.idProduk,
+				Plafon: rupiah(n.flapond),
+				Ke: n.ke,
+				Tagihan: rupiah(n.tagihan),
+				Status: n.status
+			};
+
+			if (n.status === "cash" || n.status === "none") pkm.push(row);
+			if (n.status === "individu") individu.push(row);
+		});
+	});
+
+	const wb = XLSX.utils.book_new();
+
+	if (pkm.length) {
+		const wsPKM = XLSX.utils.json_to_sheet(pkm);
+		styleHeader(wsPKM);
+		styleBody(wsPKM);
+		autoWidth(wsPKM, pkm);
+		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
+	}
+
+	if (individu.length) {
+		const wsInd = XLSX.utils.json_to_sheet(individu);
+		styleHeader(wsInd);
+		styleBody(wsInd);
+		autoWidth(wsInd, individu);
+		XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
+	}
+
+	XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
+});
 
 /* ===== RENDER: DASHBOARD & GROUP LIST ===== */
 function calcAllTotals() {
