@@ -8,7 +8,7 @@
 	--bg: #e6f0f7;
 	--card: #ffffff;
 	--radius: 12px;
-	--success: #c7e7c8;
+	--success: #ecfdf5;
 }
 
 * {
@@ -286,6 +286,7 @@ body {
 }
 .payed {
 	background-color: var(--success) !important;
+	color: #065f46 !important;
 }
 .btn-sync {
 	width: 100%;
