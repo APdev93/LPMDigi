@@ -491,6 +491,54 @@ function createHampirLunasSheet(wb, data) {
 	XLSX.utils.book_append_sheet(wb, ws, "Hampir Lunas");
 }
 
+btnDlMasterData.addEventListener("click", () => {
+	let all = localStorage.getItem("semuaKelompok");
+	if (!all) return errorAlert("Data Tidak ditemukan");
+
+	let data;
+	try {
+		data = JSON.parse(raw);
+	} catch {
+		return errorAlert("Format Data tidak valid");
+	}
+
+	const pkm = [];
+
+	data.kelompok.forEach((k) => {
+		k.nasabah.forEach((n) => {
+			const row = {
+				ClientID: n.id,
+				GroupName: k.nama,
+				ClientName: n.nama,
+				Product: n.idProduk,
+				Flapond: rupiah(n.flapond),
+				Installment: n.ke,
+				Bill: rupiah(n.tagihan),
+				Status: n.status.toUpperCase()
+			};
+
+			if (["cash", "tf", "none", "individu"].includes(n.status)) pkm.push(row);
+		});
+	});
+
+	const wb = XLSX.utils.book_new();
+
+	if (pkm.length) {
+		const wsPKM = XLSX.utils.json_to_sheet(pkm);
+		styleHeader(wsPKM);
+		styleBody(wsPKM);
+		autoWidth(wsPKM, pkm);
+		addFilter(wsPKM);
+		addConditionalColor(wsPKM, pkm.length);
+		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
+	}
+
+	createRekapSheet(wb, data);
+	createHampirLunasSheet(wb, data);
+
+	XLSX.writeFile(wb, `PKM_MasterData_${getTanggal()}.xlsx`);
+});
+
 btnDlData.addEventListener("click", () => {
 	let raw = localStorage.getItem("kelompok");
 	if (!raw) return errorAlert("Data Tidak ditemukan");
