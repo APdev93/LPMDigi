@@ -497,7 +497,7 @@ btnDlMasterData.addEventListener("click", () => {
 
 	let data;
 	try {
-		data = JSON.parse(raw);
+		data = JSON.parse(all);
 	} catch {
 		return errorAlert("Format Data tidak valid");
 	}
