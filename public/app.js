@@ -428,6 +428,32 @@ function createRekapSheet(wb, data) {
 	XLSX.utils.book_append_sheet(wb, ws, "REKAP");
 }
 
+function addConditionalColor(ws, rowCount) {
+	const endRow = rowCount + 1;
+
+	ws["!conditionalFormatting"] = [
+		{
+			ref: `A2:H${endRow}`,
+			rules: [
+				{
+					type: "expression",
+					formula: [`AND($F2>=VALUE(RIGHT($D2,2))-2,$F2<VALUE(RIGHT($D2,2)))`],
+					style: {
+						fill: { fgColor: { rgb: "FDBA74" } }
+					}
+				},
+				{
+					type: "expression",
+					formula: [`$F2=VALUE(RIGHT($D2,2))`],
+					style: {
+						fill: { fgColor: { rgb: "F87171" } }
+					}
+				}
+			]
+		}
+	];
+}
+
 btnDlData.addEventListener("click", () => {
 	let raw = localStorage.getItem("kelompok");
 	if (!raw) return errorAlert("Data Tidak ditemukan");
@@ -468,6 +494,7 @@ btnDlData.addEventListener("click", () => {
 		styleBody(wsPKM);
 		autoWidth(wsPKM, pkm);
 		addFilter(wsPKM);
+		addConditionalColor(wsPKM, pkm.length);
 		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
 	}
 
@@ -477,6 +504,7 @@ btnDlData.addEventListener("click", () => {
 		styleBody(wsInd);
 		autoWidth(wsInd, individu);
 		addFilter(wsInd);
+		addConditionalColor(wsInd, individu.length);
 		XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
 	}
 
