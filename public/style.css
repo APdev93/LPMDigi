@@ -201,7 +201,7 @@ body {
 
 .status-pill input:checked + .dot {
 	background: var(--blue);
-	border: thick double var(--blue);
+	border: thick double white !important;
 }
 
 /* action buttons */
