@@ -326,6 +326,7 @@ const btnEditGroup = document.getElementById("btnEditGroup");
 const btnDeleteGroup = document.getElementById("btnDeleteGroup");
 const btnCekDo = document.getElementById("btnCekDo");
 const btnDlData = document.getElementById("downloadBtn");
+const btnDlMasterData = document.getElementById("downloadMBtn");
 
 function getTanggal() {
 	const tanggal = new Date();
@@ -465,13 +466,13 @@ function createHampirLunasSheet(wb, data) {
 
 			if (ke >= totalAngsuran - 2 && ke < totalAngsuran) {
 				rows.push({
-					ID: n.id,
-					Kelompok: k.nama,
-					Nama: n.nama,
-					Produk: n.idProduk,
-					Ke: ke,
-					"Sisa Angsuran": totalAngsuran - ke,
-					Tagihan: rupiah(n.tagihan),
+					ClientID: n.id,
+					GroupName: k.nama,
+					ClientName: n.nama,
+					Product: n.idProduk,
+					Installment: ke,
+					Remaining: totalAngsuran - ke,
+					Bill: rupiah(n.tagihan),
 					Status: n.status.toUpperCase()
 				});
 			}
@@ -507,13 +508,13 @@ btnDlData.addEventListener("click", () => {
 	data.kelompok.forEach((k) => {
 		k.nasabah.forEach((n) => {
 			const row = {
-				ID: n.id,
-				Kelompok: k.nama,
-				Nama: n.nama,
-				Produk: n.idProduk,
-				Plafon: rupiah(n.flapond),
-				Ke: n.ke,
-				Tagihan: rupiah(n.tagihan),
+				ClientID: n.id,
+				GroupName: k.nama,
+				ClientName: n.nama,
+				Product: n.idProduk,
+				Flapond: rupiah(n.flapond),
+				Installment: n.ke,
+				Bill: rupiah(n.tagihan),
 				Status: n.status.toUpperCase()
 			};
 
