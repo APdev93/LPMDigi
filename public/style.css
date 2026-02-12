@@ -8,7 +8,7 @@
 	--bg: #e6f0f7;
 	--card: #ffffff;
 	--radius: 12px;
-	--success: #9ad4aa;
+	--success: #c7e7c8;
 }
 
 * {
@@ -20,6 +20,11 @@ body {
 	background: var(--bg);
 	color: #264055;
 	-webkit-font-smoothing: antialiased;
+}
+
+.sticky {
+	position: sticky;
+	top: 0;
 }
 
 .nasabah-table {
@@ -392,11 +397,14 @@ body {
 
 /* list */
 .list {
+	width: 100%;
 	border-radius: 10px;
 	border: 1px solid rgba(45, 140, 255, 0.08);
 	overflow: hidden;
 }
+
 .list .empty {
+	width: 100%;
 	padding: 18px;
 	text-align: center;
 	color: var(--muted);
