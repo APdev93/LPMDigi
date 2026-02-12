@@ -394,6 +394,8 @@ body {
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 10px;
+	padding-bottom: 5px;
+	background: var(--card);
 }
 .card-title {
 	margin: 0;
