@@ -410,17 +410,15 @@ function createRekapSheet(wb, data) {
 		});
 	});
 
-	const rekapData = [
+	const ws = XLSX.utils.json_to_sheet([
 		{
 			"Total Cash": rupiah(totalCash),
 			"Total TF": rupiah(totalTF),
 			"Total Individu": rupiah(totalIndividu)
 		}
-	];
+	]);
 
-	const ws = XLSX.utils.json_to_sheet(rekapData);
-
-	ws["!cols"] = [{ wch: 20 }, { wch: 20 }, { wch: 20 }];
+	ws["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }];
 
 	styleHeader(ws);
 	styleBody(ws);
@@ -438,20 +436,58 @@ function addConditionalColor(ws, rowCount) {
 				{
 					type: "expression",
 					formula: [`AND($F2>=VALUE(RIGHT($D2,2))-2,$F2<VALUE(RIGHT($D2,2)))`],
-					style: {
-						fill: { fgColor: { rgb: "FDBA74" } }
-					}
+					style: { fill: { fgColor: { rgb: "FDBA74" } } }
 				},
 				{
 					type: "expression",
 					formula: [`$F2=VALUE(RIGHT($D2,2))`],
-					style: {
-						fill: { fgColor: { rgb: "F87171" } }
-					}
+					style: { fill: { fgColor: { rgb: "F87171" } } }
 				}
 			]
 		}
 	];
+}
+
+function createHampirLunasSheet(wb, data) {
+	const rows = [];
+
+	data.kelompok.forEach((k) => {
+		k.nasabah.forEach((n) => {
+			if (!n.idProduk) return;
+
+			const produk = n.idProduk.toUpperCase();
+
+			let totalAngsuran = Number(getTotalAngsuran(produk));
+
+			if (!totalAngsuran) return;
+
+			const ke = Number(n.ke || 0);
+
+			if (ke >= totalAngsuran - 2 && ke < totalAngsuran) {
+				rows.push({
+					ID: n.id,
+					Kelompok: k.nama,
+					Nama: n.nama,
+					Produk: n.idProduk,
+					Ke: ke,
+					"Sisa Angsuran": totalAngsuran - ke,
+					Tagihan: rupiah(n.tagihan),
+					Status: n.status.toUpperCase()
+				});
+			}
+		});
+	});
+
+	if (!rows.length) return;
+
+	const ws = XLSX.utils.json_to_sheet(rows);
+
+	styleHeader(ws);
+	styleBody(ws);
+	autoWidth(ws, rows);
+	addFilter(ws);
+
+	XLSX.utils.book_append_sheet(wb, ws, "Hampir Lunas");
 }
 
 btnDlData.addEventListener("click", () => {
@@ -481,7 +517,7 @@ btnDlData.addEventListener("click", () => {
 				Status: n.status.toUpperCase()
 			};
 
-			if (n.status === "cash" || n.status === "none" || n.status === "tf") pkm.push(row);
+			if (["cash", "tf", "none"].includes(n.status)) pkm.push(row);
 			if (n.status === "individu") individu.push(row);
 		});
 	});
@@ -509,6 +545,7 @@ btnDlData.addEventListener("click", () => {
 	}
 
 	createRekapSheet(wb, data);
+	createHampirLunasSheet(wb, data);
 
 	XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
 });
