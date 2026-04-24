@@ -42,6 +42,8 @@ function errorAlert(msg) {
 	});
 }
 
+
+
 function getKodeHariNow() {
 	let day = new Date().getDay(); // 0 = Minggu, 1 = Senin, ... 6 = Sabtu
 
@@ -57,6 +59,36 @@ function getKodeHariNow() {
 	};
 
 	return mapping[day];
+}
+
+
+async function getSavedData() {
+	try {
+		let response = await fetch(
+			`/data/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
+			{
+				headers: {
+					Authorization: localStorage.getItem("auth")
+				}
+			}
+		);
+		if (!response.ok) throw new Error("Gagal mengambil data");
+		let data = await response.json();
+    
+		if (!data.status) {
+      return false
+    } else {
+    localStorage.setItem("semuaKelompok", JSON.stringify(data.data))
+    localStorage.setItem("kelompok", JSON.stringify(data.data))
+      return true
+    }
+
+  
+
+	} catch (error) {
+		alert("ERROR: " + (error.response?.data || error.message));
+    return false
+	}
 }
 
 async function getKelompok() {
@@ -211,9 +243,28 @@ function calcPresencePercentage(state) {
 	return ((hadir / total) * 100).toFixed(2);
 }
 
-function syncData() {
+
+
+async function syncData() {
 	try {
+    let username = localStorage.getItem("username")
+    let branch = localStorage.getItem("cabangID")
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}');
+    
 		showLoading();
+
+    const res = await fetch("/sync", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ username, branch, data })
+		});
+
+		if (!res.ok) return showError("Sync gagal. periksa sambungan internet");
+
+		const result = await res.json();
+		console.log(result);
+		if (!result.status) return showError(result.message);
+
 	} finally {
 		hideLoading();
 
@@ -250,8 +301,25 @@ clearBtn.addEventListener("click", () => {
 		confirmButtonText: "Ya",
 		denyButtonText: "Tidak",
 		cancelButtonText: "Batal"
-	}).then((result) => {
+	}).then(async (result) => {
 		if (result.isConfirmed) {
+
+    let username = localStorage.getItem("username")
+    let branch = localStorage.getItem("cabangID")
+      
+    const res = await fetch("/delete-data", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ username, branch })
+		});
+
+		  if (!res.ok) return showError("gagal mmenghapus. periksa sambungan internet");
+
+		  const result = await res.json();
+      console.log(result)
+		  
+		  if (!result.status) return showError(result.message);
+
 			localStorage.clear();
 			successAlert("Berhasil menghapus data");
 			location.reload();
@@ -326,7 +394,12 @@ const btnEditGroup = document.getElementById("btnEditGroup");
 const btnDeleteGroup = document.getElementById("btnDeleteGroup");
 const btnCekDo = document.getElementById("btnCekDo");
 const btnDlData = document.getElementById("downloadBtn");
+const btnSync = document.getElementById("btnSync");
 const btnDlMasterData = document.getElementById("downloadMBtn");
+
+btnSync.addEventListener("click",()=>{
+  syncData()
+})
 
 function getTanggal() {
 	const tanggal = new Date();
@@ -1275,14 +1348,20 @@ async function init() {
 	if (localStorage.getItem("isSync") !== "1") {
 		try {
 			showLoading();
-			let dataKelompok = await getKelompok();
-			let dataNasabah = await getNasabah();
-			console.log("data kelompok:", dataKelompok);
-			console.log("data nasabah:", dataNasabah);
 
-			state = loadData(dataKelompok, dataNasabah);
+      let isSavedData = await getSavedData()
 
-			console.log(state);
+      console.log(isSavedData)
+
+      if (!isSavedData) {
+    			let dataKelompok = await getKelompok();
+    			let dataNasabah = await getNasabah();
+    			console.log("data kelompok:", dataKelompok);
+    			console.log("data nasabah:", dataNasabah);
+			    state = loadData(dataKelompok, dataNasabah);
+			    console.log(state);
+      }
+      
 		} catch (error) {
 			hideLoading();
 			errorAlert("Gagal sinkronisasi: " + error.message);
