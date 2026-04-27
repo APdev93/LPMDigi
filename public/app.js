@@ -9,341 +9,342 @@ namaUnit.innerText = cabangID + " - " + localStorage.getItem("unit") || "";
 namaUser.innerText = localStorage.getItem("name") || "";
 
 function showLoading() {
-	document.getElementById("loadingIndicator").style.display = "flex";
+    document.getElementById("loadingIndicator").style.display = "flex";
 }
 
 function hideLoading() {
-	document.getElementById("loadingIndicator").style.display = "none";
+    document.getElementById("loadingIndicator").style.display = "none";
 }
 
 function successAlert(msg) {
-	Swal.fire({
-		title: "Berhasil!",
-		text: msg,
-		icon: "success",
-		confirmButtonText: "Oke",
-		customClass: {
-			popup: "swal-success-popup",
-			confirmButton: "swal-success-btn"
-		}
-	});
+    Swal.fire({
+        title: "Berhasil!",
+        text: msg,
+        icon: "success",
+        confirmButtonText: "Oke",
+        customClass: {
+            popup: "swal-success-popup",
+            confirmButton: "swal-success-btn"
+        }
+    });
 }
 
 function errorAlert(msg) {
-	Swal.fire({
-		title: "Gagal!",
-		text: msg,
-		icon: "error",
-		confirmButtonText: "Mengerti",
-		customClass: {
-			popup: "swal-err-popup",
-			confirmButton: "swal-err-btn"
-		}
-	});
+    Swal.fire({
+        title: "Gagal!",
+        text: msg,
+        icon: "error",
+        confirmButtonText: "Mengerti",
+        customClass: {
+            popup: "swal-err-popup",
+            confirmButton: "swal-err-btn"
+        }
+    });
 }
-
-
 
 function getKodeHariNow() {
-	let day = new Date().getDay(); // 0 = Minggu, 1 = Senin, ... 6 = Sabtu
+    let day = new Date().getDay(); // 0 = Minggu, 1 = Senin, ... 6 = Sabtu
 
-	// konversi ke mapping Anda (1–7)
-	let mapping = {
-		0: 1, // Minggu
-		1: 2, // Senin
-		2: 3, // Selasa
-		3: 4, // Rabu
-		4: 5, // Kamis
-		5: 6, // Jumat
-		6: 7 // Sabtu
-	};
+    // konversi ke mapping Anda (1–7)
+    let mapping = {
+        0: 1, // Minggu
+        1: 2, // Senin
+        2: 3, // Selasa
+        3: 4, // Rabu
+        4: 5, // Kamis
+        5: 6, // Jumat
+        6: 7 // Sabtu
+    };
 
-	return mapping[day];
+    return mapping[day];
 }
 
-
 async function getSavedData() {
-	try {
-		let response = await fetch(
-			`/data/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
-			{
-				headers: {
-					Authorization: localStorage.getItem("auth")
-				}
-			}
-		);
-		if (!response.ok) throw new Error("Gagal mengambil data");
-		let data = await response.json();
-    
-		if (!data.status) {
-      return false
-    } else {
-    localStorage.setItem("semuaKelompok", JSON.stringify(data.data))
-    localStorage.setItem("kelompok", JSON.stringify(data.data))
-      return true
+    try {
+        let response = await fetch(
+            `/data/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("auth")
+                }
+            }
+        );
+        if (!response.ok) throw new Error("Gagal mengambil data");
+        let data = await response.json();
+
+        if (!data.status) {
+            return false;
+        } else {
+            localStorage.setItem("semuaKelompok", JSON.stringify(data.data));
+            localStorage.setItem("kelompok", JSON.stringify(data.data));
+            return true;
+        }
+    } catch (error) {
+        alert("ERROR: " + (error.response?.data || error.message));
+        return false;
     }
-
-  
-
-	} catch (error) {
-		alert("ERROR: " + (error.response?.data || error.message));
-    return false
-	}
 }
 
 async function getKelompok() {
-	try {
-		let response = await fetch(
-			`/group-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
-			{
-				headers: {
-					Authorization: localStorage.getItem("auth")
-				}
-			}
-		);
-		if (!response.ok) throw new Error("Gagal mengambil data kelompok");
-		let data = await response.json();
-		return data.data;
-	} catch (error) {
-		alert("ERROR: " + (error.response?.data || error.message));
-	}
+    try {
+        let response = await fetch(
+            `/group-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("auth")
+                }
+            }
+        );
+        if (!response.ok) throw new Error("Gagal mengambil data kelompok");
+        let data = await response.json();
+        return data.data;
+    } catch (error) {
+        alert("ERROR: " + (error.response?.data || error.message));
+    }
 }
 
 async function getNasabah() {
-	try {
-		let response = await fetch(
-			`/collect-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
-			{
-				headers: {
-					Authorization: localStorage.getItem("auth")
-				}
-			}
-		);
-		if (!response.ok) throw new Error("Gagal mengambil data nasabah");
-		let data = await response.json();
-		return data.data;
-	} catch (error) {
-		errorAlert("ERROR: " + (error.response?.data || error.message));
-	}
+    try {
+        let response = await fetch(
+            `/collect-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("auth")
+                }
+            }
+        );
+        if (!response.ok) throw new Error("Gagal mengambil data nasabah");
+        let data = await response.json();
+        return data.data;
+    } catch (error) {
+        errorAlert("ERROR: " + (error.response?.data || error.message));
+    }
 }
 
 function loadData(kelompokData, nasabahData) {
-	let stored = loadLocal();
+    let stored = loadLocal();
 
-	let kelompok = kelompokData.map((g) => ({
-		...g,
-		nasabah: []
-	}));
+    let kelompok = kelompokData.map(g => ({
+        ...g,
+        nasabah: []
+    }));
 
-	const nasabahUnik = Array.from(new Map(nasabahData.map((n) => [n.id, n])).values());
+    const nasabahUnik = Array.from(
+        new Map(nasabahData.map(n => [n.id, n])).values()
+    );
 
-	nasabahUnik.forEach((n) => {
-		let target = kelompok.find((k) => k.id === n.IdKelompok);
+    nasabahUnik.forEach(n => {
+        let target = kelompok.find(k => k.id === n.IdKelompok);
 
-		if (target) {
-			target.nasabah.push({
-				rill: n.rill,
-				ke: n.ke,
-				idProduk: n.idProduk,
-				id: n.id,
-				nama: n.nama,
-				flapond: n.flapond,
-				tagihan: n.jumlahAngsuran,
-				status: n.status || "none"
-			});
-		}
-	});
+        if (target) {
+            target.nasabah.push({
+                rill: n.rill,
+                ke: n.ke,
+                idProduk: n.idProduk,
+                id: n.id,
+                nama: n.nama,
+                flapond: n.flapond,
+                tagihan: n.jumlahAngsuran,
+                status: n.status || "none"
+            });
+        }
+    });
 
-	localStorage.setItem("semuaKelompok", JSON.stringify({ kelompok }));
-	localStorage.setItem(STORAGE_KEY, JSON.stringify({ kelompok }));
+    localStorage.setItem("semuaKelompok", JSON.stringify({ kelompok }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ kelompok }));
 
-	return { kelompok };
+    return { kelompok };
 }
 
 function loadLocal() {
-	try {
-		showLoading();
-		let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}');
-		let hariSekarang = getKodeHariNow();
-		let filtered;
+    try {
+        showLoading();
+        let data = JSON.parse(
+            localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}'
+        );
+        let hariSekarang = getKodeHariNow();
+        let filtered;
 
-		if (hariSekarang >= 6) {
-			filtered = filterNasabahAngsuranTerakhir(data).kelompok;
-		} else {
-			filtered = data.kelompok.filter((k) => k.hariPertemuan === String(hariSekarang));
-		}
+        if (hariSekarang >= 6) {
+            filtered = filterNasabahAngsuranTerakhir(data).kelompok;
+        } else {
+            filtered = data.kelompok.filter(
+                k => k.hariPertemuan === String(hariSekarang)
+            );
+        }
 
-		return { kelompok: filtered };
-	} catch (e) {
-		errorAlert(e.message);
-		return { kelompok: [] };
-	} finally {
-		hideLoading();
-	}
+        return { kelompok: filtered };
+    } catch (e) {
+        errorAlert(e.message);
+        return { kelompok: [] };
+    } finally {
+        hideLoading();
+    }
 }
 
 function getTotalAngsuran(idProduk) {
-	const match = idProduk.match(/\d+$/);
-	return match ? parseInt(match[0]) : 0;
+    const match = idProduk.match(/\d+$/);
+    return match ? parseInt(match[0]) : 0;
 }
 
 function filterIndividual(dataset) {
-	const hasil = { kelompok: [] };
+    const hasil = { kelompok: [] };
 
-	dataset.kelompok.forEach((k) => {
-		const nasabahFiltered = k.nasabah.filter((n) => n.status === "individu");
+    dataset.kelompok.forEach(k => {
+        const nasabahFiltered = k.nasabah.filter(n => n.status === "individu");
 
-		if (nasabahFiltered.length > 0) {
-			hasil.kelompok.push({
-				id: k.id,
-				hariPertemuan: k.hariPertemuan,
-				nama: k.nama,
-				nasabah: nasabahFiltered
-			});
-		}
-	});
+        if (nasabahFiltered.length > 0) {
+            hasil.kelompok.push({
+                id: k.id,
+                hariPertemuan: k.hariPertemuan,
+                nama: k.nama,
+                nasabah: nasabahFiltered
+            });
+        }
+    });
 
-	return hasil;
+    return hasil;
 }
 
 function filterNasabahAngsuranTerakhir(dataset) {
-	const hasil = { kelompok: [] };
+    const hasil = { kelompok: [] };
 
-	dataset.kelompok.forEach((k) => {
-		const nasabahFiltered = k.nasabah.filter((n) => {
-			const total = getTotalAngsuran(n.idProduk);
-			return n.ke === total;
-		});
+    dataset.kelompok.forEach(k => {
+        const nasabahFiltered = k.nasabah.filter(n => {
+            const total = getTotalAngsuran(n.idProduk);
+            return n.ke === total;
+        });
 
-		if (nasabahFiltered.length > 0) {
-			hasil.kelompok.push({
-				id: k.id,
-				hariPertemuan: k.hariPertemuan,
-				nama: k.nama,
-				nasabah: nasabahFiltered
-			});
-		}
-	});
+        if (nasabahFiltered.length > 0) {
+            hasil.kelompok.push({
+                id: k.id,
+                hariPertemuan: k.hariPertemuan,
+                nama: k.nama,
+                nasabah: nasabahFiltered
+            });
+        }
+    });
 
-	return hasil;
+    return hasil;
 }
 
 function calcPresencePercentage(state) {
-	let total = 0;
-	let hadir = 0;
+    let total = 0;
+    let hadir = 0;
 
-	state.kelompok.forEach((g) => {
-		g.nasabah.forEach((n) => {
-			total++;
-			if (n.status !== "none") hadir++;
-		});
-	});
+    state.kelompok.forEach(g => {
+        g.nasabah.forEach(n => {
+            total++;
+            if (n.status !== "none") hadir++;
+        });
+    });
 
-	if (total === 0) return "0.00";
-	return ((hadir / total) * 100).toFixed(2);
+    if (total === 0) return "0.00";
+    return ((hadir / total) * 100).toFixed(2);
 }
 
-
-
 async function syncData() {
-	try {
-    let username = localStorage.getItem("username")
-    let branch = localStorage.getItem("cabangID")
-    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}');
-    
-		showLoading();
+    try {
+        let username = localStorage.getItem("username");
+        let branch = localStorage.getItem("cabangID");
+        let data = JSON.parse(
+            localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}'
+        );
 
-    const res = await fetch("/sync", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ username, branch, data })
-		});
+        showLoading();
 
-		if (!res.ok) return showError("Sync gagal. periksa sambungan internet");
+        const res = await fetch("/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, branch, data })
+        });
 
-		const result = await res.json();
-		console.log(result);
-		if (!result.status) return showError(result.message);
+        if (!res.ok) return showError("Sync gagal. periksa sambungan internet");
 
-	} finally {
-		hideLoading();
+        const result = await res.json();
+        console.log(result);
+        if (!result.status) return showError(result.message);
+    } finally {
+        hideLoading();
 
-		Swal.fire({
-			title: "Berhasil!",
-			text: "Berhasil sinkronisasi",
-			icon: "success",
-			confirmButtonText: "Oke",
-			customClass: {
-				popup: "swal-success-popup",
-				confirmButton: "swal-success-btn"
-			}
-		}).then((result) => {
-			if (result.isConfirmed) {
-				window.location.reload();
-			}
-		});
-	}
+        Swal.fire({
+            title: "Berhasil!",
+            text: "Berhasil sinkronisasi",
+            icon: "success",
+            confirmButtonText: "Oke",
+            customClass: {
+                popup: "swal-success-popup",
+                confirmButton: "swal-success-btn"
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                window.location.reload();
+            }
+        });
+    }
 }
 
 const clearBtn = document.getElementById("clearBtn");
 
 clearBtn.addEventListener("click", () => {
-	Swal.fire({
-		title: "Yakin ingin menghapus data?",
-		showDenyButton: true,
-		showCancelButton: true,
-		customClass: {
-			popup: "swal-success-popup",
-			confirmButton: "swal-success-btn",
-			cancelButton: "swal-err-btn",
-			denyButton: "swal-deny-btn"
-		},
-		confirmButtonText: "Ya",
-		denyButtonText: "Tidak",
-		cancelButtonText: "Batal"
-	}).then(async (result) => {
-		if (result.isConfirmed) {
+    Swal.fire({
+        title: "Yakin ingin menghapus data?",
+        showDenyButton: true,
+        showCancelButton: true,
+        customClass: {
+            popup: "swal-success-popup",
+            confirmButton: "swal-success-btn",
+            cancelButton: "swal-err-btn",
+            denyButton: "swal-deny-btn"
+        },
+        confirmButtonText: "Ya",
+        denyButtonText: "Tidak",
+        cancelButtonText: "Batal"
+    }).then(async result => {
+        if (result.isConfirmed) {
+            let username = localStorage.getItem("username");
+            let branch = localStorage.getItem("cabangID");
 
-    let username = localStorage.getItem("username")
-    let branch = localStorage.getItem("cabangID")
-      
-    const res = await fetch("/delete-data", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ username, branch })
-		});
+            const res = await fetch("/delete-data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, branch })
+            });
 
-		  if (!res.ok) return showError("gagal mmenghapus. periksa sambungan internet");
+            if (!res.ok)
+                return showError(
+                    "gagal mmenghapus. periksa sambungan internet"
+                );
 
-		  const result = await res.json();
-      console.log(result)
-		  
-		  if (!result.status) return showError(result.message);
+            const result = await res.json();
+            console.log(result);
 
-			localStorage.clear();
-			successAlert("Berhasil menghapus data");
-			location.reload();
-		} else if (result.isDenied) {
-			Swal.fire("Data tidak dihapus", "", "info");
-		}
-	});
+            if (!result.status) return showError(result.message);
+
+            localStorage.clear();
+            successAlert("Berhasil menghapus data");
+            location.reload();
+        } else if (result.isDenied) {
+            Swal.fire("Data tidak dihapus", "", "info");
+        }
+    });
 });
 
 function saveData(data) {
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 function genId(prefix = "") {
-	return prefix + Math.floor(10000 + Math.random() * 90000).toString();
+    return prefix + Math.floor(10000 + Math.random() * 90000).toString();
 }
 
 function rupiah(n) {
-	n = Number(n) || 0;
-	return n.toLocaleString("id-ID");
+    n = Number(n) || 0;
+    return n.toLocaleString("id-ID");
 }
 
 function qs(name) {
-	return new URLSearchParams(location.search).get(name);
+    return new URLSearchParams(location.search).get(name);
 }
 
 /* ===== INITIAL APP STATE ===== */
@@ -397,443 +398,459 @@ const btnDlData = document.getElementById("downloadBtn");
 const btnSync = document.getElementById("btnSync");
 const btnDlMasterData = document.getElementById("downloadMBtn");
 
-btnSync.addEventListener("click",()=>{
-  syncData()
-})
+btnSync.addEventListener("click", () => {
+    syncData();
+});
 
 function getTanggal() {
-	const tanggal = new Date();
-	const hariNama = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const tanggal = new Date();
+    const hariNama = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jumat",
+        "Sabtu"
+    ];
 
-	const hari = hariNama[tanggal.getDay()];
-	const tgl = String(tanggal.getDate()).padStart(2, "0");
-	const bln = String(tanggal.getMonth() + 1).padStart(2, "0");
-	const tahun = tanggal.getFullYear();
+    const hari = hariNama[tanggal.getDay()];
+    const tgl = String(tanggal.getDate()).padStart(2, "0");
+    const bln = String(tanggal.getMonth() + 1).padStart(2, "0");
+    const tahun = tanggal.getFullYear();
 
-	return `${hari}-${tgl}-${bln}-${tahun}`;
+    return `${hari}-${tgl}-${bln}-${tahun}`;
 }
 
 function autoWidth(ws, data) {
-	const colWidths = Object.keys(data[0]).map((key) => ({
-		wch: Math.max(key.length, ...data.map((v) => String(v[key] || "").length)) + 2
-	}));
-	ws["!cols"] = colWidths;
+    const colWidths = Object.keys(data[0]).map(key => ({
+        wch:
+            Math.max(
+                key.length,
+                ...data.map(v => String(v[key] || "").length)
+            ) + 2
+    }));
+    ws["!cols"] = colWidths;
 }
 
 function styleHeader(ws) {
-	const range = XLSX.utils.decode_range(ws["!ref"]);
-	for (let C = range.s.c; C <= range.e.c; ++C) {
-		const addr = XLSX.utils.encode_cell({ r: 0, c: C });
-		if (!ws[addr]) continue;
+    const range = XLSX.utils.decode_range(ws["!ref"]);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        const addr = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (!ws[addr]) continue;
 
-		ws[addr].s = {
-			font: { bold: true },
-			alignment: { horizontal: "center", vertical: "center" },
-			fill: { fgColor: { rgb: "E2E8F0" } },
-			border: {
-				top: { style: "thin" },
-				bottom: { style: "thin" },
-				left: { style: "thin" },
-				right: { style: "thin" }
-			}
-		};
-	}
+        ws[addr].s = {
+            font: { bold: true },
+            alignment: { horizontal: "center", vertical: "center" },
+            fill: { fgColor: { rgb: "E2E8F0" } },
+            border: {
+                top: { style: "thin" },
+                bottom: { style: "thin" },
+                left: { style: "thin" },
+                right: { style: "thin" }
+            }
+        };
+    }
 }
 
 function styleBody(ws) {
-	const range = XLSX.utils.decode_range(ws["!ref"]);
-	for (let R = 1; R <= range.e.r; ++R) {
-		for (let C = range.s.c; C <= range.e.c; ++C) {
-			const addr = XLSX.utils.encode_cell({ r: R, c: C });
-			if (!ws[addr]) continue;
+    const range = XLSX.utils.decode_range(ws["!ref"]);
+    for (let R = 1; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const addr = XLSX.utils.encode_cell({ r: R, c: C });
+            if (!ws[addr]) continue;
 
-			ws[addr].s = {
-				border: {
-					top: { style: "thin" },
-					bottom: { style: "thin" },
-					left: { style: "thin" },
-					right: { style: "thin" }
-				}
-			};
-		}
-	}
+            ws[addr].s = {
+                border: {
+                    top: { style: "thin" },
+                    bottom: { style: "thin" },
+                    left: { style: "thin" },
+                    right: { style: "thin" }
+                }
+            };
+        }
+    }
 }
 
 function addFilter(ws) {
-	const range = XLSX.utils.decode_range(ws["!ref"]);
-	const endCol = XLSX.utils.encode_col(range.e.c);
-	const endRow = range.e.r + 1;
+    const range = XLSX.utils.decode_range(ws["!ref"]);
+    const endCol = XLSX.utils.encode_col(range.e.c);
+    const endRow = range.e.r + 1;
 
-	ws["!autofilter"] = {
-		ref: `A1:${endCol}${endRow}`
-	};
+    ws["!autofilter"] = {
+        ref: `A1:${endCol}${endRow}`
+    };
 }
 
 function createRekapSheet(wb, data) {
-	let totalCash = 0;
-	let totalTF = 0;
-	let totalIndividu = 0;
+    let totalCash = 0;
+    let totalTF = 0;
+    let totalIndividu = 0;
 
-	data.kelompok.forEach((k) => {
-		k.nasabah.forEach((n) => {
-			const tagihan = Number(n.tagihan || 0);
+    data.kelompok.forEach(k => {
+        k.nasabah.forEach(n => {
+            const tagihan = Number(n.tagihan || 0);
 
-			if (n.status === "cash") totalCash += tagihan;
-			if (n.status === "tf") totalTF += tagihan;
-			if (n.status === "individu") totalIndividu += tagihan;
-		});
-	});
+            if (n.status === "cash") totalCash += tagihan;
+            if (n.status === "tf") totalTF += tagihan;
+            if (n.status === "individu") totalIndividu += tagihan;
+        });
+    });
 
-	const ws = XLSX.utils.json_to_sheet([
-		{
-			"Total Cash": rupiah(totalCash),
-			"Total TF": rupiah(totalTF),
-			"Total Individu": rupiah(totalIndividu)
-		}
-	]);
+    const ws = XLSX.utils.json_to_sheet([
+        {
+            "Total Cash": rupiah(totalCash),
+            "Total TF": rupiah(totalTF),
+            "Total Individu": rupiah(totalIndividu)
+        }
+    ]);
 
-	ws["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }];
+    ws["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }];
 
-	styleHeader(ws);
-	styleBody(ws);
+    styleHeader(ws);
+    styleBody(ws);
 
-	XLSX.utils.book_append_sheet(wb, ws, "REKAP");
+    XLSX.utils.book_append_sheet(wb, ws, "REKAP");
 }
 
 function addConditionalColor(ws, rowCount) {
-	const endRow = rowCount + 1;
+    const endRow = rowCount + 1;
 
-	ws["!conditionalFormatting"] = [
-		{
-			ref: `A2:H${endRow}`,
-			rules: [
-				{
-					type: "expression",
-					formula: [`AND($F2>=VALUE(RIGHT($D2,2))-2,$F2<VALUE(RIGHT($D2,2)))`],
-					style: { fill: { fgColor: { rgb: "FDBA74" } } }
-				},
-				{
-					type: "expression",
-					formula: [`$F2=VALUE(RIGHT($D2,2))`],
-					style: { fill: { fgColor: { rgb: "F87171" } } }
-				}
-			]
-		}
-	];
+    ws["!conditionalFormatting"] = [
+        {
+            ref: `A2:H${endRow}`,
+            rules: [
+                {
+                    type: "expression",
+                    formula: [
+                        `AND($F2>=VALUE(RIGHT($D2,2))-2,$F2<VALUE(RIGHT($D2,2)))`
+                    ],
+                    style: { fill: { fgColor: { rgb: "FDBA74" } } }
+                },
+                {
+                    type: "expression",
+                    formula: [`$F2=VALUE(RIGHT($D2,2))`],
+                    style: { fill: { fgColor: { rgb: "F87171" } } }
+                }
+            ]
+        }
+    ];
 }
 
 function createHampirLunasSheet(wb, data) {
-	const rows = [];
+    const rows = [];
 
-	data.kelompok.forEach((k) => {
-		k.nasabah.forEach((n) => {
-			if (!n.idProduk) return;
+    data.kelompok.forEach(k => {
+        k.nasabah.forEach(n => {
+            if (!n.idProduk) return;
 
-			const produk = n.idProduk.toUpperCase();
+            const produk = n.idProduk.toUpperCase();
 
-			let totalAngsuran = Number(getTotalAngsuran(produk));
+            let totalAngsuran = Number(getTotalAngsuran(produk));
 
-			if (!totalAngsuran) return;
+            if (!totalAngsuran) return;
 
-			const ke = Number(n.ke || 0);
+            const ke = Number(n.ke || 0);
 
-			if (ke >= totalAngsuran - 2 && ke < totalAngsuran) {
-				rows.push({
-					ClientID: n.id,
-					GroupName: k.nama,
-					ClientName: n.nama,
-					Product: n.idProduk,
-					Installment: ke,
-					Remaining: totalAngsuran - ke,
-					Bill: rupiah(n.tagihan),
-					Status: n.status.toUpperCase()
-				});
-			}
-		});
-	});
+            if (ke >= totalAngsuran - 2 && ke < totalAngsuran) {
+                rows.push({
+                    ClientID: n.id,
+                    GroupName: k.nama,
+                    ClientName: n.nama,
+                    Product: n.idProduk,
+                    Installment: ke,
+                    Remaining: totalAngsuran - ke,
+                    Bill: rupiah(n.tagihan),
+                    Status: n.status.toUpperCase()
+                });
+            }
+        });
+    });
 
-	if (!rows.length) return;
+    if (!rows.length) return;
 
-	const ws = XLSX.utils.json_to_sheet(rows);
+    const ws = XLSX.utils.json_to_sheet(rows);
 
-	styleHeader(ws);
-	styleBody(ws);
-	autoWidth(ws, rows);
-	addFilter(ws);
+    styleHeader(ws);
+    styleBody(ws);
+    autoWidth(ws, rows);
+    addFilter(ws);
 
-	XLSX.utils.book_append_sheet(wb, ws, "Hampir Lunas");
+    XLSX.utils.book_append_sheet(wb, ws, "Hampir Lunas");
 }
 
 btnDlMasterData.addEventListener("click", () => {
-	let all = localStorage.getItem("semuaKelompok");
-	if (!all) return errorAlert("Data Tidak ditemukan");
+    let all = localStorage.getItem("semuaKelompok");
+    if (!all) return errorAlert("Data Tidak ditemukan");
 
-	let data;
-	try {
-		data = JSON.parse(all);
-	} catch {
-		return errorAlert("Format Data tidak valid");
-	}
+    let data;
+    try {
+        data = JSON.parse(all);
+    } catch {
+        return errorAlert("Format Data tidak valid");
+    }
 
-	const pkm = [];
+    const pkm = [];
 
-	data.kelompok.forEach((k) => {
-		k.nasabah.forEach((n) => {
-			const row = {
-				ClientID: n.id,
-				GroupName: k.nama,
-				ClientName: n.nama,
-				Product: n.idProduk,
-				Flapond: rupiah(n.flapond),
-				Installment: n.ke,
-				Bill: rupiah(n.tagihan),
-				Status: n.status.toUpperCase()
-			};
+    data.kelompok.forEach(k => {
+        k.nasabah.forEach(n => {
+            const row = {
+                ClientID: n.id,
+                GroupName: k.nama,
+                ClientName: n.nama,
+                Product: n.idProduk,
+                Flapond: rupiah(n.flapond),
+                Installment: n.ke,
+                Bill: rupiah(n.tagihan),
+                Status: n.status.toUpperCase()
+            };
 
-			if (["cash", "tf", "none", "individu"].includes(n.status)) pkm.push(row);
-		});
-	});
+            if (["cash", "tf", "none", "individu"].includes(n.status))
+                pkm.push(row);
+        });
+    });
 
-	const wb = XLSX.utils.book_new();
+    const wb = XLSX.utils.book_new();
 
-	if (pkm.length) {
-		const wsPKM = XLSX.utils.json_to_sheet(pkm);
-		styleHeader(wsPKM);
-		styleBody(wsPKM);
-		autoWidth(wsPKM, pkm);
-		addFilter(wsPKM);
-		addConditionalColor(wsPKM, pkm.length);
-		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
-	}
+    if (pkm.length) {
+        const wsPKM = XLSX.utils.json_to_sheet(pkm);
+        styleHeader(wsPKM);
+        styleBody(wsPKM);
+        autoWidth(wsPKM, pkm);
+        addFilter(wsPKM);
+        addConditionalColor(wsPKM, pkm.length);
+        XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
+    }
 
-	createRekapSheet(wb, data);
-	createHampirLunasSheet(wb, data);
+    createRekapSheet(wb, data);
+    createHampirLunasSheet(wb, data);
 
-	XLSX.writeFile(wb, `PKM_MasterData_${getTanggal()}.xlsx`);
+    XLSX.writeFile(wb, `PKM_MasterData_${getTanggal()}.xlsx`);
 });
 
 btnDlData.addEventListener("click", () => {
-	let raw = localStorage.getItem("kelompok");
-	if (!raw) return errorAlert("Data Tidak ditemukan");
+    let raw = localStorage.getItem("kelompok");
+    if (!raw) return errorAlert("Data Tidak ditemukan");
 
-	let data;
-	try {
-		data = JSON.parse(raw);
-	} catch {
-		return errorAlert("Format Data tidak valid");
-	}
+    let data;
+    try {
+        data = JSON.parse(raw);
+    } catch {
+        return errorAlert("Format Data tidak valid");
+    }
 
-	const pkm = [];
-	const individu = [];
+    const pkm = [];
+    const individu = [];
 
-	data.kelompok.forEach((k) => {
-		k.nasabah.forEach((n) => {
-			const row = {
-				ClientID: n.id,
-				GroupName: k.nama,
-				ClientName: n.nama,
-				Product: n.idProduk,
-				Flapond: rupiah(n.flapond),
-				Installment: n.ke,
-				Bill: rupiah(n.tagihan),
-				Status: n.status.toUpperCase()
-			};
+    data.kelompok.forEach(k => {
+        k.nasabah.forEach(n => {
+            const row = {
+                ClientID: n.id,
+                GroupName: k.nama,
+                ClientName: n.nama,
+                Product: n.idProduk,
+                Flapond: rupiah(n.flapond),
+                Installment: n.ke,
+                Bill: rupiah(n.tagihan),
+                Status: n.status.toUpperCase()
+            };
 
-			if (["cash", "tf", "none"].includes(n.status)) pkm.push(row);
-			if (n.status === "individu") individu.push(row);
-		});
-	});
+            if (["cash", "tf", "none"].includes(n.status)) pkm.push(row);
+            if (n.status === "individu") individu.push(row);
+        });
+    });
 
-	const wb = XLSX.utils.book_new();
+    const wb = XLSX.utils.book_new();
 
-	if (pkm.length) {
-		const wsPKM = XLSX.utils.json_to_sheet(pkm);
-		styleHeader(wsPKM);
-		styleBody(wsPKM);
-		autoWidth(wsPKM, pkm);
-		addFilter(wsPKM);
-		addConditionalColor(wsPKM, pkm.length);
-		XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
-	}
+    if (pkm.length) {
+        const wsPKM = XLSX.utils.json_to_sheet(pkm);
+        styleHeader(wsPKM);
+        styleBody(wsPKM);
+        autoWidth(wsPKM, pkm);
+        addFilter(wsPKM);
+        addConditionalColor(wsPKM, pkm.length);
+        XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
+    }
 
-	if (individu.length) {
-		const wsInd = XLSX.utils.json_to_sheet(individu);
-		styleHeader(wsInd);
-		styleBody(wsInd);
-		autoWidth(wsInd, individu);
-		addFilter(wsInd);
-		addConditionalColor(wsInd, individu.length);
-		XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
-	}
+    if (individu.length) {
+        const wsInd = XLSX.utils.json_to_sheet(individu);
+        styleHeader(wsInd);
+        styleBody(wsInd);
+        autoWidth(wsInd, individu);
+        addFilter(wsInd);
+        addConditionalColor(wsInd, individu.length);
+        XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
+    }
 
-	createRekapSheet(wb, data);
-	createHampirLunasSheet(wb, data);
+    createRekapSheet(wb, data);
+    createHampirLunasSheet(wb, data);
 
-	XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
+    XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
 });
 
 /* ===== RENDER: DASHBOARD & GROUP LIST ===== */
 function calcAllTotals() {
-	let totalCash = 0,
-		totalTf = 0,
-		totalNas = 0,
-		totalTagihan = 0,
-		totalBelumNas = 0,
-		totalSudahNas = 0;
+    let totalCash = 0,
+        totalTf = 0,
+        totalNas = 0,
+        totalTagihan = 0,
+        totalBelumNas = 0,
+        totalSudahNas = 0;
 
-	state?.kelompok.forEach((k) => {
-		k.nasabah.forEach((n) => {
-			const t = Number(n.tagihan) || 0;
-			totalTagihan += t;
+    state?.kelompok.forEach(k => {
+        k.nasabah.forEach(n => {
+            const t = Number(n.tagihan) || 0;
+            totalTagihan += t;
 
-			if (n.status === "cash") totalCash += t;
-			else if (n.status === "tf") totalTf += t;
-			else if (n.status === "individu") totalCash += t;
-			else if (n.status === "none") totalBelumNas += 1;
-		});
+            if (n.status === "cash") totalCash += t;
+            else if (n.status === "tf") totalTf += t;
+            else if (n.status === "individu") totalCash += t;
+            else if (n.status === "none") totalBelumNas += 1;
+        });
 
-		totalNas += k.nasabah.length;
-	});
+        totalNas += k.nasabah.length;
+    });
 
-	return {
-		totalCash,
-		totalTf,
-		totalNas,
-		totalTagihan,
-		totalBelum: Math.max(0, totalTagihan - (totalCash + totalTf)),
-		totalBelumNas,
-		totalSudahNas: totalNas - totalBelumNas
-	};
+    return {
+        totalCash,
+        totalTf,
+        totalNas,
+        totalTagihan,
+        totalBelum: Math.max(0, totalTagihan - (totalCash + totalTf)),
+        totalBelumNas,
+        totalSudahNas: totalNas - totalBelumNas
+    };
 }
 
 function renderDashboard() {
-	const totals = calcAllTotals();
-	totalUangEl.innerText = `Rp ${rupiah(totals.totalCash + totals.totalTf)}`;
-	totalTransferEl.innerText = `Rp ${rupiah(totals.totalTf)}`;
-	totalRill.innerText = `Rp ${rupiah(totals.totalCash)}`;
-	totalNasabahEl.innerText = totals.totalNas.toString();
-	totalBelumEl.innerText = `Rp ${rupiah(totals.totalBelum)}`;
-	totalBelumNasabahEl.innerText = totals.totalBelumNas.toString();
-	totalSudahNasabahEl.innerText = totals.totalSudahNas.toString();
-	totalProgress.innerHTML = calcPresencePercentage(state) + "%";
+    const totals = calcAllTotals();
+    totalUangEl.innerText = `Rp ${rupiah(totals.totalCash + totals.totalTf)}`;
+    totalTransferEl.innerText = `Rp ${rupiah(totals.totalTf)}`;
+    totalRill.innerText = `Rp ${rupiah(totals.totalCash)}`;
+    totalNasabahEl.innerText = totals.totalNas.toString();
+    totalBelumEl.innerText = `Rp ${rupiah(totals.totalBelum)}`;
+    totalBelumNasabahEl.innerText = totals.totalBelumNas.toString();
+    totalSudahNasabahEl.innerText = totals.totalSudahNas.toString();
+    totalProgress.innerHTML = calcPresencePercentage(state) + "%";
 }
 
 function renderGroups() {
-	const cardTitle = document.getElementById("cardTitle");
-	let currentDay = getKodeHariNow();
-	let individuData = filterIndividual(state);
+    const cardTitle = document.getElementById("cardTitle");
+    let currentDay = getKodeHariNow();
+    let individuData = filterIndividual(state);
 
-	groupsListEl.innerHTML = "";
+    groupsListEl.innerHTML = "";
 
-	if (currentDay >= 6) {
-		cardTitle.innerText = "Daftar DO 2 Minggu Depan";
-	} else {
-		cardTitle.innerText = "Daftar PKM";
-	}
+    if (currentDay >= 6) {
+        cardTitle.innerText = "Daftar DO 2 Minggu Depan";
+    } else {
+        cardTitle.innerText = "Daftar PKM";
+    }
 
-	if (state.kelompok.length <= 0) {
-		groupsListEl.innerHTML = `<div class="empty">Tidak ada penagihan hari ini.</div>`;
-		return;
-	}
+    if (state.kelompok.length <= 0) {
+        groupsListEl.innerHTML = `<div class="empty">Tidak ada penagihan hari ini.</div>`;
+        return;
+    }
 
-	let allNasabahIndividu = [];
-	let currentPage = 1;
-	const limit = 5;
+    let allNasabahIndividu = [];
+    let currentPage = 1;
+    const limit = 5;
 
-	individuData.kelompok.forEach((k) => {
-		k.nasabah.forEach((n) => {
-			allNasabahIndividu.push({
-				nama: n.nama,
-				kelompok: k.nama,
-				tagihan: n.tagihan,
-				status: n.status
-			});
-		});
-	});
-	allNasabahIndividu.sort((a, b) =>
-		a.kelompok.localeCompare(b.kelompok, "id", { sensitivity: "base" })
-	);
+    individuData.kelompok.forEach(k => {
+        k.nasabah.forEach(n => {
+            allNasabahIndividu.push({
+                nama: n.nama,
+                kelompok: k.nama,
+                tagihan: n.tagihan,
+                status: n.status
+            });
+        });
+    });
+    allNasabahIndividu.sort((a, b) =>
+        a.kelompok.localeCompare(b.kelompok, "id", { sensitivity: "base" })
+    );
 
-	function renderTable() {
-		if (allNasabahIndividu.length <= 0) {
-			iGroupsListEl.innerHTML = `<div class="empty">Tidak ada nasabah individu.</div>`;
-			return;
-		}
+    function renderTable() {
+        if (allNasabahIndividu.length <= 0) {
+            iGroupsListEl.innerHTML = `<div class="empty">Tidak ada nasabah individu.</div>`;
+            return;
+        }
 
-		iGroupsListEl.innerHTML = "";
+        iGroupsListEl.innerHTML = "";
 
-		const start = (currentPage - 1) * limit;
-		const end = start + limit;
-		const pageData = allNasabahIndividu.slice(start, end);
+        const start = (currentPage - 1) * limit;
+        const end = start + limit;
+        const pageData = allNasabahIndividu.slice(start, end);
 
-		pageData.forEach((n, i) => {
-			const tr = document.createElement("tr");
+        pageData.forEach((n, i) => {
+            const tr = document.createElement("tr");
 
-			if (n.status !== "inone") {
-				tr.classList.add("payed");
-			}
+            if (n.status !== "inone") {
+                tr.classList.add("payed");
+            }
 
-			tr.innerHTML = `
+            tr.innerHTML = `
       <td>${start + i + 1}</td>
       <td>${escapeHtml(n.kelompok)}</td>
       <td>${escapeHtml(n.nama)}</td>
       <td>Rp ${rupiah(n.tagihan)}</td>
     `;
 
-			iGroupsListEl.appendChild(tr);
-		});
+            iGroupsListEl.appendChild(tr);
+        });
 
-		updatePagination();
-	}
+        updatePagination();
+    }
 
-	function updatePagination() {
-		const totalPage = Math.ceil(allNasabahIndividu.length / limit);
+    function updatePagination() {
+        const totalPage = Math.ceil(allNasabahIndividu.length / limit);
 
-		document.getElementById("pageInfo").textContent = `Halaman ${currentPage} / ${totalPage}`;
+        document.getElementById("pageInfo").textContent =
+            `Halaman ${currentPage} / ${totalPage}`;
 
-		document.getElementById("prevBtn").disabled = currentPage === 1;
-		document.getElementById("nextBtn").disabled = currentPage === totalPage;
-	}
+        document.getElementById("prevBtn").disabled = currentPage === 1;
+        document.getElementById("nextBtn").disabled = currentPage === totalPage;
+    }
 
-	document.getElementById("prevBtn").onclick = () => {
-		if (currentPage > 1) {
-			currentPage--;
-			renderTable();
-		}
-	};
+    document.getElementById("prevBtn").onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    };
 
-	document.getElementById("nextBtn").onclick = () => {
-		const totalPage = Math.ceil(allNasabahIndividu.length / limit);
-		if (currentPage < totalPage) {
-			currentPage++;
-			renderTable();
-		}
-	};
+    document.getElementById("nextBtn").onclick = () => {
+        const totalPage = Math.ceil(allNasabahIndividu.length / limit);
+        if (currentPage < totalPage) {
+            currentPage++;
+            renderTable();
+        }
+    };
 
-	renderTable();
+    renderTable();
 
-	state.kelompok.forEach((k) => {
-		let cash = 0,
-			tf = 0,
-			target = 0;
-		k.nasabah.forEach((n) => {
-			const t = Number(n.tagihan) || 0;
-			target += t;
-			if (n.status === "cash") cash += t;
-			if (n.status === "individu") cash += t;
-			else if (n.status === "tf") tf += t;
-		});
+    state.kelompok.forEach(k => {
+        let cash = 0,
+            tf = 0,
+            target = 0;
+        k.nasabah.forEach(n => {
+            const t = Number(n.tagihan) || 0;
+            target += t;
+            if (n.status === "cash") cash += t;
+            if (n.status === "individu") cash += t;
+            else if (n.status === "tf") tf += t;
+        });
 
-		const div = document.createElement("div");
-		div.className = "list-item";
-		div.setAttribute("data-action", "open");
-		div.setAttribute("data-id", k.id);
+        const div = document.createElement("div");
+        div.className = "list-item";
+        div.setAttribute("data-action", "open");
+        div.setAttribute("data-id", k.id);
 
-		let nasBelum = k.nasabah.filter((n) => n.status === "none");
-		if (nasBelum <= 0) {
-			div.classList.add("payed");
-		}
-		div.innerHTML = `
+        let nasBelum = k.nasabah.filter(n => n.status === "none");
+        if (nasBelum <= 0) {
+            div.classList.add("payed");
+        }
+        div.innerHTML = `
       <div class="list-left">
         <div>
           <div class="kelompok-name">${escapeHtml(k.nama)}</div>
@@ -856,17 +873,17 @@ function renderGroups() {
       </div>
     `;
 
-		groupsListEl.appendChild(div);
-	});
+        groupsListEl.appendChild(div);
+    });
 
-	feather.replace();
+    feather.replace();
 }
 
 function nasabahCard(n, k, i) {
-	let today = getKodeHariNow();
+    let today = getKodeHariNow();
 
-	if (today >= 6) {
-		return `
+    if (today >= 6) {
+        return `
 <div class="nasabah-card nasabah-main light">
 
 <div class="nasabah-left">
@@ -888,8 +905,8 @@ function nasabahCard(n, k, i) {
     </div>
 
 </div>`;
-	} else {
-		return `
+    } else {
+        return `
 <div class="nasabah-card nasabah-main light">
 
 <div class="nasabah-left">
@@ -913,29 +930,29 @@ function nasabahCard(n, k, i) {
     <div class="nasabah-right">
       <label class="status-pill">
         <input type="radio" name="st${n.id}" value="cash" ${
-			n.status === "cash" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
+            n.status === "cash" ? "checked" : ""
+        } data-group="${k.id}" data-nasabah="${n.id}">
         <span class="dot"></span> Cash
       </label>
 
       <label class="status-pill">
         <input type="radio" name="st${n.id}" value="tf" ${
-			n.status === "tf" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
+            n.status === "tf" ? "checked" : ""
+        } data-group="${k.id}" data-nasabah="${n.id}">
         <span class="dot"></span> Transfer
       </label>
 
       <label class="status-pill">
         <input type="radio" name="st${n.id}" value="none" ${
-			n.status === "none" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
+            n.status === "none" ? "checked" : ""
+        } data-group="${k.id}" data-nasabah="${n.id}">
         <span class="dot"></span> Belum
       </label>
 	  
       <label class="status-pill">
         <input type="radio" name="st${n.id}" value="individu" ${
-			n.status === "individu" ? "checked" : ""
-		} data-group="${k.id}" data-nasabah="${n.id}">
+            n.status === "individu" ? "checked" : ""
+        } data-group="${k.id}" data-nasabah="${n.id}">
         <span class="dot"></span> Individu
       </label>
 
@@ -951,432 +968,483 @@ function nasabahCard(n, k, i) {
 		
     </div>
 </div>`;
-	}
+    }
 }
 
 /* ===== GROUP DETAIL RENDER ===== */
 function renderGroupDetail(groupId) {
-	let today = getKodeHariNow();
-	const k = state.kelompok.find((x) => x.id === groupId);
-	if (!k) return errorAlert("Kelompok tidak ditemukan");
+    let today = getKodeHariNow();
+    const k = state.kelompok.find(x => x.id === groupId);
+    if (!k) return errorAlert("Kelompok tidak ditemukan");
 
-	currentGroupId = groupId;
-	groupTitleEl.innerText = k.nama;
+    currentGroupId = groupId;
+    groupTitleEl.innerText = k.nama;
 
-	// meta
-	const totalTarget = k.nasabah.reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
-	const totalCash = k.nasabah
-		.filter((n) => n.status === "cash" || n.status === "individu")
-		.reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
-	const totalTf = k.nasabah
-		.filter((n) => n.status === "tf")
-		.reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
-	const belum = Math.max(0, totalTarget - (totalCash + totalTf));
+    // meta
+    const totalTarget = k.nasabah.reduce(
+        (s, n) => s + (Number(n.tagihan) || 0),
+        0
+    );
+    const totalCash = k.nasabah
+        .filter(n => n.status === "cash" || n.status === "individu")
+        .reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
+    const totalTf = k.nasabah
+        .filter(n => n.status === "tf")
+        .reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
+    const belum = Math.max(0, totalTarget - (totalCash + totalTf));
 
-	// recap boxes
-	if (today <= 6) {
-		groupMetaEl.innerHTML = `<small class="kelompok-meta">Total Tagihan: Rp ${rupiah(
-			totalTarget
-		)} • Cash: Rp ${rupiah(totalCash)} • TF: Rp ${rupiah(totalTf)} • Belum: Rp ${rupiah(
-			belum
-		)}</small>`;
+    // recap boxes
+    if (today <= 6) {
+        groupMetaEl.innerHTML = `<small class="kelompok-meta">Total Tagihan: Rp ${rupiah(
+            totalTarget
+        )} • Cash: Rp ${rupiah(totalCash)} • TF: Rp ${rupiah(totalTf)} • Belum: Rp ${rupiah(
+            belum
+        )}</small>`;
 
-		groupRecapEl.innerHTML = `
+        groupRecapEl.innerHTML = `
 		<div class="group-recap">
 		<div class="recap-box"><div style="color:var(--muted)">Total Tagihan</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-			totalTarget
-		)}</div></div>
+            totalTarget
+        )}</div></div>
 		<div class="recap-box"><div style="color:var(--muted)">Terkumpul (Cash)</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-			totalCash
-		)}</div></div>
+            totalCash
+        )}</div></div>
 		<div class="recap-box"><div style="color:var(--muted)">Total Transfer</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-			totalTf
-		)}</div></div>
+            totalTf
+        )}</div></div>
 		<div class="recap-box"><div style="color:var(--muted)">Belum Terkumpul</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-			belum
-		)}</div></div>
+            belum
+        )}</div></div>
 		</div>
 		`;
-	}
+    }
 
-	// nasabah list
-	nasabahListEl.innerHTML = "";
-	if (k.nasabah.length === 0) {
-		nasabahListEl.innerHTML = `<div class="empty">Belum ada nasabah di kelompok ini.</div>`;
-	} else {
-		k.nasabah.forEach((n, i) => {
-			const nas = document.createElement("div");
-			nas.className = "list-item";
-			if (n.status !== "none") {
-				nas.classList.add("payed");
-			}
+    // nasabah list
+    nasabahListEl.innerHTML = "";
+    if (k.nasabah.length === 0) {
+        nasabahListEl.innerHTML = `<div class="empty">Belum ada nasabah di kelompok ini.</div>`;
+    } else {
+        k.nasabah.forEach((n, i) => {
+            const nas = document.createElement("div");
+            nas.className = "list-item";
+            if (n.status !== "none") {
+                nas.classList.add("payed");
+            }
 
-			nas.innerHTML = nasabahCard(n, k, i);
-			nasabahListEl.appendChild(nas);
-		});
-		feather.replace();
-	}
+            nas.innerHTML = nasabahCard(n, k, i);
+            nasabahListEl.appendChild(nas);
+        });
+        feather.replace();
+    }
 
-	// show detail page
-	pageGroups.classList.add("hidden");
-	pageGroupDetail.classList.remove("hidden");
+    // show detail page
+    pageGroups.classList.add("hidden");
+    pageGroupDetail.classList.remove("hidden");
 }
 
 /* ===== CRUD: Kelompok ===== */
 function addGroup(name) {
-	state.kelompok.push({
-		id: genId(cabangID),
-		hariPertemuan: getKodeHariNow().toString(),
-		nama: name,
-		nasabah: []
-	});
-	saveData(state);
-	renderAll();
+    state.kelompok.push({
+        id: genId(cabangID),
+        hariPertemuan: getKodeHariNow().toString(),
+        nama: name,
+        nasabah: []
+    });
+    saveData(state);
+    renderAll();
 }
 
 function updateGroup(id, newName) {
-	const k = state.kelompok.find((x) => x.id === id);
-	if (!k) return;
-	k.nama = newName;
-	saveData(state);
-	renderAll();
+    const k = state.kelompok.find(x => x.id === id);
+    if (!k) return;
+    k.nama = newName;
+    saveData(state);
+    renderAll();
 }
 
 function removeGroup(id) {
-	state.kelompok = state.kelompok.filter((x) => x.id !== id);
-	saveData(state);
-	renderAll();
+    state.kelompok = state.kelompok.filter(x => x.id !== id);
+    saveData(state);
+    renderAll();
 }
 
 /* ===== CRUD: Nasabah ===== */
 function addNasabahToGroup(groupId, nama, tagihan, status = "none") {
-	const k = state.kelompok.find((x) => x.id === groupId);
-	if (!k) return;
-	k.nasabah.push({
-		rill: 0,
-		ke: 0,
-		idProduk: "",
-		id: genId(localStorage.getItem("cabangID")),
-		nama: nama,
-		tagihan: Number(tagihan) || 0,
-		status
-	});
-	saveData(state);
-	renderGroupDetail(groupId);
-	renderAll();
+    const k = state.kelompok.find(x => x.id === groupId);
+    if (!k) return;
+    k.nasabah.push({
+        rill: 0,
+        ke: 0,
+        idProduk: "",
+        id: genId(localStorage.getItem("cabangID")),
+        nama: nama,
+        tagihan: Number(tagihan) || 0,
+        status
+    });
+    saveData(state);
+    renderGroupDetail(groupId);
+    renderAll();
 }
 
 function updateNasabah(groupId, nasabahId, newName, newTagihan) {
-	const k = state.kelompok.find((x) => x.id === groupId);
-	if (!k) return;
-	const n = k.nasabah.find((x) => x.id === nasabahId);
-	if (!n) return;
-	n.nama = newName;
-	n.tagihan = Number(newTagihan) || 0;
-	saveData(state);
-	renderGroupDetail(groupId);
+    const k = state.kelompok.find(x => x.id === groupId);
+    if (!k) return;
+    const n = k.nasabah.find(x => x.id === nasabahId);
+    if (!n) return;
+    n.nama = newName;
+    n.tagihan = Number(newTagihan) || 0;
+    saveData(state);
+    renderGroupDetail(groupId);
 }
 
 function removeNasabah(groupId, nasabahId) {
-	const k = state.kelompok.find((x) => x.id === groupId);
-	if (!k) return;
-	k.nasabah = k.nasabah.filter((x) => x.id !== nasabahId);
-	saveData(state);
-	renderGroupDetail(groupId);
+    const k = state.kelompok.find(x => x.id === groupId);
+    if (!k) return;
+    k.nasabah = k.nasabah.filter(x => x.id !== nasabahId);
+    saveData(state);
+    renderGroupDetail(groupId);
 }
 
 function setNasabahStatus(groupId, nasabahId, status) {
-	const k = state.kelompok.find((x) => x.id === groupId);
-	if (!k) return;
-	const n = k.nasabah.find((x) => x.id === nasabahId);
-	if (!n) return;
-	n.status = status;
-	saveData(state);
-	renderGroupDetail(groupId);
+    const k = state.kelompok.find(x => x.id === groupId);
+    if (!k) return;
+    const n = k.nasabah.find(x => x.id === nasabahId);
+    if (!n) return;
+    n.status = status;
+    saveData(state);
+    renderGroupDetail(groupId);
 }
 
 /* ===== EVENTS & MODAL LOGIC ===== */
 function openModal(modalEl) {
-	modalEl.style.display = "flex";
+    modalEl.style.display = "flex";
 }
 function closeModal(modalEl) {
-	modalEl.style.display = "none";
+    modalEl.style.display = "none";
 }
 
 function addGroupFromData(id) {
-	let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
-	let group = allGroupData.kelompok.find((k) => k.id === id);
+    let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
+    let group = allGroupData.kelompok.find(k => k.id === id);
 
-	group.hariPertemuan = getKodeHariNow().toString();
-	state.kelompok.push(group);
-	saveData(state);
-	renderAll();
+    group.hariPertemuan = getKodeHariNow().toString();
+    state.kelompok.push(group);
+    saveData(state);
+    renderAll();
 }
 
 function bindEvents() {
-	// open new group modal
-	btnNewGroup?.addEventListener("click", () => {
-		openNewGroupModal();
-	});
-	openNewGroup?.addEventListener("click", () => {
-		openNewGroupModal();
-	});
+    // open new group modal
+    btnNewGroup?.addEventListener("click", () => {
+        openNewGroupModal();
+    });
+    openNewGroup?.addEventListener("click", () => {
+        openNewGroupModal();
+    });
 
-	// modal group actions
-	closeGroupModal?.addEventListener("click", () => closeModal(modalGroup));
-	saveGroupBtn?.addEventListener("click", () => {
-		const editingId = saveGroupBtn.getAttribute("data-edit");
+    // modal group actions
+    closeGroupModal?.addEventListener("click", () => closeModal(modalGroup));
+    saveGroupBtn?.addEventListener("click", () => {
+        const editingId = saveGroupBtn.getAttribute("data-edit");
 
-		if (editingId) {
-			const name = inputGroupName.value.trim();
-			if (!name) return errorAlert("Isi nama kelompok");
-			updateGroup(editingId, name);
-		} else {
-			const selectedId = selectGroupData.value;
-			if (!selectedId) return errorAlert("Pilih kelompok");
-			addGroupFromData(selectedId);
-		}
+        if (editingId) {
+            const name = inputGroupName.value.trim();
+            if (!name) return errorAlert("Isi nama kelompok");
+            updateGroup(editingId, name);
+        } else {
+            const selectedId = selectGroupData.value;
+            if (!selectedId) return errorAlert("Pilih kelompok");
+            addGroupFromData(selectedId);
+        }
 
-		inputGroupName.value = "";
-		closeModal(modalGroup);
-	});
+        inputGroupName.value = "";
+        closeModal(modalGroup);
+    });
 
-	// group list actions (delegation)
-	groupsListEl.addEventListener("click", (ev) => {
-		const btn = ev.target.closest("button");
-		if (btn) {
-			const action = btn.dataset.action;
-			const id = btn.dataset.id;
-			if (action === "edit") return openEditGroupModal(id);
-			if (action === "delete") {
-				if (confirm("Hapus kelompok?")) removeGroup(id);
-				return;
-			}
-		}
+    // group list actions (delegation)
+    groupsListEl.addEventListener("click", ev => {
+        const btn = ev.target.closest("button");
+        if (btn) {
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+            if (action === "edit") return openEditGroupModal(id);
+            if (action === "delete") {
+                if (confirm("Hapus kelompok?")) removeGroup(id);
+                return;
+            }
+        }
 
-		const item = ev.target.closest(".list-item");
-		if (item) {
-			const id = item.dataset.id;
-			renderGroupDetail(id);
-		}
-	});
-	// back button
-	backToGroups?.addEventListener("click", () => {
-		pageGroupDetail.classList.add("hidden");
-		pageGroups.classList.remove("hidden");
-		currentGroupId = null;
-		renderAll();
-	});
+        const item = ev.target.closest(".list-item");
+        if (item) {
+            const id = item.dataset.id;
+            renderGroupDetail(id);
+        }
+    });
+    // back button
+    backToGroups?.addEventListener("click", () => {
+        pageGroupDetail.classList.add("hidden");
+        pageGroups.classList.remove("hidden");
+        currentGroupId = null;
+        renderAll();
+    });
 
-	// group detail buttons
-	btnAddNasabah?.addEventListener("click", () => openAddNasabahModal());
-	btnEditGroup?.addEventListener("click", () => {
-		if (!currentGroupId) return;
-		openEditGroupModal(currentGroupId);
-	});
-	btnDeleteGroup?.addEventListener("click", () => {
-		if (!currentGroupId) return;
-		if (confirm("Hapus kelompok ini?")) {
-			removeGroup(currentGroupId);
-			pageGroupDetail.classList.add("hidden");
-			pageGroups.classList.remove("hidden");
-			currentGroupId = null;
-		}
-	});
+    // group detail buttons
+    btnAddNasabah?.addEventListener("click", () => openAddNasabahModal());
+    btnEditGroup?.addEventListener("click", () => {
+        if (!currentGroupId) return;
+        openEditGroupModal(currentGroupId);
+    });
+    btnDeleteGroup?.addEventListener("click", () => {
+        if (!currentGroupId) return;
+        if (confirm("Hapus kelompok ini?")) {
+            removeGroup(currentGroupId);
+            pageGroupDetail.classList.add("hidden");
+            pageGroups.classList.remove("hidden");
+            currentGroupId = null;
+        }
+    });
 
-	// nasabah interactions (radio, edit, delete) - delegation on nasabahListEl
-	nasabahListEl?.addEventListener("change", (ev) => {
-		const input = ev.target;
-		if (input && input.name && input.name.startsWith("st")) {
-			const groupId = input.getAttribute("data-group");
-			const nasId = input.getAttribute("data-nasabah");
-			const value = input.value;
-			setNasabahStatus(groupId, nasId, value);
-		}
-	});
+    // nasabah interactions (radio, edit, delete) - delegation on nasabahListEl
+    nasabahListEl?.addEventListener("change", ev => {
+        const input = ev.target;
+        if (input && input.name && input.name.startsWith("st")) {
+            const groupId = input.getAttribute("data-group");
+            const nasId = input.getAttribute("data-nasabah");
+            const value = input.value;
+            setNasabahStatus(groupId, nasId, value);
+        }
+    });
 
-	nasabahListEl?.addEventListener("click", (ev) => {
-		const btn = ev.target.closest("button");
-		if (!btn) return;
-		const action = btn.getAttribute("data-action");
-		const nasId = btn.getAttribute("data-id");
-		const groupId = btn.getAttribute("data-group");
-		if (action === "edit-n") {
-			// prompt edit
-			const k = state.kelompok.find((x) => x.id === groupId);
-			const n = k?.nasabah.find((x) => x.id === nasId);
-			if (!n) return;
-			const newName = prompt("Ubah nama nasabah:", n.nama);
-			if (newName === null) return;
-			const newTag = prompt("Ubah jumlah tagihan (angka):", n.tagihan);
-			if (newTag === null) return;
-			updateNasabah(groupId, nasId, newName.trim(), Number(newTag) || 0);
-		} else if (action === "del-n") {
-			if (confirm("Hapus nasabah ini?")) removeNasabah(groupId, nasId);
-		}
-	});
+    nasabahListEl?.addEventListener("click", ev => {
+        const btn = ev.target.closest("button");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const nasId = btn.getAttribute("data-id");
+        const groupId = btn.getAttribute("data-group");
+        if (action === "edit-n") {
+            // prompt edit
+            const k = state.kelompok.find(x => x.id === groupId);
+            const n = k?.nasabah.find(x => x.id === nasId);
+            if (!n) return;
+            const newName = prompt("Ubah nama nasabah:", n.nama);
+            if (newName === null) return;
+            const newTag = prompt("Ubah jumlah tagihan (angka):", n.tagihan);
+            if (newTag === null) return;
+            updateNasabah(groupId, nasId, newName.trim(), Number(newTag) || 0);
+        } else if (action === "del-n") {
+            if (confirm("Hapus nasabah ini?")) removeNasabah(groupId, nasId);
+        }
+    });
 
-	// modal nasabah controls
-	closeNasabahModal?.addEventListener("click", () => {
-		closeModal(modalNasabah);
-		clearNasabahModal();
-	});
-	saveNasabahBtn?.addEventListener("click", () => {
-		const name = inputNasabahName.value.trim();
-		const tag = Number(inputNasabahTagihan.value) || 0;
-		const status = getSelectedNasabahStatus();
-		if (!name) return alert("Isi nama nasabah");
-		addNasabahToGroup(currentGroupId, name, tag, status);
-		closeModal(modalNasabah);
-		clearNasabahModal();
-	});
-	saveNasabahAgainBtn?.addEventListener("click", () => {
-		const name = inputNasabahName.value.trim();
-		const tag = Number(inputNasabahTagihan.value) || 0;
-		const status = getSelectedNasabahStatus();
-		if (!name) return alert("Isi nama nasabah");
-		addNasabahToGroup(currentGroupId, name, tag, status);
-		// keep modal open and clear inputs for next
-		inputNasabahName.value = "";
-		inputNasabahTagihan.value = "";
-		inputNasabahName.focus();
-	});
+    // modal nasabah controls
+    closeNasabahModal?.addEventListener("click", () => {
+        closeModal(modalNasabah);
+        clearNasabahModal();
+    });
+    saveNasabahBtn?.addEventListener("click", () => {
+        const name = inputNasabahName.value.trim();
+        const tag = Number(inputNasabahTagihan.value) || 0;
+        const status = getSelectedNasabahStatus();
+        if (!name) return alert("Isi nama nasabah");
+        addNasabahToGroup(currentGroupId, name, tag, status);
+        closeModal(modalNasabah);
+        clearNasabahModal();
+    });
+    saveNasabahAgainBtn?.addEventListener("click", () => {
+        const name = inputNasabahName.value.trim();
+        const tag = Number(inputNasabahTagihan.value) || 0;
+        const status = getSelectedNasabahStatus();
+        if (!name) return alert("Isi nama nasabah");
+        addNasabahToGroup(currentGroupId, name, tag, status);
+        // keep modal open and clear inputs for next
+        inputNasabahName.value = "";
+        inputNasabahTagihan.value = "";
+        inputNasabahName.focus();
+    });
 
-	// clicking outside modal closes
-	window.addEventListener("click", (ev) => {
-		if (ev.target === modalGroup) closeModal(modalGroup);
-		if (ev.target === modalNasabah) closeModal(modalNasabah);
-	});
+    // clicking outside modal closes
+    window.addEventListener("click", ev => {
+        if (ev.target === modalGroup) closeModal(modalGroup);
+        if (ev.target === modalNasabah) closeModal(modalNasabah);
+    });
 }
 
 /* ===== OPEN / EDIT MODAL HELPERS ===== */
 
 const selectGroupData = document.getElementById("selectGroupData");
 function renderGroupOption(data) {
-	selectGroupData.innerHTML = `<option value="">-- Pilih Grup --</option>`;
-	data.forEach((k) => {
-		selectGroupData.innerHTML += `
+    selectGroupData.innerHTML = `<option value="">-- Pilih Grup --</option>`;
+    data.forEach(k => {
+        selectGroupData.innerHTML += `
     <option value="${k.id}">
       ${k.nama}
     </option>
   `;
-	});
+    });
 }
 
 function openNewGroupModal() {
-	let selectGroup = document.getElementById("selectGroup");
-	let inputGroupNameGroup = document.getElementById("inputGroupNameGroup");
-	let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
+    let selectGroup = document.getElementById("selectGroup");
+    let inputGroupNameGroup = document.getElementById("inputGroupNameGroup");
+    let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
 
-	modalGroupTitle.innerText = "Tambah Kelompok";
-	inputGroupName.value = "";
-	inputGroupNameGroup.style.display = "none";
-	saveGroupBtn.removeAttribute("data-edit");
+    modalGroupTitle.innerText = "Tambah Kelompok";
+    inputGroupName.value = "";
+    inputGroupNameGroup.style.display = "none";
+    saveGroupBtn.removeAttribute("data-edit");
 
-	selectGroup.style.display = "block";
+    selectGroup.style.display = "block";
 
-	renderGroupOption(allGroupData.kelompok);
+    renderGroupOption(allGroupData.kelompok);
 
-	openModal(modalGroup);
+    openModal(modalGroup);
 }
 
 function openEditGroupModal(id) {
-	const k = state.kelompok.find((x) => x.id === id);
-	if (!k) return;
-	modalGroupTitle.innerText = "Edit Kelompok";
-	inputGroupName.value = k.nama;
-	saveGroupBtn.setAttribute("data-edit", id);
-	openModal(modalGroup);
+    const k = state.kelompok.find(x => x.id === id);
+    if (!k) return;
+    modalGroupTitle.innerText = "Edit Kelompok";
+    inputGroupName.value = k.nama;
+    saveGroupBtn.setAttribute("data-edit", id);
+    openModal(modalGroup);
 }
 
 function openAddNasabahModal() {
-	if (!currentGroupId) return alert("Pilih kelompok terlebih dahulu");
-	modalNasabah.querySelector("#modalNasabahTitle").innerText =
-		"Tambah Nasabah - " + (state.kelompok.find((x) => x.id === currentGroupId)?.nama || "");
-	inputNasabahName.value = "";
-	inputNasabahTagihan.value = "";
-	// default radio none
-	const radios = modalNasabah.querySelectorAll('input[name="status"]');
-	radios.forEach((r) => (r.checked = r.value === "none"));
-	openModal(modalNasabah);
+    if (!currentGroupId) return alert("Pilih kelompok terlebih dahulu");
+    modalNasabah.querySelector("#modalNasabahTitle").innerText =
+        "Tambah Nasabah - " +
+        (state.kelompok.find(x => x.id === currentGroupId)?.nama || "");
+    inputNasabahName.value = "";
+    inputNasabahTagihan.value = "";
+    // default radio none
+    const radios = modalNasabah.querySelectorAll('input[name="status"]');
+    radios.forEach(r => (r.checked = r.value === "none"));
+    openModal(modalNasabah);
 }
 
 function clearNasabahModal() {
-	inputNasabahName.value = "";
-	inputNasabahTagihan.value = "";
-	const radios = modalNasabah.querySelectorAll('input[name="status"]');
-	radios.forEach((r) => (r.checked = r.value === "none"));
+    inputNasabahName.value = "";
+    inputNasabahTagihan.value = "";
+    const radios = modalNasabah.querySelectorAll('input[name="status"]');
+    radios.forEach(r => (r.checked = r.value === "none"));
 }
 
 function getSelectedNasabahStatus() {
-	const radios = modalNasabah.querySelectorAll('input[name="status"]');
-	for (const r of radios) if (r.checked) return r.value;
-	return "none";
+    const radios = modalNasabah.querySelectorAll('input[name="status"]');
+    for (const r of radios) if (r.checked) return r.value;
+    return "none";
 }
 
 /* ===== UTILITES ===== */
 function escapeHtml(str) {
-	if (typeof str !== "string") return str;
-	return str.replace(
-		/[&<>"']/g,
-		(m) =>
-			({
-				"&": "&amp;",
-				"<": "&lt;",
-				">": "&gt;",
-				'"': "&quot;",
-				"'": "&#39;"
-			})[m]
-	);
+    if (typeof str !== "string") return str;
+    return str.replace(
+        /[&<>"']/g,
+        m =>
+            ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[m]
+    );
 }
 
 function renderAll() {
-	renderDashboard();
-	renderGroups();
+    renderDashboard();
+    renderGroups();
 }
 
 /* ===== BOOTSTRAP ===== */
 async function init() {
-	let auth = localStorage.getItem("auth");
-	if (!auth) {
-		localStorage.setItem("isSync", "0");
-		// redirect to login
-		window.location.href = "/login";
-		return;
-	}
+    let auth = localStorage.getItem("auth");
+    if (!auth) {
+        localStorage.setItem("isSync", "0");
+        // redirect to login
+        window.location.href = "/login";
+        return;
+    }
 
-	if (localStorage.getItem("isSync") !== "1") {
-		try {
-			showLoading();
+    setInterval(() => {
+        const tokenexpired = localStorage.getItem("tokenExpired");
 
-      let isSavedData = await getSavedData()
+        if (!tokenexpired) return;
 
-      console.log(isSavedData)
+        const now = new Date();
+        const expired = new Date(tokenexpired.replace(" ", "T"));
 
-      if (!isSavedData) {
-    			let dataKelompok = await getKelompok();
-    			let dataNasabah = await getNasabah();
-    			console.log("data kelompok:", dataKelompok);
-    			console.log("data nasabah:", dataNasabah);
-			    state = loadData(dataKelompok, dataNasabah);
-			    console.log(state);
-      }
-      
-		} catch (error) {
-			hideLoading();
-			errorAlert("Gagal sinkronisasi: " + error.message);
-		} finally {
-			localStorage.setItem("isSync", "1");
-			hideLoading();
-		}
-		successAlert("sync berhasil");
-	}
+        if (now > expired) {
+            Swal.fire({
+                title: "Sesi Berakhir",
+                text: "Silahkan Login Kembali",
+                icon: "info",
+                confirmButtonText: "Oke",
+                customClass: {
+                    popup: "swal-success-popup",
+                    confirmButton: "swal-success-btn"
+                }
+            }).then(async result => {
+                if (result.isConfirmed) {
+                    showLoading();
+                    let username = localStorage.getItem("username");
+                    let branch = localStorage.getItem("cabangID");
 
-	state = loadLocal();
+                    const res = await fetch("/delete-data", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, branch })
+                    });
 
-	if (!state.kelompok) state.kelompok = [];
-	bindEvents();
-	renderAll();
+                    if (!res.ok)
+                        return showError(
+                            "gagal mmenghapus. periksa sambungan internet"
+                        );
+
+                    const result = await res.json();
+                    console.log(result);
+
+                    if (!result.status) return showError(result.message);
+
+                    localStorage.clear();
+                    hideLoading();
+                    window.location.href = "/login";
+                }
+            });
+        }
+    }, 60000);
+
+    if (localStorage.getItem("isSync") !== "1") {
+        try {
+            showLoading();
+
+            let isSavedData = await getSavedData();
+
+            console.log(isSavedData);
+
+            if (!isSavedData) {
+                let dataKelompok = await getKelompok();
+                let dataNasabah = await getNasabah();
+                console.log("data kelompok:", dataKelompok);
+                console.log("data nasabah:", dataNasabah);
+                state = loadData(dataKelompok, dataNasabah);
+                console.log(state);
+            }
+        } catch (error) {
+            hideLoading();
+            errorAlert("Gagal sinkronisasi: " + error.message);
+        } finally {
+            localStorage.setItem("isSync", "1");
+            hideLoading();
+        }
+        successAlert("sync berhasil");
+    }
+
+    state = loadLocal();
+
+    if (!state.kelompok) state.kelompok = [];
+    bindEvents();
+    renderAll();
 }
 
 init();
