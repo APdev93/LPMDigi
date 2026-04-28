@@ -259,11 +259,12 @@ async function syncData() {
             body: JSON.stringify({ username, branch, data })
         });
 
-        if (!res.ok) return showError("Sync gagal. periksa sambungan internet");
+        if (!res.ok)
+            return errorAlert("Sync gagal. periksa sambungan internet");
 
         const result = await res.json();
         console.log(result);
-        if (!result.status) return showError(result.message);
+        if (!result.status) return errorAlert(result.message);
     } finally {
         hideLoading();
 
@@ -312,14 +313,14 @@ clearBtn.addEventListener("click", () => {
             });
 
             if (!res.ok)
-                return showError(
+                return errorAlert(
                     "gagal mmenghapus. periksa sambungan internet"
                 );
 
             const result = await res.json();
             console.log(result);
 
-            if (!result.status) return showError(result.message);
+            if (!result.status) return errorAlert(result.message);
 
             localStorage.clear();
             successAlert("Berhasil menghapus data");
@@ -1356,6 +1357,35 @@ function renderAll() {
     renderGroups();
 }
 
+function checkSession() {
+    const tokenexpired = localStorage.getItem("tokenExpired");
+
+    if (!tokenexpired) return;
+
+    const now = new Date();
+    const expired = new Date(tokenexpired.replace(" ", "T"));
+
+    if (now > expired) {
+        Swal.fire({
+            title: "Sesi Berakhir",
+            text: "Silahkan Login Kembali",
+            icon: "info",
+            confirmButtonText: "Oke",
+            customClass: {
+                popup: "swal-success-popup",
+                confirmButton: "swal-success-btn"
+            }
+        }).then(async result => {
+            if (result.isConfirmed) {
+                showLoading();
+                localStorage.clear();
+                hideLoading();
+                window.location.href = "/login";
+            }
+        });
+    }
+}
+
 /* ===== BOOTSTRAP ===== */
 async function init() {
     let auth = localStorage.getItem("auth");
@@ -1366,52 +1396,10 @@ async function init() {
         return;
     }
 
+    checkSession();
+
     setInterval(() => {
-        const tokenexpired = localStorage.getItem("tokenExpired");
-
-        if (!tokenexpired) return;
-
-        const now = new Date();
-        const expired = new Date(tokenexpired.replace(" ", "T"));
-
-        if (now > expired) {
-            Swal.fire({
-                title: "Sesi Berakhir",
-                text: "Silahkan Login Kembali",
-                icon: "info",
-                confirmButtonText: "Oke",
-                customClass: {
-                    popup: "swal-success-popup",
-                    confirmButton: "swal-success-btn"
-                }
-            }).then(async result => {
-                if (result.isConfirmed) {
-                    showLoading();
-                    let username = localStorage.getItem("username");
-                    let branch = localStorage.getItem("cabangID");
-
-                    const res = await fetch("/delete-data", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ username, branch })
-                    });
-
-                    if (!res.ok)
-                        return showError(
-                            "gagal mmenghapus. periksa sambungan internet"
-                        );
-
-                    const result = await res.json();
-                    console.log(result);
-
-                    if (!result.status) return showError(result.message);
-
-                    localStorage.clear();
-                    hideLoading();
-                    window.location.href = "/login";
-                }
-            });
-        }
+        checkSession();
     }, 60000);
 
     if (localStorage.getItem("isSync") !== "1") {
