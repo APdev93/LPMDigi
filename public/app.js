@@ -8,6 +8,39 @@ userName.innerHTML = localStorage.getItem("username")?.toUpperCase() || "";
 namaUnit.innerText = cabangID + " - " + localStorage.getItem("unit") || "";
 namaUser.innerText = localStorage.getItem("name") || "";
 
+const now = new Date();
+
+const hariList = [
+    "Minggu",
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+];
+const bulanList = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+];
+
+const hari = hariList[now.getDay()];
+const tanggal = now.getDate();
+const bulan = bulanList[now.getMonth()];
+const tahun = now.getFullYear();
+let dateEl = document.getElementById("date");
+dateEl.innerText = `${hari}, ${tanggal} ${bulan} ${tahun}`;
+
 function showLoading() {
     document.getElementById("loadingIndicator").style.display = "flex";
 }
@@ -24,8 +57,8 @@ function successAlert(msg) {
         confirmButtonText: "Oke",
         customClass: {
             popup: "swal-success-popup",
-            confirmButton: "swal-success-btn"
-        }
+            confirmButton: "swal-success-btn",
+        },
     });
 }
 
@@ -37,8 +70,8 @@ function errorAlert(msg) {
         confirmButtonText: "Mengerti",
         customClass: {
             popup: "swal-err-popup",
-            confirmButton: "swal-err-btn"
-        }
+            confirmButton: "swal-err-btn",
+        },
     });
 }
 
@@ -53,7 +86,7 @@ function getKodeHariNow() {
         3: 4, // Rabu
         4: 5, // Kamis
         5: 6, // Jumat
-        6: 7 // Sabtu
+        6: 7, // Sabtu
     };
 
     return mapping[day];
@@ -65,9 +98,9 @@ async function getSavedData() {
             `/data/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("auth")
-                }
-            }
+                    Authorization: localStorage.getItem("auth"),
+                },
+            },
         );
         if (!response.ok) throw new Error("Gagal mengambil data");
         let data = await response.json();
@@ -91,9 +124,9 @@ async function getKelompok() {
             `/group-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("auth")
-                }
-            }
+                    Authorization: localStorage.getItem("auth"),
+                },
+            },
         );
         if (!response.ok) throw new Error("Gagal mengambil data kelompok");
         let data = await response.json();
@@ -109,9 +142,9 @@ async function getNasabah() {
             `/collect-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("auth")
-                }
-            }
+                    Authorization: localStorage.getItem("auth"),
+                },
+            },
         );
         if (!response.ok) throw new Error("Gagal mengambil data nasabah");
         let data = await response.json();
@@ -124,17 +157,17 @@ async function getNasabah() {
 function loadData(kelompokData, nasabahData) {
     let stored = loadLocal();
 
-    let kelompok = kelompokData.map(g => ({
+    let kelompok = kelompokData.map((g) => ({
         ...g,
-        nasabah: []
+        nasabah: [],
     }));
 
     const nasabahUnik = Array.from(
-        new Map(nasabahData.map(n => [n.id, n])).values()
+        new Map(nasabahData.map((n) => [n.id, n])).values(),
     );
 
-    nasabahUnik.forEach(n => {
-        let target = kelompok.find(k => k.id === n.IdKelompok);
+    nasabahUnik.forEach((n) => {
+        let target = kelompok.find((k) => k.id === n.IdKelompok);
 
         if (target) {
             target.nasabah.push({
@@ -145,7 +178,7 @@ function loadData(kelompokData, nasabahData) {
                 nama: n.nama,
                 flapond: n.flapond,
                 tagihan: n.jumlahAngsuran,
-                status: n.status || "none"
+                status: n.status || "none",
             });
         }
     });
@@ -160,7 +193,7 @@ function loadLocal() {
     try {
         showLoading();
         let data = JSON.parse(
-            localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}'
+            localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}',
         );
         let hariSekarang = getKodeHariNow();
         let filtered;
@@ -169,7 +202,7 @@ function loadLocal() {
             filtered = filterNasabahAngsuranTerakhir(data).kelompok;
         } else {
             filtered = data.kelompok.filter(
-                k => k.hariPertemuan === String(hariSekarang)
+                (k) => k.hariPertemuan === String(hariSekarang),
             );
         }
 
@@ -190,15 +223,17 @@ function getTotalAngsuran(idProduk) {
 function filterIndividual(dataset) {
     const hasil = { kelompok: [] };
 
-    dataset.kelompok.forEach(k => {
-        const nasabahFiltered = k.nasabah.filter(n => n.status === "individu");
+    dataset.kelompok.forEach((k) => {
+        const nasabahFiltered = k.nasabah.filter(
+            (n) => n.status === "individu",
+        );
 
         if (nasabahFiltered.length > 0) {
             hasil.kelompok.push({
                 id: k.id,
                 hariPertemuan: k.hariPertemuan,
                 nama: k.nama,
-                nasabah: nasabahFiltered
+                nasabah: nasabahFiltered,
             });
         }
     });
@@ -209,8 +244,8 @@ function filterIndividual(dataset) {
 function filterNasabahAngsuranTerakhir(dataset) {
     const hasil = { kelompok: [] };
 
-    dataset.kelompok.forEach(k => {
-        const nasabahFiltered = k.nasabah.filter(n => {
+    dataset.kelompok.forEach((k) => {
+        const nasabahFiltered = k.nasabah.filter((n) => {
             const total = getTotalAngsuran(n.idProduk);
             return n.ke === total;
         });
@@ -220,7 +255,7 @@ function filterNasabahAngsuranTerakhir(dataset) {
                 id: k.id,
                 hariPertemuan: k.hariPertemuan,
                 nama: k.nama,
-                nasabah: nasabahFiltered
+                nasabah: nasabahFiltered,
             });
         }
     });
@@ -232,8 +267,8 @@ function calcPresencePercentage(state) {
     let total = 0;
     let hadir = 0;
 
-    state.kelompok.forEach(g => {
-        g.nasabah.forEach(n => {
+    state.kelompok.forEach((g) => {
+        g.nasabah.forEach((n) => {
             total++;
             if (n.status !== "none") hadir++;
         });
@@ -248,7 +283,7 @@ async function syncData() {
         let username = localStorage.getItem("username");
         let branch = localStorage.getItem("cabangID");
         let data = JSON.parse(
-            localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}'
+            localStorage.getItem(STORAGE_KEY) || '{"kelompok": []}',
         );
 
         showLoading();
@@ -256,7 +291,7 @@ async function syncData() {
         const res = await fetch("/sync", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, branch, data })
+            body: JSON.stringify({ username, branch, data }),
         });
 
         if (!res.ok)
@@ -275,9 +310,9 @@ async function syncData() {
             confirmButtonText: "Oke",
             customClass: {
                 popup: "swal-success-popup",
-                confirmButton: "swal-success-btn"
-            }
-        }).then(result => {
+                confirmButton: "swal-success-btn",
+            },
+        }).then((result) => {
             if (result.isConfirmed) {
                 window.location.reload();
             }
@@ -296,12 +331,12 @@ clearBtn.addEventListener("click", () => {
             popup: "swal-success-popup",
             confirmButton: "swal-success-btn",
             cancelButton: "swal-err-btn",
-            denyButton: "swal-deny-btn"
+            denyButton: "swal-deny-btn",
         },
         confirmButtonText: "Ya",
         denyButtonText: "Tidak",
-        cancelButtonText: "Batal"
-    }).then(async result => {
+        cancelButtonText: "Batal",
+    }).then(async (result) => {
         if (result.isConfirmed) {
             let username = localStorage.getItem("username");
             let branch = localStorage.getItem("cabangID");
@@ -309,18 +344,22 @@ clearBtn.addEventListener("click", () => {
             const res = await fetch("/delete-data", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, branch })
+                body: JSON.stringify({ username, branch }),
             });
 
             if (!res.ok)
                 return errorAlert(
-                    "gagal mmenghapus. periksa sambungan internet"
+                    "gagal mmenghapus. periksa sambungan internet",
                 );
 
             const result = await res.json();
             console.log(result);
 
-            if (!result.status) return errorAlert(result.message);
+            if (!result.status) {
+                localStorage.clear();
+                successAlert("Berhasil menghapus data");
+                location.reload();
+            }
 
             localStorage.clear();
             successAlert("Berhasil menghapus data");
@@ -412,7 +451,7 @@ function getTanggal() {
         "Rabu",
         "Kamis",
         "Jumat",
-        "Sabtu"
+        "Sabtu",
     ];
 
     const hari = hariNama[tanggal.getDay()];
@@ -424,12 +463,12 @@ function getTanggal() {
 }
 
 function autoWidth(ws, data) {
-    const colWidths = Object.keys(data[0]).map(key => ({
+    const colWidths = Object.keys(data[0]).map((key) => ({
         wch:
             Math.max(
                 key.length,
-                ...data.map(v => String(v[key] || "").length)
-            ) + 2
+                ...data.map((v) => String(v[key] || "").length),
+            ) + 2,
     }));
     ws["!cols"] = colWidths;
 }
@@ -448,8 +487,8 @@ function styleHeader(ws) {
                 top: { style: "thin" },
                 bottom: { style: "thin" },
                 left: { style: "thin" },
-                right: { style: "thin" }
-            }
+                right: { style: "thin" },
+            },
         };
     }
 }
@@ -466,8 +505,8 @@ function styleBody(ws) {
                     top: { style: "thin" },
                     bottom: { style: "thin" },
                     left: { style: "thin" },
-                    right: { style: "thin" }
-                }
+                    right: { style: "thin" },
+                },
             };
         }
     }
@@ -479,7 +518,7 @@ function addFilter(ws) {
     const endRow = range.e.r + 1;
 
     ws["!autofilter"] = {
-        ref: `A1:${endCol}${endRow}`
+        ref: `A1:${endCol}${endRow}`,
     };
 }
 
@@ -488,8 +527,8 @@ function createRekapSheet(wb, data) {
     let totalTF = 0;
     let totalIndividu = 0;
 
-    data.kelompok.forEach(k => {
-        k.nasabah.forEach(n => {
+    data.kelompok.forEach((k) => {
+        k.nasabah.forEach((n) => {
             const tagihan = Number(n.tagihan || 0);
 
             if (n.status === "cash") totalCash += tagihan;
@@ -502,8 +541,8 @@ function createRekapSheet(wb, data) {
         {
             "Total Cash": rupiah(totalCash),
             "Total TF": rupiah(totalTF),
-            "Total Individu": rupiah(totalIndividu)
-        }
+            "Total Individu": rupiah(totalIndividu),
+        },
     ]);
 
     ws["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }];
@@ -524,25 +563,25 @@ function addConditionalColor(ws, rowCount) {
                 {
                     type: "expression",
                     formula: [
-                        `AND($F2>=VALUE(RIGHT($D2,2))-2,$F2<VALUE(RIGHT($D2,2)))`
+                        `AND($F2>=VALUE(RIGHT($D2,2))-2,$F2<VALUE(RIGHT($D2,2)))`,
                     ],
-                    style: { fill: { fgColor: { rgb: "FDBA74" } } }
+                    style: { fill: { fgColor: { rgb: "FDBA74" } } },
                 },
                 {
                     type: "expression",
                     formula: [`$F2=VALUE(RIGHT($D2,2))`],
-                    style: { fill: { fgColor: { rgb: "F87171" } } }
-                }
-            ]
-        }
+                    style: { fill: { fgColor: { rgb: "F87171" } } },
+                },
+            ],
+        },
     ];
 }
 
 function createHampirLunasSheet(wb, data) {
     const rows = [];
 
-    data.kelompok.forEach(k => {
-        k.nasabah.forEach(n => {
+    data.kelompok.forEach((k) => {
+        k.nasabah.forEach((n) => {
             if (!n.idProduk) return;
 
             const produk = n.idProduk.toUpperCase();
@@ -562,7 +601,7 @@ function createHampirLunasSheet(wb, data) {
                     Installment: ke,
                     Remaining: totalAngsuran - ke,
                     Bill: rupiah(n.tagihan),
-                    Status: n.status.toUpperCase()
+                    Status: n.status.toUpperCase(),
                 });
             }
         });
@@ -593,8 +632,8 @@ btnDlMasterData.addEventListener("click", () => {
 
     const pkm = [];
 
-    data.kelompok.forEach(k => {
-        k.nasabah.forEach(n => {
+    data.kelompok.forEach((k) => {
+        k.nasabah.forEach((n) => {
             const row = {
                 ClientID: n.id,
                 GroupName: k.nama,
@@ -603,7 +642,7 @@ btnDlMasterData.addEventListener("click", () => {
                 Flapond: rupiah(n.flapond),
                 Installment: n.ke,
                 Bill: rupiah(n.tagihan),
-                Status: n.status.toUpperCase()
+                Status: n.status.toUpperCase(),
             };
 
             if (["cash", "tf", "none", "individu"].includes(n.status))
@@ -643,8 +682,8 @@ btnDlData.addEventListener("click", () => {
     const pkm = [];
     const individu = [];
 
-    data.kelompok.forEach(k => {
-        k.nasabah.forEach(n => {
+    data.kelompok.forEach((k) => {
+        k.nasabah.forEach((n) => {
             const row = {
                 ClientID: n.id,
                 GroupName: k.nama,
@@ -653,7 +692,7 @@ btnDlData.addEventListener("click", () => {
                 Flapond: rupiah(n.flapond),
                 Installment: n.ke,
                 Bill: rupiah(n.tagihan),
-                Status: n.status.toUpperCase()
+                Status: n.status.toUpperCase(),
             };
 
             if (["cash", "tf", "none"].includes(n.status)) pkm.push(row);
@@ -698,8 +737,8 @@ function calcAllTotals() {
         totalBelumNas = 0,
         totalSudahNas = 0;
 
-    state?.kelompok.forEach(k => {
-        k.nasabah.forEach(n => {
+    state?.kelompok.forEach((k) => {
+        k.nasabah.forEach((n) => {
             const t = Number(n.tagihan) || 0;
             totalTagihan += t;
 
@@ -719,7 +758,7 @@ function calcAllTotals() {
         totalTagihan,
         totalBelum: Math.max(0, totalTagihan - (totalCash + totalTf)),
         totalBelumNas,
-        totalSudahNas: totalNas - totalBelumNas
+        totalSudahNas: totalNas - totalBelumNas,
     };
 }
 
@@ -757,18 +796,18 @@ function renderGroups() {
     let currentPage = 1;
     const limit = 5;
 
-    individuData.kelompok.forEach(k => {
-        k.nasabah.forEach(n => {
+    individuData.kelompok.forEach((k) => {
+        k.nasabah.forEach((n) => {
             allNasabahIndividu.push({
                 nama: n.nama,
                 kelompok: k.nama,
                 tagihan: n.tagihan,
-                status: n.status
+                status: n.status,
             });
         });
     });
     allNasabahIndividu.sort((a, b) =>
-        a.kelompok.localeCompare(b.kelompok, "id", { sensitivity: "base" })
+        a.kelompok.localeCompare(b.kelompok, "id", { sensitivity: "base" }),
     );
 
     function renderTable() {
@@ -830,11 +869,11 @@ function renderGroups() {
 
     renderTable();
 
-    state.kelompok.forEach(k => {
+    state.kelompok.forEach((k) => {
         let cash = 0,
             tf = 0,
             target = 0;
-        k.nasabah.forEach(n => {
+        k.nasabah.forEach((n) => {
             const t = Number(n.tagihan) || 0;
             target += t;
             if (n.status === "cash") cash += t;
@@ -847,7 +886,7 @@ function renderGroups() {
         div.setAttribute("data-action", "open");
         div.setAttribute("data-id", k.id);
 
-        let nasBelum = k.nasabah.filter(n => n.status === "none");
+        let nasBelum = k.nasabah.filter((n) => n.status === "none");
         if (nasBelum <= 0) {
             div.classList.add("payed");
         }
@@ -862,15 +901,6 @@ function renderGroups() {
             <span class="badge">Sisa NoA: ${nasBelum.length}</span>
           </div>
         </div>
-      </div>
-
-      <div class="actions" style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-edit" data-action="edit" data-id="${k.id}">
-          <i data-feather="edit-2"></i>
-        </button>
-        <button class="btn btn-danger" data-action="delete" data-id="${k.id}">
-          <i data-feather="trash-2"></i>
-        </button>
       </div>
     `;
 
@@ -975,7 +1005,7 @@ function nasabahCard(n, k, i) {
 /* ===== GROUP DETAIL RENDER ===== */
 function renderGroupDetail(groupId) {
     let today = getKodeHariNow();
-    const k = state.kelompok.find(x => x.id === groupId);
+    const k = state.kelompok.find((x) => x.id === groupId);
     if (!k) return errorAlert("Kelompok tidak ditemukan");
 
     currentGroupId = groupId;
@@ -984,37 +1014,37 @@ function renderGroupDetail(groupId) {
     // meta
     const totalTarget = k.nasabah.reduce(
         (s, n) => s + (Number(n.tagihan) || 0),
-        0
+        0,
     );
     const totalCash = k.nasabah
-        .filter(n => n.status === "cash" || n.status === "individu")
+        .filter((n) => n.status === "cash" || n.status === "individu")
         .reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
     const totalTf = k.nasabah
-        .filter(n => n.status === "tf")
+        .filter((n) => n.status === "tf")
         .reduce((s, n) => s + (Number(n.tagihan) || 0), 0);
     const belum = Math.max(0, totalTarget - (totalCash + totalTf));
 
     // recap boxes
     if (today <= 6) {
         groupMetaEl.innerHTML = `<small class="kelompok-meta">Total Tagihan: Rp ${rupiah(
-            totalTarget
+            totalTarget,
         )} • Cash: Rp ${rupiah(totalCash)} • TF: Rp ${rupiah(totalTf)} • Belum: Rp ${rupiah(
-            belum
+            belum,
         )}</small>`;
 
         groupRecapEl.innerHTML = `
 		<div class="group-recap">
 		<div class="recap-box"><div style="color:var(--muted)">Total Tagihan</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-            totalTarget
+            totalTarget,
         )}</div></div>
 		<div class="recap-box"><div style="color:var(--muted)">Terkumpul (Cash)</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-            totalCash
+            totalCash,
         )}</div></div>
 		<div class="recap-box"><div style="color:var(--muted)">Total Transfer</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-            totalTf
+            totalTf,
         )}</div></div>
 		<div class="recap-box"><div style="color:var(--muted)">Belum Terkumpul</div><div style="font-weight:700;color:var(--blue)">Rp ${rupiah(
-            belum
+            belum,
         )}</div></div>
 		</div>
 		`;
@@ -1049,14 +1079,14 @@ function addGroup(name) {
         id: genId(cabangID),
         hariPertemuan: getKodeHariNow().toString(),
         nama: name,
-        nasabah: []
+        nasabah: [],
     });
     saveData(state);
     renderAll();
 }
 
 function updateGroup(id, newName) {
-    const k = state.kelompok.find(x => x.id === id);
+    const k = state.kelompok.find((x) => x.id === id);
     if (!k) return;
     k.nama = newName;
     saveData(state);
@@ -1064,14 +1094,14 @@ function updateGroup(id, newName) {
 }
 
 function removeGroup(id) {
-    state.kelompok = state.kelompok.filter(x => x.id !== id);
+    state.kelompok = state.kelompok.filter((x) => x.id !== id);
     saveData(state);
     renderAll();
 }
 
 /* ===== CRUD: Nasabah ===== */
 function addNasabahToGroup(groupId, nama, tagihan, status = "none") {
-    const k = state.kelompok.find(x => x.id === groupId);
+    const k = state.kelompok.find((x) => x.id === groupId);
     if (!k) return;
     k.nasabah.push({
         rill: 0,
@@ -1080,7 +1110,7 @@ function addNasabahToGroup(groupId, nama, tagihan, status = "none") {
         id: genId(localStorage.getItem("cabangID")),
         nama: nama,
         tagihan: Number(tagihan) || 0,
-        status
+        status,
     });
     saveData(state);
     renderGroupDetail(groupId);
@@ -1088,9 +1118,9 @@ function addNasabahToGroup(groupId, nama, tagihan, status = "none") {
 }
 
 function updateNasabah(groupId, nasabahId, newName, newTagihan) {
-    const k = state.kelompok.find(x => x.id === groupId);
+    const k = state.kelompok.find((x) => x.id === groupId);
     if (!k) return;
-    const n = k.nasabah.find(x => x.id === nasabahId);
+    const n = k.nasabah.find((x) => x.id === nasabahId);
     if (!n) return;
     n.nama = newName;
     n.tagihan = Number(newTagihan) || 0;
@@ -1099,17 +1129,17 @@ function updateNasabah(groupId, nasabahId, newName, newTagihan) {
 }
 
 function removeNasabah(groupId, nasabahId) {
-    const k = state.kelompok.find(x => x.id === groupId);
+    const k = state.kelompok.find((x) => x.id === groupId);
     if (!k) return;
-    k.nasabah = k.nasabah.filter(x => x.id !== nasabahId);
+    k.nasabah = k.nasabah.filter((x) => x.id !== nasabahId);
     saveData(state);
     renderGroupDetail(groupId);
 }
 
 function setNasabahStatus(groupId, nasabahId, status) {
-    const k = state.kelompok.find(x => x.id === groupId);
+    const k = state.kelompok.find((x) => x.id === groupId);
     if (!k) return;
-    const n = k.nasabah.find(x => x.id === nasabahId);
+    const n = k.nasabah.find((x) => x.id === nasabahId);
     if (!n) return;
     n.status = status;
     saveData(state);
@@ -1126,7 +1156,7 @@ function closeModal(modalEl) {
 
 function addGroupFromData(id) {
     let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
-    let group = allGroupData.kelompok.find(k => k.id === id);
+    let group = allGroupData.kelompok.find((k) => k.id === id);
 
     group.hariPertemuan = getKodeHariNow().toString();
     state.kelompok.push(group);
@@ -1163,7 +1193,7 @@ function bindEvents() {
     });
 
     // group list actions (delegation)
-    groupsListEl.addEventListener("click", ev => {
+    groupsListEl.addEventListener("click", (ev) => {
         const btn = ev.target.closest("button");
         if (btn) {
             const action = btn.dataset.action;
@@ -1206,7 +1236,7 @@ function bindEvents() {
     });
 
     // nasabah interactions (radio, edit, delete) - delegation on nasabahListEl
-    nasabahListEl?.addEventListener("change", ev => {
+    nasabahListEl?.addEventListener("change", (ev) => {
         const input = ev.target;
         if (input && input.name && input.name.startsWith("st")) {
             const groupId = input.getAttribute("data-group");
@@ -1216,7 +1246,7 @@ function bindEvents() {
         }
     });
 
-    nasabahListEl?.addEventListener("click", ev => {
+    nasabahListEl?.addEventListener("click", (ev) => {
         const btn = ev.target.closest("button");
         if (!btn) return;
         const action = btn.getAttribute("data-action");
@@ -1224,8 +1254,8 @@ function bindEvents() {
         const groupId = btn.getAttribute("data-group");
         if (action === "edit-n") {
             // prompt edit
-            const k = state.kelompok.find(x => x.id === groupId);
-            const n = k?.nasabah.find(x => x.id === nasId);
+            const k = state.kelompok.find((x) => x.id === groupId);
+            const n = k?.nasabah.find((x) => x.id === nasId);
             if (!n) return;
             const newName = prompt("Ubah nama nasabah:", n.nama);
             if (newName === null) return;
@@ -1264,7 +1294,7 @@ function bindEvents() {
     });
 
     // clicking outside modal closes
-    window.addEventListener("click", ev => {
+    window.addEventListener("click", (ev) => {
         if (ev.target === modalGroup) closeModal(modalGroup);
         if (ev.target === modalNasabah) closeModal(modalNasabah);
     });
@@ -1275,7 +1305,7 @@ function bindEvents() {
 const selectGroupData = document.getElementById("selectGroupData");
 function renderGroupOption(data) {
     selectGroupData.innerHTML = `<option value="">-- Pilih Grup --</option>`;
-    data.forEach(k => {
+    data.forEach((k) => {
         selectGroupData.innerHTML += `
     <option value="${k.id}">
       ${k.nama}
@@ -1302,7 +1332,7 @@ function openNewGroupModal() {
 }
 
 function openEditGroupModal(id) {
-    const k = state.kelompok.find(x => x.id === id);
+    const k = state.kelompok.find((x) => x.id === id);
     if (!k) return;
     modalGroupTitle.innerText = "Edit Kelompok";
     inputGroupName.value = k.nama;
@@ -1314,12 +1344,12 @@ function openAddNasabahModal() {
     if (!currentGroupId) return alert("Pilih kelompok terlebih dahulu");
     modalNasabah.querySelector("#modalNasabahTitle").innerText =
         "Tambah Nasabah - " +
-        (state.kelompok.find(x => x.id === currentGroupId)?.nama || "");
+        (state.kelompok.find((x) => x.id === currentGroupId)?.nama || "");
     inputNasabahName.value = "";
     inputNasabahTagihan.value = "";
     // default radio none
     const radios = modalNasabah.querySelectorAll('input[name="status"]');
-    radios.forEach(r => (r.checked = r.value === "none"));
+    radios.forEach((r) => (r.checked = r.value === "none"));
     openModal(modalNasabah);
 }
 
@@ -1327,7 +1357,7 @@ function clearNasabahModal() {
     inputNasabahName.value = "";
     inputNasabahTagihan.value = "";
     const radios = modalNasabah.querySelectorAll('input[name="status"]');
-    radios.forEach(r => (r.checked = r.value === "none"));
+    radios.forEach((r) => (r.checked = r.value === "none"));
 }
 
 function getSelectedNasabahStatus() {
@@ -1341,14 +1371,14 @@ function escapeHtml(str) {
     if (typeof str !== "string") return str;
     return str.replace(
         /[&<>"']/g,
-        m =>
+        (m) =>
             ({
                 "&": "&amp;",
                 "<": "&lt;",
                 ">": "&gt;",
                 '"': "&quot;",
-                "'": "&#39;"
-            })[m]
+                "'": "&#39;",
+            })[m],
     );
 }
 
@@ -1365,6 +1395,7 @@ function checkSession() {
     const now = new Date();
     const expired = new Date(tokenexpired.replace(" ", "T"));
 
+    console.log("Session expired:", now > expired);
     if (now > expired) {
         Swal.fire({
             title: "Sesi Berakhir",
@@ -1373,9 +1404,9 @@ function checkSession() {
             confirmButtonText: "Oke",
             customClass: {
                 popup: "swal-success-popup",
-                confirmButton: "swal-success-btn"
-            }
-        }).then(async result => {
+                confirmButton: "swal-success-btn",
+            },
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 showLoading();
                 localStorage.clear();
@@ -1400,7 +1431,7 @@ async function init() {
 
     setInterval(() => {
         checkSession();
-    }, 60000);
+    }, 30000);
 
     if (localStorage.getItem("isSync") !== "1") {
         try {
