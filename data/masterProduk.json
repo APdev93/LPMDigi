@@ -1,0 +1,702 @@
+[
+    {
+      "id": "203",
+      "productName": "MM5S25",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "2000000",
+      "maxPlafond": "5000000",
+      "paymentTerm": "25",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 2000000,
+          "AngsuranPerminggu": "90000"
+        },
+        {
+          "Plafond": 2500000,
+          "AngsuranPerminggu": "112500"
+        },
+        {
+          "Plafond": 3000000,
+          "AngsuranPerminggu": "135000"
+        },
+        {
+          "Plafond": 3500000,
+          "AngsuranPerminggu": "157500"
+        },
+        {
+          "Plafond": 4000000,
+          "AngsuranPerminggu": "180000"
+        },
+        {
+          "Plafond": 4500000,
+          "AngsuranPerminggu": "202500"
+        },
+        {
+          "Plafond": 5000000,
+          "AngsuranPerminggu": "225000"
+        }
+      ]
+    },
+    {
+      "id": "205",
+      "productName": "MM5S50",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "2000000",
+      "maxPlafond": "5000000",
+      "paymentTerm": "50",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 2000000,
+          "AngsuranPerminggu": "50000"
+        },
+        {
+          "Plafond": 2500000,
+          "AngsuranPerminggu": "62500"
+        },
+        {
+          "Plafond": 3000000,
+          "AngsuranPerminggu": "75000"
+        },
+        {
+          "Plafond": 3500000,
+          "AngsuranPerminggu": "87500"
+        },
+        {
+          "Plafond": 4000000,
+          "AngsuranPerminggu": "100000"
+        },
+        {
+          "Plafond": 4500000,
+          "AngsuranPerminggu": "112500"
+        },
+        {
+          "Plafond": 5000000,
+          "AngsuranPerminggu": "125000"
+        }
+      ]
+    },
+    {
+      "id": "334",
+      "productName": "MM5S75",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "2000000",
+      "maxPlafond": "5000000",
+      "paymentTerm": "75",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 2000000,
+          "AngsuranPerminggu": "37000"
+        },
+        {
+          "Plafond": 2500000,
+          "AngsuranPerminggu": "46000"
+        },
+        {
+          "Plafond": 3000000,
+          "AngsuranPerminggu": "55000"
+        },
+        {
+          "Plafond": 3500000,
+          "AngsuranPerminggu": "65000"
+        },
+        {
+          "Plafond": 4000000,
+          "AngsuranPerminggu": "74000"
+        },
+        {
+          "Plafond": 4500000,
+          "AngsuranPerminggu": "83000"
+        },
+        {
+          "Plafond": 5000000,
+          "AngsuranPerminggu": "92000"
+        }
+      ]
+    },
+    {
+      "id": "338",
+      "productName": "MM5S00",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "2000000",
+      "maxPlafond": "5000000",
+      "paymentTerm": "100",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 2000000,
+          "AngsuranPerminggu": "30000"
+        },
+        {
+          "Plafond": 2500000,
+          "AngsuranPerminggu": "37500"
+        },
+        {
+          "Plafond": 3000000,
+          "AngsuranPerminggu": "45000"
+        },
+        {
+          "Plafond": 3500000,
+          "AngsuranPerminggu": "52500"
+        },
+        {
+          "Plafond": 4000000,
+          "AngsuranPerminggu": "60000"
+        },
+        {
+          "Plafond": 4500000,
+          "AngsuranPerminggu": "67500"
+        },
+        {
+          "Plafond": 5000000,
+          "AngsuranPerminggu": "75000"
+        }
+      ]
+    },
+    {
+      "id": "207",
+      "productName": "MM7S26",
+      "isReguler": "1",
+      "IsMP": "2",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "52",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "265000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "289000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "313000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "337000"
+        }
+      ]
+    },
+    {
+      "id": "209",
+      "productName": "MM7S52",
+      "isReguler": "1",
+      "IsMP": "2",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "104",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "159000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "174000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "188000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "202000"
+        }
+      ]
+    },
+    {
+      "id": "322",
+      "productName": "MM7S13",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "26",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "476000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "520000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "563000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "606000"
+        }
+      ]
+    },
+    {
+      "id": "325",
+      "productName": "MM7S25",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "25",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "248000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "270000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "293000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "315000"
+        }
+      ]
+    },
+    {
+      "id": "329",
+      "productName": "MM7S39",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "78",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "194000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "212000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "230000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "247000"
+        }
+      ]
+    },
+    {
+      "id": "331",
+      "productName": "MM7S50",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "50",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "138000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "150000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "163000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "175000"
+        }
+      ]
+    },
+    {
+      "id": "335",
+      "productName": "MM7S75",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "75",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "101000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "110000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "120000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "129000"
+        }
+      ]
+    },
+    {
+      "id": "339",
+      "productName": "MM7S00",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "5500000",
+      "maxPlafond": "7000000",
+      "paymentTerm": "100",
+      "interest": "25",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 5500000,
+          "AngsuranPerminggu": "83000"
+        },
+        {
+          "Plafond": 6000000,
+          "AngsuranPerminggu": "90000"
+        },
+        {
+          "Plafond": 6500000,
+          "AngsuranPerminggu": "98000"
+        },
+        {
+          "Plafond": 7000000,
+          "AngsuranPerminggu": "105000"
+        }
+      ]
+    },
+    {
+      "id": "211",
+      "productName": "M10S26",
+      "isReguler": "1",
+      "IsMP": "2",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "52",
+      "interest": "19.7",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 7500000,
+          "AngsuranPerminggu": "346000"
+        },
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "369000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "392000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "415000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "438000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "461000"
+        }
+      ]
+    },
+    {
+      "id": "213",
+      "productName": "M10S52",
+      "isReguler": "1",
+      "IsMP": "2",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "104",
+      "interest": "19.7",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "215000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "228000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "242000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "255000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "269000"
+        }
+      ]
+    },
+    {
+      "id": "323",
+      "productName": "M10S13",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "26",
+      "interest": "19.2",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 7500000,
+          "AngsuranPerminggu": "633000"
+        },
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "675000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "717000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "759000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "801000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "844000"
+        }
+      ]
+    },
+    {
+      "id": "326",
+      "productName": "M10S25",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "25",
+      "interest": "19.2",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 7500000,
+          "AngsuranPerminggu": "329000"
+        },
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "351000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "373000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "395000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "417000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "439000"
+        }
+      ]
+    },
+    {
+      "id": "330",
+      "productName": "M10S39",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "78",
+      "interest": "19.2",
+      "isSyariah": "1",
+      "productFrequency": "2",
+      "DetailProduct": [
+        {
+          "Plafond": 7500000,
+          "AngsuranPerminggu": "248000"
+        },
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "265000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "281000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "298000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "314000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "331000"
+        }
+      ]
+    },
+    {
+      "id": "332",
+      "productName": "M10S50",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "50",
+      "interest": "19.2",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 7500000,
+          "AngsuranPerminggu": "179000"
+        },
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "191000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "203000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "215000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "227000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "239000"
+        }
+      ]
+    },
+    {
+      "id": "336",
+      "productName": "M10S75",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "75",
+      "interest": "19.2",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "138000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "146000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "155000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "164000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "172000"
+        }
+      ]
+    },
+    {
+      "id": "340",
+      "productName": "M10S00",
+      "isReguler": "1",
+      "IsMP": "1",
+      "minPlafond": "7500000",
+      "maxPlafond": "10000000",
+      "paymentTerm": "100",
+      "interest": "19.2",
+      "isSyariah": "1",
+      "productFrequency": "1",
+      "DetailProduct": [
+        {
+          "Plafond": 8000000,
+          "AngsuranPerminggu": "111000"
+        },
+        {
+          "Plafond": 8500000,
+          "AngsuranPerminggu": "118000"
+        },
+        {
+          "Plafond": 9000000,
+          "AngsuranPerminggu": "125000"
+        },
+        {
+          "Plafond": 9500000,
+          "AngsuranPerminggu": "132000"
+        },
+        {
+          "Plafond": 10000000,
+          "AngsuranPerminggu": "139000"
+        }
+      ]
+    }
+  ]

@@ -4,7 +4,12 @@ const axios = require("axios");
 const ejs = require("ejs");
 const path = require("path");
 const fs = require("fs");
-const { saveData, readData, deleteData, deleteAllDatabase } = require("./lib/utils");
+const {
+    saveData,
+    readData,
+    deleteData,
+    deleteAllDatabase
+} = require("./lib/utils");
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,188 +22,195 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const PORT = process.env.PORT || 3000;
 
-
 const startAutoDeleteScheduler = () => {
-	const interval = 24 * 60 * 60 * 1000;
+    const interval = 24 * 60 * 60 * 1000;
 
-	setInterval(async () => {
-		const result = await deleteAllDatabase();
+    setInterval(async () => {
+        const result = await deleteAllDatabase();
 
-		console.log(
-			new Date().toISOString(),
-			result.message
-		);
-	}, interval);
+        console.log(new Date().toISOString(), result.message);
+    }, interval);
 };
 
 const baseUrl = "http://pkmmekaar.kresnasaraswati.id/v1/pkm";
 const apk_version = "0.0.18-026-prod @ 2024-06-19";
 const cookie =
-	"SERVERID=DCPRDNEWAPPPKM15; TS0196d619=01a219d6f17b5eef2fb400cc872382725fc5cb3fd51bfde217d3c4fd901bcdbd78ae820e16a3260677694fd48b91325fd2d75395a0f717830cec7c6587ff70a7120a42c6cf";
+    "SERVERID=DCPRDNEWAPPPKM15; TS0196d619=01a219d6f17b5eef2fb400cc872382725fc5cb3fd51bfde217d3c4fd901bcdbd78ae820e16a3260677694fd48b91325fd2d75395a0f717830cec7c6587ff70a7120a42c6cf";
 
 app.get("/", (req, res) => {
-	res.render("index.html");
+    res.render("index.html");
 });
 
 app.get("/login", (req, res) => {
-	res.render("login.html");
+    res.render("login.html");
+});
+
+app.get("/master-produk", (req, res) => {
+    const data = JSON.parse(
+        fs.readFileSync("./data/masterProduk.json", "utf-8")
+    );
+
+    res.json({
+        status: true,
+        data: data
+    });
 });
 
 app.post("/sync", async (req, res) => {
-	let { username, branch, data } = req.body;
+    let { username, branch, data } = req.body;
 
-	try {
-		let savedData = await saveData(username, branch, data);
+    try {
+        let savedData = await saveData(username, branch, data);
 
-		res.json(savedData);
-	} catch (error) {
-		res.json({
-			status: false,
-			message: error.message
-		});
-	}
+        res.json(savedData);
+    } catch (error) {
+        res.json({
+            status: false,
+            message: error.message
+        });
+    }
 });
 
 app.post("/delete-data", async (req, res) => {
-	let { username, branch } = req.body;
+    let { username, branch } = req.body;
 
-	try {
-		let deletedData = await deleteData(username, branch);
+    try {
+        let deletedData = await deleteData(username, branch);
 
-		res.json(deletedData);
-	} catch (error) {
-		res.json({
-			status: false,
-			message: error.message
-		});
-	}
+        res.json(deletedData);
+    } catch (error) {
+        res.json({
+            status: false,
+            message: error.message
+        });
+    }
 });
 
 app.get("/data/:branch/:username", async (req, res) => {
-	let { username, branch } = req.params;
+    let { username, branch } = req.params;
 
-	try {
-		let result = await readData(username, branch);
+    try {
+        let result = await readData(username, branch);
 
-		res.json(result);
-	} catch (error) {
-		res.json({
-			status: false,
-			message: error.message,
-      data: null
-		});
-	}
+        res.json(result);
+    } catch (error) {
+        res.json({
+            status: false,
+            message: error.message,
+            data: null
+        });
+    }
 });
 
 app.post("/login", async (req, res) => {
-	const { username, password } = req.body;
+    const { username, password } = req.body;
 
-	try {
-		let payload = {
-			username,
-			password,
-			apk_version
-		};
+    try {
+        let payload = {
+            username,
+            password,
+            apk_version
+        };
 
-		let headers = {
-			"Content-Type": "application/json",
-			Cookie: cookie
-		};
+        let headers = {
+            "Content-Type": "application/json",
+            Cookie: cookie
+        };
 
-		let response = await axios.post(`${baseUrl}/AuthLogin`, payload, {
-			headers
-		});
+        let response = await axios.post(`${baseUrl}/AuthLogin`, payload, {
+            headers
+        });
 
-		return res.json(response.data);
-	} catch (error) {
-		console.log("ERROR:", error.response?.data || error.message);
-		return res.json(error.response?.data || error.message);
-	}
+        return res.json(response.data);
+    } catch (error) {
+        console.log("ERROR:", error.response?.data || error.message);
+        return res.json(error.response?.data || error.message);
+    }
 });
 
 app.get("/collect-list/:cabang/:username", async (req, res) => {
-	let { cabang, username } = req.params;
+    let { cabang, username } = req.params;
 
-	console.log("Request from: ", username);
+    console.log("Request from: ", username);
 
-	let Authorization = req.headers["authorization"];
+    let Authorization = req.headers["authorization"];
 
-	try {
-		let response = await axios.get(
-			`${baseUrl}/GetCollectionList/${cabang}/${username}`,
-			{
-				headers: {
-					Cookie: cookie,
-					Authorization: Authorization
-				}
-			}
-		);
+    try {
+        let response = await axios.get(
+            `${baseUrl}/GetCollectionList/${cabang}/${username}`,
+            {
+                headers: {
+                    Cookie: cookie,
+                    Authorization: Authorization
+                }
+            }
+        );
 
-		let data = response.data.data
-			.filter(item => item.StatusPAR === "NO")
-			.map(item => ({
-				id: item.AccountID,
-				IdKelompok: item.GroupID,
-				namaKelompok: item.GroupName,
-				idProduk: item.ProductID,
-				nama: item.ClientName,
-				rill: item.Rill,
-				ke: item.Ke,
-				flapond: item.DisburseAmount,
-				jumlahAngsuran: item.InstallmentAmount,
-				hariPertemuan: item.MeetingDay,
-				status: "none"
-			}));
+        let data = response.data.data
+            .filter(item => item.StatusPAR === "NO")
+            .map(item => ({
+                id: item.AccountID,
+                IdKelompok: item.GroupID,
+                namaKelompok: item.GroupName,
+                idProduk: item.ProductID,
+                nama: item.ClientName,
+                rill: item.Rill,
+                ke: item.Ke,
+                flapond: item.DisburseAmount,
+                jumlahAngsuran: item.InstallmentAmount,
+                hariPertemuan: item.MeetingDay,
+                status: "none"
+            }));
 
-		console.log("jumlah data:", data.length);
+        console.log("jumlah data:", data.length);
 
-		return res.json({
-			responseCode: response.data.responseCode,
-			responseDescription: response.data.responseDescription,
-			data
-		});
-	} catch (error) {
-		console.log("ERROR:", error.response?.data || error.message);
-		return res.json(error.response?.data || error.message);
-	}
+        return res.json({
+            responseCode: response.data.responseCode,
+            responseDescription: response.data.responseDescription,
+            data
+        });
+    } catch (error) {
+        console.log("ERROR:", error.response?.data || error.message);
+        return res.json(error.response?.data || error.message);
+    }
 });
 
 app.get("/group-list/:cabang/:username", async (req, res) => {
-	let { cabang, username } = req.params;
+    let { cabang, username } = req.params;
 
-	let Authorization = req.headers["authorization"];
+    let Authorization = req.headers["authorization"];
 
-	try {
-		let response = await axios.get(
-			`${baseUrl}/GetListGroup/${cabang}/${username}`,
-			{
-				headers: {
-					Cookie: cookie,
-					Authorization: Authorization
-				}
-			}
-		);
+    try {
+        let response = await axios.get(
+            `${baseUrl}/GetListGroup/${cabang}/${username}`,
+            {
+                headers: {
+                    Cookie: cookie,
+                    Authorization: Authorization
+                }
+            }
+        );
 
-		let data = response.data.data.map(item => ({
-			id: item.GroupID,
-			nama: item.GroupName,
-			hariPertemuan: item.MeetingDay
-		}));
+        let data = response.data.data.map(item => ({
+            id: item.GroupID,
+            nama: item.GroupName,
+            hariPertemuan: item.MeetingDay
+        }));
 
-		console.log("jumlah data:", data.length);
+        console.log("jumlah data:", data.length);
 
-		return res.json({
-			responseCode: response.data.responseCode,
-			responseDescription: response.data.responseDescription,
-			data
-		});
-	} catch (error) {
-		console.log("ERROR:", error.response?.data || error.message);
-		return res.json(error.response?.data || error.message);
-	}
+        return res.json({
+            responseCode: response.data.responseCode,
+            responseDescription: response.data.responseDescription,
+            data
+        });
+    } catch (error) {
+        console.log("ERROR:", error.response?.data || error.message);
+        return res.json(error.response?.data || error.message);
+    }
 });
 
 app.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
-  startAutoDeleteScheduler()
+    console.log(`Server is running on port ${PORT}`);
+    startAutoDeleteScheduler();
 });
