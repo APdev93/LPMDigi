@@ -980,7 +980,11 @@ function nasabahCard(n, k, i) {
       </div>
 
       <div class="pill">
-        tagihan: <strong>Rp ${rupiah(n.angsuran)}</strong>
+        tagihan: <strong>Rp ${rupiah(n.tagihan)}</strong>
+      </div>
+      
+      <div class="pill">
+        kewajiban angsuran: <strong>Rp ${rupiah(n.angsuran)}</strong>
       </div>
 
       <div class="pill">
