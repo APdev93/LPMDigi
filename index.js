@@ -8,7 +8,8 @@ const {
     saveData,
     readData,
     deleteData,
-    deleteAllDatabase
+    deleteAllDatabase,
+    logger
 } = require("./lib/utils");
 
 const app = express();
@@ -28,7 +29,7 @@ const startAutoDeleteScheduler = () => {
     setInterval(async () => {
         const result = await deleteAllDatabase();
 
-        console.log(new Date().toISOString(), result.message);
+        logger.info("Auto delete executed", result);
     }, interval);
 };
 
@@ -58,12 +59,13 @@ app.get("/master-produk", (req, res) => {
 
 app.post("/sync", async (req, res) => {
     let { username, branch, data } = req.body;
-
+    logger.info("Sync request", { username });
     try {
         let savedData = await saveData(username, branch, data);
-
+        logger.success("Sync success", { username });
         res.json(savedData);
     } catch (error) {
+        logger.error("Sync failed", error);
         res.json({
             status: false,
             message: error.message
@@ -74,11 +76,16 @@ app.post("/sync", async (req, res) => {
 app.post("/delete-data", async (req, res) => {
     let { username, branch } = req.body;
 
+    logger.warning("Delete data request", { username, branch });
+
     try {
         let deletedData = await deleteData(username, branch);
 
+        logger.success("Data deleted", { username, branch });
+
         res.json(deletedData);
     } catch (error) {
+        logger.error("Delete failed", error);
         res.json({
             status: false,
             message: error.message
@@ -88,12 +95,13 @@ app.post("/delete-data", async (req, res) => {
 
 app.get("/data/:branch/:username", async (req, res) => {
     let { username, branch } = req.params;
-
+    logger.info("Get data request", { username });
     try {
         let result = await readData(username, branch);
-
+        logger.success("Get Data success", { username });
         res.json(result);
     } catch (error) {
+        logger.error("Get data failed", error);
         res.json({
             status: false,
             message: error.message,
@@ -104,7 +112,7 @@ app.get("/data/:branch/:username", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-
+    logger.info("Login request", { username });
     try {
         let payload = {
             username,
@@ -120,9 +128,10 @@ app.post("/login", async (req, res) => {
         let response = await axios.post(`${baseUrl}/AuthLogin`, payload, {
             headers
         });
-
+        logger.success("Login success", { username });
         return res.json(response.data);
     } catch (error) {
+        logger.error("Login failed", error);
         console.log("ERROR:", error.response?.data || error.message);
         return res.json(error.response?.data || error.message);
     }
@@ -131,7 +140,7 @@ app.post("/login", async (req, res) => {
 app.get("/collect-list/:cabang/:username", async (req, res) => {
     let { cabang, username } = req.params;
 
-    console.log("Request from: ", username);
+    logger.info("Fetch collect list", { username, cabang });
 
     let Authorization = req.headers["authorization"];
 
@@ -157,12 +166,16 @@ app.get("/collect-list/:cabang/:username", async (req, res) => {
                 rill: item.Rill,
                 ke: item.Ke,
                 flapond: item.DisburseAmount,
+                up: item.UPAmount,
                 jumlahAngsuran: item.InstallmentAmount,
+                angsuranSebelumnya: item.AngsuranSebelumnya,
                 hariPertemuan: item.MeetingDay,
                 status: "none"
             }));
 
-        console.log("jumlah data:", data.length);
+        logger.success("Collect list fetched", {
+            total: data.length
+        });
 
         return res.json({
             responseCode: response.data.responseCode,
@@ -170,7 +183,7 @@ app.get("/collect-list/:cabang/:username", async (req, res) => {
             data
         });
     } catch (error) {
-        console.log("ERROR:", error.response?.data || error.message);
+        logger.error("Collect list failed", error);
         return res.json(error.response?.data || error.message);
     }
 });

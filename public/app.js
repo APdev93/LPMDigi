@@ -78,10 +78,20 @@ function errorAlert(msg) {
 function getAngsuran(productName, plafond) {
     let data = JSON.parse(localStorage.getItem("masterProduk"));
     const product = data.find(p => p.productName === productName);
-    if (!product) throw new Error("Product tidak ditemukan");
+    if (!product) {
+        console.log(`Product tidak ditemukan ${productName}`);
+        return "0";
+    }
 
     const detail = product.DetailProduct.find(d => d.Plafond == plafond);
-    if (!detail) throw new Error("Plafond tidak ditemukan");
+    if (!detail) {
+        console.log("Plafond tidak ditemukan", plafond);
+        return "0";
+    }
+
+    console.log(
+        `${productName}:${rupiah(plafond)}:${detail.AngsuranPerminggu}`
+    );
 
     return detail.AngsuranPerminggu;
 }
@@ -107,7 +117,7 @@ async function getMasterProduk() {
     try {
         let response = await fetch("/master-produk");
 
-        if (!response.ok) throw new Error("Gagal mengambil data");
+        if (!response.ok) return errorAlert("Gagal mengambil data produk");
 
         let data = await response.json();
 
@@ -118,6 +128,7 @@ async function getMasterProduk() {
             return false;
         }
     } catch (error) {
+        console.log(error);
         alert("ERROR: " + (error.response?.data || error.message));
         return false;
     }
@@ -133,7 +144,7 @@ async function getSavedData() {
                 }
             }
         );
-        if (!response.ok) throw new Error("Gagal mengambil data");
+        if (!response.ok) return errorAlert("Gagal mengambil data");
         let data = await response.json();
 
         if (!data.status) {
@@ -159,7 +170,7 @@ async function getKelompok() {
                 }
             }
         );
-        if (!response.ok) throw new Error("Gagal mengambil data kelompok");
+        if (!response.ok) return errorAlert("Gagal mengambil data kelompok");
         let data = await response.json();
         return data.data;
     } catch (error) {
@@ -186,39 +197,46 @@ async function getNasabah() {
 }
 
 function loadData(kelompokData, nasabahData) {
-    let stored = loadLocal();
+    console.log(kelompokData, nasabahData);
+    try {
+        let stored = loadLocal();
+        console.log(stored);
+        let kelompok = kelompokData.map(g => ({
+            ...g,
+            nasabah: []
+        }));
+        console.log("kelompokdata:", kelompok);
+        const nasabahUnik = Array.from(
+            new Map(nasabahData.map(n => [n.id, n])).values()
+        );
 
-    let kelompok = kelompokData.map(g => ({
-        ...g,
-        nasabah: []
-    }));
+        nasabahUnik.forEach(n => {
+            let target = kelompok.find(k => k.id === n.IdKelompok);
 
-    const nasabahUnik = Array.from(
-        new Map(nasabahData.map(n => [n.id, n])).values()
-    );
+            if (target) {
+                target.nasabah.push({
+                    rill: n.rill,
+                    ke: n.ke,
+                    idProduk: n.idProduk,
+                    id: n.id,
+                    nama: n.nama,
+                    flapond: n.flapond,
+                    tagihan: n.jumlahAngsuran,
+                    up: n.up,
+                    angsuranSebelumnya: n.angsuranSebelumnya,
+                    angsuran: getAngsuran(n.idProduk, n.flapond),
+                    status: n.status || "none"
+                });
+            }
+        });
 
-    nasabahUnik.forEach(n => {
-        let target = kelompok.find(k => k.id === n.IdKelompok);
+        localStorage.setItem("semuaKelompok", JSON.stringify({ kelompok }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ kelompok }));
 
-        if (target) {
-            target.nasabah.push({
-                rill: n.rill,
-                ke: n.ke,
-                idProduk: n.idProduk,
-                id: n.id,
-                nama: n.nama,
-                flapond: n.flapond,
-                tagihan: n.jumlahAngsuran,
-                angsuran: getAngsuran(n.idProduk, n.flapond),
-                status: n.status || "none"
-            });
-        }
-    });
-
-    localStorage.setItem("semuaKelompok", JSON.stringify({ kelompok }));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ kelompok }));
-
-    return { kelompok };
+        return { kelompok };
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 function loadLocal() {
@@ -967,28 +985,30 @@ function nasabahCard(n, k, i) {
 
 </div>`;
     } else {
-        if (Number(n.tagihan) > 0) {
-            return `
+        return `
 <div class="nasabah-card nasabah-main light">
 
 <div class="nasabah-left">
-	<div class="kode-produk">${escapeHtml(n.idProduk || "N/A")}</div>
-      <div class="nas-name">${i + 1}.${escapeHtml(n.nama)}</div>
+	<div class="kode-produk">${i + 1} • ${escapeHtml(n.idProduk || "N/A")} • Rp${rupiah(n.flapond || 0)}</div>
+      <div class="nas-name">${escapeHtml(n.nama)}</div>
 
-      <div class="pill">
-        plafond: <strong>Rp ${rupiah(n.flapond)}</strong>
-      </div>
-
-      <div class="pill">
+      <div class="pill ${Number(n.tagihan) > 0 ? "red" : ""}">
         tagihan: <strong>Rp ${rupiah(n.tagihan)}</strong>
       </div>
-      
-      <div class="pill">
+      <div class="pill green">
         kewajiban angsuran: <strong>Rp ${rupiah(n.angsuran)}</strong>
       </div>
-
       <div class="pill">
-        ke: <strong>${n.ke}</strong>
+        angsuran sebelumnya: <strong>Rp ${rupiah(n.angsuranSebelumnya)}</strong>
+      </div>
+      <div class="pill">
+        jumlah up: <strong>Rp ${rupiah(n.up)}</strong>
+      </div>
+      <div class="pill">
+        angsuran ke: <strong>${n.ke}/${getTotalAngsuran(n.idProduk)}</strong>
+      </div>
+      <div class="pill">
+        sisa angsuran: <strong>${getTotalAngsuran(n.idProduk) - n.ke}</strong>
       </div>
 
     </div>
@@ -1034,7 +1054,6 @@ function nasabahCard(n, k, i) {
 		
     </div>
 </div>`;
-        }
     }
 }
 
@@ -1094,8 +1113,10 @@ function renderGroupDetail(groupId) {
         k.nasabah.forEach((n, i) => {
             const nas = document.createElement("div");
             nas.className = "list-item";
-            if (n.status !== "none") {
+            if (n.status === "cash") {
                 nas.classList.add("payed");
+            } else if (n.status === "tf") {
+                nas.classList.add("payTf");
             }
 
             nas.innerHTML = nasabahCard(n, k, i);
@@ -1193,9 +1214,10 @@ function closeModal(modalEl) {
 function addGroupFromData(id) {
     let allGroupData = JSON.parse(localStorage.getItem("semuaKelompok"));
     let group = allGroupData.kelompok.find(k => k.id === id);
-
+    console.log(group);
     group.hariPertemuan = getKodeHariNow().toString();
     state.kelompok.push(group);
+    console.log(state);
     saveData(state);
     renderAll();
 }
@@ -1213,13 +1235,15 @@ function bindEvents() {
     closeGroupModal?.addEventListener("click", () => closeModal(modalGroup));
     saveGroupBtn?.addEventListener("click", () => {
         const editingId = saveGroupBtn.getAttribute("data-edit");
-
+        console.log(editingId);
         if (editingId) {
             const name = inputGroupName.value.trim();
+            console.log(name);
             if (!name) return errorAlert("Isi nama kelompok");
             updateGroup(editingId, name);
         } else {
             const selectedId = selectGroupData.value;
+            console.log(selectedId);
             if (!selectedId) return errorAlert("Pilih kelompok");
             addGroupFromData(selectedId);
         }
