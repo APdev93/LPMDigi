@@ -1123,6 +1123,8 @@ function renderGroupDetail(groupId) {
                 nas.classList.add("payed");
             } else if (n.status === "tf") {
                 nas.classList.add("payTf");
+            } else if (n.status !== "none") {
+                nas.classList.add("payed");
             }
 
             nas.innerHTML = nasabahCard(n, k, i);
