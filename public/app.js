@@ -860,7 +860,13 @@ function renderGroups() {
 
     function renderTable() {
         if (allNasabahIndividu.length <= 0) {
-            iGroupsListEl.innerHTML = `<div class="empty">Tidak ada nasabah individu.</div>`;
+            iGroupsListEl.innerHTML = `
+  <tr>
+    <td colspan="4" style="text-align:center; padding:20px;">
+      Tidak ada nasabah individu.
+    </td>
+  </tr>
+`;
             return;
         }
 

@@ -84,6 +84,11 @@ body {
     top: 62px;
 }
 
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
 .nasabah-table {
     width: 100%;
     border-collapse: collapse;
@@ -101,6 +106,7 @@ body {
     font-size: 14px;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;  
 }
 .nasabah-table th {
     font-weight: 600;
@@ -115,6 +121,9 @@ body {
 .nasabah-table tbody tr.payed td {
     color: #065f46;
     font-weight: 500;
+}
+.nasabah-table tbody {
+    width: 100%;
 }
 
 .green {

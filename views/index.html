@@ -7,26 +7,29 @@
             rel="icon"
             sizes="32x32"
             type="image/png"
-            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
+        />
         <link
             rel="shortcut icon"
-            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
+        />
         <title>LPM Digi PNM</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-            rel="stylesheet" />
+            rel="stylesheet"
+        />
 
         <!-- module imports -->
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
-            rel="stylesheet" />
+            rel="stylesheet"
+        />
         <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
         <script src="https://unpkg.com/feather-icons"></script>
-
 
         <!-- styles -->
         <link rel="stylesheet" href="/style.css" />
@@ -122,17 +125,19 @@
                             </div>
                         </div>
 
-                        <table class="nasabah-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Kelompok</th>
-                                    <th>Nama</th>
-                                    <th>Tagihan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="iGroupsList"></tbody>
-                        </table>
+                        <div class="table-wrapper">
+                            <table class="nasabah-table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Kelompok</th>
+                                        <th>Nama</th>
+                                        <th>Tagihan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="iGroupsList"></tbody>
+                            </table>
+                        </div>
 
                         <div class="pagination">
                             <button id="prevBtn">Prev</button>
@@ -181,20 +186,23 @@
                             <div class="card-actions">
                                 <button
                                     id="btnAddNasabah"
-                                    class="btn btn-primary">
+                                    class="btn btn-primary"
+                                >
                                     <i data-feather="user-plus"></i> Tambah
                                     Nasabah
                                 </button>
                                 <button
                                     id="btnEditGroup"
                                     class="btn btn-edit"
-                                    title="Edit Kelompok">
+                                    title="Edit Kelompok"
+                                >
                                     <i data-feather="edit-2"></i>
                                 </button>
                                 <button
                                     id="btnDeleteGroup"
                                     class="btn btn-danger"
-                                    title="Hapus Kelompok">
+                                    title="Hapus Kelompok"
+                                >
                                     <i data-feather="trash-2"></i>
                                 </button>
                             </div>
@@ -219,7 +227,8 @@
                     <input
                         id="inputGroupName"
                         type="text"
-                        placeholder="Nama kelompok baru" />
+                        placeholder="Nama kelompok baru"
+                    />
                 </div>
                 <div class="form-group" id="selectGroup">
                     <label>Pilih Data Kelompok</label>
@@ -248,7 +257,8 @@
                     <input
                         id="inputNasabahName"
                         type="text"
-                        placeholder="Nama nasabah" />
+                        placeholder="Nama nasabah"
+                    />
                 </div>
 
                 <div class="form-group">
@@ -256,7 +266,8 @@
                     <input
                         id="inputNasabahTagihan"
                         type="number"
-                        placeholder="0" />
+                        placeholder="0"
+                    />
                 </div>
 
                 <div class="form-group">
@@ -267,7 +278,8 @@
                                 name="status"
                                 type="radio"
                                 value="none"
-                                checked />
+                                checked
+                            />
                             Tidak Stor</label
                         >
                         <label class="radio-card"
@@ -298,7 +310,8 @@
         <div
             id="loadingIndicator"
             class="loader-container"
-            style="display: none">
+            style="display: none"
+        >
             <div class="loader"></div>
         </div>
 
