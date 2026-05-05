@@ -1005,12 +1005,6 @@ function nasabahCard(n, k, i) {
         kewajiban angsuran: <strong>Rp ${rupiah(n.angsuran)}</strong>
       </div>
       <div class="pill">
-        angsuran sebelumnya: <strong>Rp ${rupiah(n.angsuranSebelumnya)}</strong>
-      </div>
-      <div class="pill">
-        jumlah up: <strong>Rp ${rupiah(n.up)}</strong>
-      </div>
-      <div class="pill">
         angsuran ke: <strong>${n.ke}/${getTotalAngsuran(n.idProduk)}</strong>
       </div>
       <div class="pill">
