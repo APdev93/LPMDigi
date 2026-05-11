@@ -1488,8 +1488,17 @@ async function init() {
         window.location.href = "/login";
         return;
     }
-    getMasterProduk();
-    checkSession();
+    try {
+        showLoading();
+        await getMasterProduk();
+        await checkSession();
+        await getSavedData();
+    } catch (error) {
+        hideLoading();
+        console.error(error);
+    } finally {
+        hideLoading();
+    }
 
     setInterval(() => {
         checkSession();
