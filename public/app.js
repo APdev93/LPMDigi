@@ -49,6 +49,27 @@ function hideLoading() {
     document.getElementById("loadingIndicator").style.display = "none";
 }
 
+function showToast(message, duration = 3000) {
+    const container = document.getElementById("toastContainer");
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+
+    toast.innerHTML = `
+    <p>${message}</p>
+  `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add("hide");
+
+        toast.addEventListener("animationend", () => {
+            toast.remove();
+        });
+    }, duration);
+}
+
 function successAlert(msg) {
     Swal.fire({
         title: "Berhasil!",
@@ -342,29 +363,16 @@ async function syncData() {
             body: JSON.stringify({ username, branch, data })
         });
 
-        if (!res.ok)
-            return errorAlert("Sync gagal. periksa sambungan internet");
+        if (!res.ok) return showToast("Gagal Menyimpan. Cek Koneksi");
 
         const result = await res.json();
         console.log(result);
-        if (!result.status) return errorAlert(result.message);
+        if (!result.status) return showToast(result.message);
     } finally {
         hideLoading();
 
-        Swal.fire({
-            title: "Berhasil!",
-            text: "Berhasil sinkronisasi",
-            icon: "success",
-            confirmButtonText: "Oke",
-            customClass: {
-                popup: "swal-success-popup",
-                confirmButton: "swal-success-btn"
-            }
-        }).then(result => {
-            if (result.isConfirmed) {
-                window.location.reload();
-            }
-        });
+        showToast("Berhasil disimpan!");
+        getSavedData();
     }
 }
 
