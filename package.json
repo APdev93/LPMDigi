@@ -1,6 +1,6 @@
 {
-    "name": "server",
-    "version": "1.0.0",
+    "name": "LPM Digi",
+    "version": "1.2.30",
     "main": "index.js",
     "type": "commonjs",
     "scripts": {

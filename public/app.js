@@ -1278,6 +1278,7 @@ function bindEvents() {
         pageGroupDetail.classList.add("hidden");
         pageGroups.classList.remove("hidden");
         currentGroupId = null;
+        syncData();
         renderAll();
     });
 

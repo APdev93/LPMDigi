@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -8,12 +8,25 @@
             rel="icon"
             sizes="32x32"
             type="image/png"
-            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
+        />
         <link
             rel="shortcut icon"
-            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png" />
+            href="https://mekaar.getredy.id/assets/images/pnm/mekaar-logo.png"
+        />
         <link rel="stylesheet" href="/style.css" type="text/css" media="all" />
         <style>
+            #version {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+
+            #version p {
+                font-size: 12px;
+                color: #4d94ca;
+            }
             body {
                 margin: 0;
                 padding: 0;
@@ -126,7 +139,8 @@
             <img
                 src="/media/logo.png"
                 alt="logo"
-                style="margin-bottom: 20px;width: 100%" />
+                style="margin-bottom: 20px; width: 100%"
+            />
 
             <div class="form-group">
                 <label>Username</label>
@@ -134,7 +148,8 @@
                     id="inputUserName"
                     type="text"
                     placeholder="Masukan username"
-                    autocapitalize="words" />
+                    autocapitalize="words"
+                />
             </div>
 
             <div class="form-group">
@@ -144,7 +159,8 @@
                         id="inputPassword"
                         type="password"
                         placeholder="Masukan password"
-                        autocapitalize="words" />
+                        autocapitalize="words"
+                    />
                     <div id="togglePassword" class="toggle-eye">
                         <i data-feather="eye"></i>
                     </div>
@@ -152,12 +168,17 @@
             </div>
 
             <button class="btn-login" id="btnLogin">Login</button>
+
+            <div id="version">
+                <p>1.2.30 @ 12-05-2025</p>
+            </div>
         </div>
 
         <div
             id="loadingIndicator"
             class="loader-container"
-            style="display: none">
+            style="display: none"
+        >
             <div class="loader"></div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
