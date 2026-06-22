@@ -46,6 +46,10 @@ app.get("/login", (req, res) => {
     res.render("login.html");
 });
 
+app.get("/token", (req, res) => {
+    res.render("token.html");
+});
+
 app.get("/master-produk", (req, res) => {
     const data = JSON.parse(
         fs.readFileSync("./data/masterProduk.json", "utf-8")
