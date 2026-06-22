@@ -171,7 +171,6 @@ async function getSavedData() {
         if (!data.status) {
             return false;
         } else {
-            localStorage.setItem("semuaKelompok", JSON.stringify(data.data));
             localStorage.setItem("kelompok", JSON.stringify(data.data));
             return true;
         }
@@ -250,9 +249,6 @@ function loadData(kelompokData, nasabahData) {
                 });
             }
         });
-
-        localStorage.setItem("semuaKelompok", JSON.stringify({ kelompok }));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ kelompok }));
 
         return { kelompok };
     } catch (error) {
@@ -493,6 +489,7 @@ const btnCekDo = document.getElementById("btnCekDo");
 const btnDlData = document.getElementById("downloadBtn");
 const btnSync = document.getElementById("btnSync");
 const btnDlMasterData = document.getElementById("downloadMBtn");
+const copyLPMBtn = document.getElementById("btnCopyLPM");
 
 btnSync.addEventListener("click", () => {
     syncData();
@@ -578,7 +575,7 @@ function addFilter(ws) {
     };
 }
 
-function createRekapSheet(wb, data) {
+function createRekapSheet(wb, data, totalRunOff) {
     let totalCash = 0;
     let totalTF = 0;
     let totalIndividu = 0;
@@ -597,11 +594,12 @@ function createRekapSheet(wb, data) {
         {
             "Total Cash": rupiah(totalCash),
             "Total TF": rupiah(totalTF),
-            "Total Individu": rupiah(totalIndividu)
+            "Total Individu": rupiah(totalIndividu),
+            "Total Run Off": rupiah(totalRunOff)
         }
     ]);
 
-    ws["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }];
+    ws["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }];
 
     styleHeader(ws);
     styleBody(ws);
@@ -688,8 +686,12 @@ btnDlMasterData.addEventListener("click", () => {
 
     const pkm = [];
 
+    let totalRunOff = 0;
+
     data.kelompok.forEach(k => {
         k.nasabah.forEach(n => {
+            const tagihan = Number(n.tagihan || 0);
+
             const row = {
                 ClientID: n.id,
                 GroupName: k.nama,
@@ -701,8 +703,10 @@ btnDlMasterData.addEventListener("click", () => {
                 Status: n.status.toUpperCase()
             };
 
-            if (["cash", "tf", "none", "individu"].includes(n.status))
+            if (["cash", "tf", "none", "individu"].includes(n.status)) {
                 pkm.push(row);
+                totalRunOff += tagihan;
+            }
         });
     });
 
@@ -718,7 +722,7 @@ btnDlMasterData.addEventListener("click", () => {
         XLSX.utils.book_append_sheet(wb, wsPKM, "PKM");
     }
 
-    createRekapSheet(wb, data);
+    createRekapSheet(wb, data, totalRunOff);
     createHampirLunasSheet(wb, data);
 
     XLSX.writeFile(wb, `PKM_MasterData_${getTanggal()}.xlsx`);
@@ -738,8 +742,12 @@ btnDlData.addEventListener("click", () => {
     const pkm = [];
     const individu = [];
 
+    let totalRunOff = 0;
+
     data.kelompok.forEach(k => {
         k.nasabah.forEach(n => {
+            const tagihan = Number(n.tagihan || 0);
+
             const row = {
                 ClientID: n.id,
                 GroupName: k.nama,
@@ -751,8 +759,15 @@ btnDlData.addEventListener("click", () => {
                 Status: n.status.toUpperCase()
             };
 
-            if (["cash", "tf", "none"].includes(n.status)) pkm.push(row);
-            if (n.status === "individu") individu.push(row);
+            if (["cash", "tf", "none"].includes(n.status)) {
+                pkm.push(row);
+                totalRunOff += tagihan;
+            }
+
+            if (n.status === "individu") {
+                individu.push(row);
+                totalRunOff += tagihan;
+            }
         });
     });
 
@@ -778,7 +793,7 @@ btnDlData.addEventListener("click", () => {
         XLSX.utils.book_append_sheet(wb, wsInd, "Individu");
     }
 
-    createRekapSheet(wb, data);
+    createRekapSheet(wb, data, totalRunOff);
     createHampirLunasSheet(wb, data);
 
     XLSX.writeFile(wb, `PKM_INDIVIDU_${getTanggal()}.xlsx`);
@@ -1262,6 +1277,35 @@ function bindEvents() {
         closeModal(modalGroup);
     });
 
+    btnCopyLpm?.addEventListener("click", async () => {
+        if (!currentGroupId) {
+            return errorAlert("Kelompok tidak ditemukan");
+        }
+
+        const kelompok = state.kelompok.find(k => k.id === currentGroupId);
+
+        if (!kelompok) {
+            return errorAlert("Data kelompok tidak ditemukan");
+        }
+
+        let text = `${kelompok.nama}\n\n`;
+
+        kelompok.nasabah.forEach((item, i) => {
+            text += `${i + 1}. ${item.nama.toUpperCase().split("BINTI")[0]}/${rupiah(item.angsuran)} ${
+                item.status === "cash" || item.status === "tf" ? "✓" : ""
+            }\n`;
+        });
+
+        try {
+            await navigator.clipboard.writeText(text);
+
+            showToast("LPM berhasil disalin");
+        } catch (error) {
+            console.log(error);
+            showToast("Gagal menyalin LPM");
+        }
+    });
+
     // group list actions (delegation)
     groupsListEl.addEventListener("click", ev => {
         const btn = ev.target.closest("button");
@@ -1527,7 +1571,11 @@ async function init() {
                 console.log("data kelompok:", dataKelompok);
                 console.log("data nasabah:", dataNasabah);
                 state = loadData(dataKelompok, dataNasabah);
-                console.log(state);
+                localStorage.setItem("semuaKelompok", JSON.stringify(state));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } else {
+                state = loadData(dataKelompok, dataNasabah);
+                localStorage.setItem("semuaKelompok", JSON.stringify(state));
             }
         } catch (error) {
             hideLoading();
