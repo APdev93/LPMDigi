@@ -62,11 +62,11 @@ app.get("/master-produk", (req, res) => {
 });
 
 app.post("/sync", async (req, res) => {
-    let { username, branch, data } = req.body;
+    let { name, username, branch, data } = req.body;
     logger.info("Sync request", { username });
     try {
-        let savedData = await saveData(username, branch, data);
-        logger.success("Sync success", { username });
+        let savedData = await saveData(name, username, branch, data);
+        logger.success("Sync success", { username, name });
         res.json(savedData);
     } catch (error) {
         logger.error("Sync failed", error);
