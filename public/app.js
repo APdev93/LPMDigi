@@ -345,6 +345,7 @@ function calcPresencePercentage(state) {
 
 async function syncData() {
     try {
+        let name = localStorage.getItem("name");
         let username = localStorage.getItem("username");
         let branch = localStorage.getItem("cabangID");
         let data = JSON.parse(
@@ -356,7 +357,7 @@ async function syncData() {
         const res = await fetch("/sync", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, branch, data })
+            body: JSON.stringify({ name, username, branch, data })
         });
 
         if (!res.ok) return showToast("Gagal Menyimpan. Cek Koneksi");
