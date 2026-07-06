@@ -36,8 +36,7 @@ const startAutoDeleteScheduler = () => {
 const baseUrl = "http://pkmmekaar.kresnasaraswati.id/v1/pkm";
 const apk_version = "0.0.18-026-prod @ 2024-06-19";
 const cookie =
-    "SERVERID=DCPRDNEWAPPPKM15; TS0196d619=01a219d6f17b5eef2fb400cc872382725fc5cb3fd51bfde217d3c4fd901bcdbd78ae820e16a3260677694fd48b91325fd2d75395a0f717830cec7c6587ff70a7120a42c6cf";
-
+    "SERVERID=DCPRDNEWAPPPKM12; TS0196d619=01a219d6f17966e8f97ccebf374a091581ba16d1cf86ce1a78d9d62826a7ba9db75dbc5debc3f3deec3a28428d0e320c4b40728618e25f44e1d2d32d1c2cae1425f0b85f66";
 app.get("/", (req, res) => {
     res.render("index.html");
 });
@@ -132,6 +131,7 @@ app.post("/login", async (req, res) => {
         let response = await axios.post(`${baseUrl}/AuthLogin`, payload, {
             headers
         });
+        //console.log(response);
         logger.success("Login success", { username });
         return res.json(response.data);
     } catch (error) {
