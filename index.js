@@ -45,8 +45,8 @@ app.get("/login", (req, res) => {
     res.render("login.html");
 });
 
-app.get("/token", (req, res) => {
-    res.render("token.html");
+app.get("/kolase", (req, res) => {
+    res.render("kolase.html");
 });
 
 app.get("/master-produk", (req, res) => {
