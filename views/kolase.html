@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Foto Proses - Kolase</title>
+        <style>
+            :root {
+                --blue: #1687d9;
+                --dark: #123047;
+                --bg: #f4f7fa;
+                --line: #d9e2ea;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background: var(--bg);
+                color: #17232d;
+            }
+            header {
+                background: linear-gradient(135deg, #0d78c7, #46a9e8);
+                color: #fff;
+                padding: 18px 20px;
+                position: sticky;
+                top: 0;
+                z-index: 5;
+                box-shadow: 0 2px 10px #0002;
+            }
+            header h1 {
+                margin: 0;
+                font-size: 21px;
+            }
+            header p {
+                margin: 5px 0 0;
+                opacity: 0.9;
+                font-size: 13px;
+            }
+            main {
+                max-width: 1180px;
+                margin: auto;
+                padding: 18px;
+            }
+            .card {
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 16px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 8px #00000008;
+            }
+            .row {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+            input,
+            select,
+            button {
+                font: inherit;
+            }
+            input[type="text"] {
+                width: 100%;
+                padding: 11px 12px;
+                border: 1px solid #cbd7e1;
+                border-radius: 9px;
+                outline: none;
+            }
+            input[type="text"]:focus {
+                border-color: var(--blue);
+            }
+            .btn {
+                border: 0;
+                border-radius: 9px;
+                padding: 10px 14px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+            .primary {
+                background: var(--blue);
+                color: #fff;
+            }
+            .secondary {
+                background: #e9f2f8;
+                color: #145579;
+            }
+            .danger {
+                background: #ffe9e9;
+                color: #a32222;
+            }
+            .ghost {
+                background: #fff;
+                border: 1px solid var(--line);
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+                gap: 12px;
+            }
+            .stage {
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 11px;
+                background: #fbfdff;
+            }
+            .stage h3 {
+                font-size: 15px;
+                margin: 0 0 8px;
+            }
+            .stage img {
+                width: 100%;
+                height: 145px;
+                object-fit: contain;
+                background: #f1f4f6;
+                border-radius: 8px;
+                display: block;
+            }
+            .empty {
+                height: 145px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f5f6f7;
+                border: 2px dashed #c9d3da;
+                border-radius: 8px;
+                color: #7a8790;
+                font-size: 13px;
+                text-align: center;
+            }
+            .stage .meta {
+                font-size: 11px;
+                color: #66737c;
+                margin-top: 6px;
+                min-height: 14px;
+            }
+            .stage .actions {
+                display: flex;
+                gap: 6px;
+                margin-top: 8px;
+            }
+            .stage .actions button {
+                padding: 7px 9px;
+                font-size: 12px;
+            }
+            .toolbar {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .toolbar input {
+                flex: 1;
+                min-width: 220px;
+            }
+            .list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+                gap: 9px;
+            }
+            .customer {
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 11px;
+                cursor: pointer;
+                background: #fff;
+            }
+            .customer:hover {
+                border-color: var(--blue);
+            }
+            .customer strong {
+                display: block;
+            }
+            .customer small {
+                color: #71808a;
+            }
+            .status {
+                padding: 8px 10px;
+                border-radius: 8px;
+                background: #eef7fc;
+                color: #145579;
+                font-size: 13px;
+                margin-top: 9px;
+            }
+            #previewWrap {
+                display: flex;
+                justify-content: center;
+                background: #e8edf1;
+                padding: 15px;
+                border-radius: 12px;
+                overflow: auto;
+            }
+            canvas {
+                background: #fff;
+                max-width: 100%;
+                height: auto;
+                box-shadow: 0 2px 12px #0003;
+            }
+            .note {
+                font-size: 12px;
+                color: #65727b;
+                line-height: 1.5;
+            }
+            @media (max-width: 600px) {
+                main {
+                    padding: 10px;
+                }
+                .card {
+                    padding: 12px;
+                }
+                .stage img,
+                .empty {
+                    height: 125px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Kolase - Foto Proses</h1>
+        </header>
+        <main>
+            <section class="card">
+                <div class="toolbar">
+                    <input
+                        id="customerName"
+                        type="text"
+                        placeholder="Nama nasabah, contoh: Johariah"
+                    />
+                    <button class="btn primary" onclick="newCustomer()">
+                        + Tambah Nasabah
+                    </button>
+                    <button class="btn secondary" onclick="saveCustomer()">
+                        Simpan
+                    </button>
+                    <button class="btn danger" onclick="deleteCustomer()">
+                        Hapus
+                    </button>
+                </div>
+                <div id="status" class="status">Belum memilih nasabah.</div>
+            </section>
+
+            <section class="card">
+                <h2 style="font-size: 17px; margin: 0 0 12px">
+                    Daftar Nasabah
+                </h2>
+                <div class="list" id="customerList"></div>
+            </section>
+
+            <section class="card">
+                <h2 style="font-size: 17px; margin: 0 0 12px">Foto Proses</h2>
+                <div class="grid" id="stageGrid"></div>
+            </section>
+
+            <section class="card">
+                <div class="row" style="justify-content: space-between">
+                    <div>
+                        <h2 style="font-size: 17px; margin: 0">Preview Foto</h2>
+                    </div>
+                    <div class="toolbar">
+                        <button class="btn secondary" onclick="renderPreview()">
+                            Refresh Preview
+                        </button>
+                        <button class="btn primary" onclick="downloadJPG()">
+                            Download JPG
+                        </button>
+                        <button class="btn ghost" onclick="printCanvas()">
+                            Print
+                        </button>
+                    </div>
+                </div>
+                <div id="previewWrap" style="margin-top: 12px">
+                    <canvas id="canvas" width="1280" height="1600"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <input id="fileInput" type="file" accept="image/*" hidden />
+
+        <script>
+            const stages = [
+                { id: "nasabah", name: "Nasabah" },
+                { id: "uji", name: "Uji Kelayakan" },
+                { id: "pp3", name: "PP3" },
+                { id: "pencairan", name: "Pencairan" },
+                { id: "sub", name: "Sub Ketua" },
+                { id: "ketua", name: "Ketua" },
+                { id: "pj", name: "Penanggung Jawab" }
+            ];
+            let db,
+                customers = {},
+                current = "",
+                pendingStage = "";
+
+            function openDB() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open("fotoProsesDB", 1);
+                    req.onupgradeneeded = e =>
+                        e.target.result.createObjectStore("customers", {
+                            keyPath: "name"
+                        });
+                    req.onsuccess = e => {
+                        db = e.target.result;
+                        resolve();
+                    };
+                    req.onerror = () => reject(req.error);
+                });
+            }
+            function idbPut(data) {
+                return new Promise((res, rej) => {
+                    let r = db
+                        .transaction("customers", "readwrite")
+                        .objectStore("customers")
+                        .put(data);
+                    r.onsuccess = () => res();
+                    r.onerror = () => rej(r.error);
+                });
+            }
+            function idbGetAll() {
+                return new Promise((res, rej) => {
+                    let r = db
+                        .transaction("customers")
+                        .objectStore("customers")
+                        .getAll();
+                    r.onsuccess = () => res(r.result);
+                    r.onerror = () => rej(r.error);
+                });
+            }
+            function idbDelete(name) {
+                return new Promise((res, rej) => {
+                    let r = db
+                        .transaction("customers", "readwrite")
+                        .objectStore("customers")
+                        .delete(name);
+                    r.onsuccess = () => res();
+                    r.onerror = () => rej(r.error);
+                });
+            }
+
+            function newCustomer() {
+                current = "";
+                document.getElementById("customerName").value = "";
+                customers["__new"] = { name: "", photos: {} };
+                renderStages();
+                setStatus("Nasabah baru. Masukkan nama lalu upload foto.");
+            }
+            async function saveCustomer() {
+                const name = document
+                    .getElementById("customerName")
+                    .value.trim();
+                if (!name) {
+                    alert("Masukkan nama nasabah.");
+                    return;
+                }
+                let data = customers[current] ||
+                    customers["__new"] || { photos: {} };
+                if (current && current !== name) {
+                    await idbDelete(current);
+                }
+                data.name = name;
+                await idbPut(data);
+                delete customers["__new"];
+                customers[name] = data;
+                current = name;
+                renderList();
+                setStatus("Tersimpan: " + name);
+            }
+            async function deleteCustomer() {
+                if (!current) {
+                    alert("Pilih nasabah terlebih dahulu.");
+                    return;
+                }
+                if (!confirm("Hapus seluruh foto proses " + current + "?"))
+                    return;
+                await idbDelete(current);
+                delete customers[current];
+                current = "";
+                document.getElementById("customerName").value = "";
+                renderList();
+                renderStages();
+                renderPreview();
+                setStatus("Nasabah dihapus.");
+            }
+            function selectCustomer(name) {
+                current = name;
+                document.getElementById("customerName").value = name;
+                renderStages();
+                renderPreview();
+                setStatus("Nasabah aktif: " + name);
+            }
+            function setStatus(t) {
+                document.getElementById("status").textContent = t;
+            }
+
+            function renderList() {
+                const el = document.getElementById("customerList");
+                el.innerHTML = "";
+                const arr = Object.values(customers).filter(x => x.name);
+                if (!arr.length) {
+                    el.innerHTML =
+                        '<div class="note">Belum ada data nasabah.</div>';
+                    return;
+                }
+                arr.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+                    const d = document.createElement("div");
+                    d.className = "customer";
+                    const count = stages.filter(s => c.photos?.[s.id]).length;
+                    d.innerHTML =
+                        "<strong>" +
+                        esc(c.name) +
+                        "</strong><small>" +
+                        count +
+                        "/7 foto tersedia</small>";
+                    d.onclick = () => selectCustomer(c.name);
+                    el.appendChild(d);
+                });
+            }
+            function esc(s) {
+                return s.replace(
+                    /[&<>"']/g,
+                    m =>
+                        ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            '"': "&quot;",
+                            "'": "&#39;"
+                        })[m]
+                );
+            }
+
+            function renderStages() {
+                const el = document.getElementById("stageGrid");
+                el.innerHTML = "";
+                const data = customers[current] ||
+                    customers["__new"] || { photos: {} };
+                stages.forEach(s => {
+                    const box = document.createElement("div");
+                    box.className = "stage";
+                    const photo = data.photos?.[s.id];
+                    box.innerHTML = "<h3>" + s.name + "</h3>";
+                    if (photo) {
+                        const img = document.createElement("img");
+                        img.src = photo;
+                        box.appendChild(img);
+                        const m = document.createElement("div");
+                        m.className = "meta";
+                        m.textContent = "Foto tersedia";
+                        box.appendChild(m);
+                    } else {
+                        const e = document.createElement("div");
+                        e.className = "empty";
+                        e.textContent = "FOTO BELUM ADA";
+                        box.appendChild(e);
+                        const m = document.createElement("div");
+                        m.className = "meta";
+                        m.textContent = "Akan menjadi placeholder";
+                        box.appendChild(m);
+                    }
+                    const actions = document.createElement("div");
+                    actions.className = "actions";
+                    const up = document.createElement("button");
+                    up.className = "btn primary";
+                    up.textContent = photo ? "Ganti" : "Upload";
+                    up.onclick = () => chooseFile(s.id);
+                    actions.appendChild(up);
+                    if (photo) {
+                        const rm = document.createElement("button");
+                        rm.className = "btn danger";
+                        rm.textContent = "Hapus";
+                        rm.onclick = () => removePhoto(s.id);
+                        actions.appendChild(rm);
+                    }
+                    box.appendChild(actions);
+                    el.appendChild(box);
+                });
+            }
+            function chooseFile(stage) {
+                if (!current && !customers["__new"]) {
+                    alert("Buat/pilih nasabah terlebih dahulu.");
+                    return;
+                }
+                pendingStage = stage;
+                document.getElementById("fileInput").click();
+            }
+            document.getElementById("fileInput").onchange = async e => {
+                const f = e.target.files[0];
+                if (!f) return;
+                if (!f.type.startsWith("image/")) {
+                    alert("Pilih file gambar.");
+                    return;
+                }
+                const data = customers[current] ||
+                    customers["__new"] || { name: "", photos: {} };
+                data.photos = data.photos || {};
+                data.photos[pendingStage] = await fileToDataURL(f);
+                if (current) {
+                    await idbPut(data);
+                    customers[current] = data;
+                } else customers["__new"] = data;
+                e.target.value = "";
+                renderStages();
+                renderPreview();
+                setStatus(
+                    "Foto " +
+                        stages.find(s => s.id === pendingStage).name +
+                        " ditambahkan."
+                );
+            };
+            function fileToDataURL(file) {
+                return new Promise((res, rej) => {
+                    let r = new FileReader();
+                    r.onload = () => res(r.result);
+                    r.onerror = () => rej(r.error);
+                    r.readAsDataURL(file);
+                });
+            }
+            async function removePhoto(stage) {
+                const data = customers[current] || customers["__new"];
+                if (!data) return;
+                delete data.photos[stage];
+                if (current) {
+                    await idbPut(data);
+                    customers[current] = data;
+                } else customers["__new"] = data;
+                renderStages();
+                renderPreview();
+            }
+
+            const canvas = document.getElementById("canvas"),
+                ctx = canvas.getContext("2d");
+            const CW = 1240,
+                CH = 1754,
+                margin = 28,
+                gap = 22,
+                row1 = 405,
+                row2 = 405;
+            const col2 = (CW - 2 * margin - gap) / 2,
+                col3 = (CW - 2 * margin - 2 * gap) / 3;
+            const boxes = [
+                [margin, margin, col2, row1],
+                [margin + col2 + gap, margin, col2, row1],
+                [margin, margin + row1 + gap, col2, row2],
+                [margin + col2 + gap, margin + row1 + gap, col2, row2],
+                [
+                    margin,
+                    margin + row1 + row2 + 2 * gap,
+                    col3,
+                    CH - 2 * margin - 2 * gap - row1 - row2
+                ],
+                [
+                    margin + col3 + gap,
+                    margin + row1 + row2 + 2 * gap,
+                    col3,
+                    CH - 2 * margin - 2 * gap - row1 - row2
+                ],
+                [
+                    margin + 2 * (col3 + gap),
+                    margin + row1 + row2 + 2 * gap,
+                    col3,
+                    CH - 2 * margin - 2 * gap - row1 - row2
+                ]
+            ];
+            function rr(c, x, y, w, h, r) {
+                c.beginPath();
+                c.roundRect(x, y, w, h, r);
+                c.fill();
+            }
+            function drawLabel(x, y, text) {
+                ctx.font = "27px Arial";
+                const tw = ctx.measureText(text).width,
+                    ph = 18,
+                    pv = 10;
+                ctx.fillStyle = "#fff";
+                rr(ctx, x, y, tw + 2 * ph, 27 + 2 * pv, 16);
+                ctx.fillStyle = "#111";
+                ctx.fillText(text, x + ph, y + 27);
+            }
+            function drawPlaceholder(x, y, w, h) {
+                ctx.fillStyle = "#f7f7f7";
+                rr(ctx, x + 10, y + 10, w - 20, h - 20, 18);
+                ctx.strokeStyle = "#cdd5da";
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = "#777";
+                ctx.font = "23px Arial";
+                const t = "FOTO BELUM ADA",
+                    tw = ctx.measureText(t).width;
+                ctx.fillText(t, x + (w - tw) / 2, y + h / 2 + 8);
+            }
+            function loadImage(src) {
+                return new Promise((res, rej) => {
+                    const i = new Image();
+                    i.onload = () => res(i);
+                    i.onerror = rej;
+                    i.src = src;
+                });
+            }
+            async function drawPhoto(src, x, y, w, h) {
+                const im = await loadImage(src);
+                const scale = Math.min(w / im.width, h / im.height),
+                    nw = im.width * scale,
+                    nh = im.height * scale;
+                ctx.drawImage(im, x + (w - nw) / 2, y + (h - nh) / 2, nw, nh);
+            }
+            async function renderPreview() {
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(0, 0, CW, CH);
+                const data = customers[current] ||
+                    customers["__new"] || { photos: {} };
+                for (let i = 0; i < stages.length; i++) {
+                    const s = stages[i],
+                        b = boxes[i];
+                    ctx.fillStyle = "#fff";
+                    ctx.fillRect(b[0], b[1], b[2], b[3]);
+                    if (data.photos?.[s.id]) {
+                        try {
+                            await drawPhoto(data.photos[s.id], ...b);
+                        } catch {
+                            drawPlaceholder(...b);
+                        }
+                    } else drawPlaceholder(...b);
+                    drawLabel(b[0] + 12, b[1] + 12, s.name.toLowerCase());
+                }
+            }
+            function downloadJPG() {
+                renderPreview().then(() => {
+                    const name = (current || "foto_proses").replace(
+                        /[^\w\- ]/g,
+                        "_"
+                    );
+                    const a = document.createElement("a");
+                    a.download = "foto_proses_" + name + ".jpg";
+                    a.href = canvas.toDataURL("image/jpeg", 0.96);
+                    a.click();
+                });
+            }
+            function printCanvas() {
+                renderPreview().then(() => {
+                    const data = canvas.toDataURL("image/jpeg", 0.96);
+                    const w = window.open("", "_blank");
+                    w.document.write(
+                        '<html><head><title>Foto Proses</title><style>@page{size:A4 portrait;margin:0}body{margin:0}img{width:210mm;height:297mm;object-fit:contain;display:block}</style></head><body><img src="' +
+                            data +
+                            '"></body></html>'
+                    );
+                    w.document.close();
+                    setTimeout(() => w.print(), 400);
+                });
+            }
+
+            (async () => {
+                await openDB();
+                const arr = await idbGetAll();
+                arr.forEach(x => (customers[x.name] = x));
+                renderList();
+                renderStages();
+                renderPreview();
+            })();
+        </script>
+    </body>
+</html>
