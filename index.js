@@ -24,13 +24,36 @@ app.use(express.static(path.join(__dirname, "public")));
 const PORT = process.env.PORT || 3000;
 
 const startAutoDeleteScheduler = () => {
-    const interval = 24 * 60 * 60 * 1000;
+    const scheduleDelete = () => {
+        const now = new Date();
+        const next = new Date();
 
-    setInterval(async () => {
-        const result = await deleteAllDatabase();
+        next.setHours(5, 0, 0, 0);
 
-        logger.info("Auto delete executed", result);
-    }, interval);
+        // Jika sudah lewat jam 05:00, jadwalkan untuk besok
+        if (now >= next) {
+            next.setDate(next.getDate() + 1);
+        }
+
+        const delay = next - now;
+
+        logger.info(`Auto delete scheduled at ${next.toLocaleString()}`);
+
+        setTimeout(async () => {
+            try {
+                const result = await deleteAllDatabase();
+
+                logger.info("Auto delete executed", result);
+            } catch (error) {
+                logger.error("Auto delete failed", error);
+            }
+
+            // Jadwalkan lagi untuk besok jam 05:00
+            scheduleDelete();
+        }, delay);
+    };
+
+    scheduleDelete();
 };
 
 const baseUrl = "http://pkmmekaar.kresnasaraswati.id/v1/pkm";
@@ -43,6 +66,10 @@ app.get("/", (req, res) => {
 
 app.get("/login", (req, res) => {
     res.render("login.html");
+});
+
+app.get("/tes", (req, res) => {
+    res.render("tes.html");
 });
 
 app.get("/kolase", (req, res) => {
