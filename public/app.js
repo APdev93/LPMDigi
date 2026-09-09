@@ -844,8 +844,8 @@ async function syncProgress() {
             ao_name: localStorage.getItem("name"),
             pkm: {
                 total_noa: pkm.totalNas.toString(),
-                sisa_noa: totalBelumNas.toString(),
-                noa_done: totalSudahNas.toString()
+                sisa_noa: pkm.totalBelumNas.toString(),
+                noa_done: pkm.totalSudahNas.toString()
             }
         };
 
