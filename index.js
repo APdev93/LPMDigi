@@ -147,11 +147,49 @@ app.post("/sync-progress", (req, res) => {
             progress = [];
         }
 
-        // Tambahkan data baru
-        progress.push({
-            ...data,
-            updated_at: new Date().toISOString()
-        });
+        // ==========================================
+        // USER HARUS UNIQUE
+        // BRANCH BOLEH SAMA
+        // ==========================================
+        const index = progress.findIndex(
+            item => String(item.users) === String(data.users)
+        );
+
+        const updatedAt = new Date().toISOString();
+
+        if (index !== -1) {
+            // ==========================
+            // USER SUDAH ADA → UPDATE
+            // ==========================
+            progress[index] = {
+                ...progress[index],
+                brach: data.brach,
+                ao_name: data.ao_name,
+                pkm: data.pkm,
+                updated_at: updatedAt
+            };
+
+            logger.info("Progress updated", {
+                branch: data.brach,
+                username: data.users
+            });
+        } else {
+            // ==========================
+            // USER BELUM ADA → TAMBAH
+            // ==========================
+            progress.push({
+                brach: data.brach,
+                users: data.users,
+                ao_name: data.ao_name,
+                pkm: data.pkm,
+                updated_at: updatedAt
+            });
+
+            logger.info("Progress added", {
+                branch: data.brach,
+                username: data.users
+            });
+        }
 
         fs.writeFileSync(
             progressFile,
@@ -159,17 +197,16 @@ app.post("/sync-progress", (req, res) => {
             "utf8"
         );
 
-        logger.success("Progress berhasil disimpan", {
-            username: data.users,
-            branch: data.brach
-        });
-
         return res.json({
             status: true,
-            message: "Progress berhasil disimpan"
+            message:
+                index !== -1
+                    ? "Progress berhasil diperbarui"
+                    : "Progress berhasil ditambahkan",
+            data: index !== -1 ? progress[index] : progress[progress.length - 1]
         });
     } catch (error) {
-        logger.error("Gagal menyimpan progress", error);
+        logger.error("Progress sync failed", error);
 
         return res.status(500).json({
             status: false,
