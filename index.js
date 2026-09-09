@@ -21,6 +21,18 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static(path.join(__dirname, "public")));
 
+const progressFile = path.join(__dirname, "database", "progress.json");
+
+// Pastikan folder database ada
+if (!fs.existsSync(path.dirname(progressFile))) {
+    fs.mkdirSync(path.dirname(progressFile), { recursive: true });
+}
+
+// Pastikan progress.json ada
+if (!fs.existsSync(progressFile)) {
+    fs.writeFileSync(progressFile, "[]", "utf8");
+}
+
 const PORT = process.env.PORT || 3000;
 
 const startAutoDeleteScheduler = () => {
@@ -85,6 +97,85 @@ app.get("/master-produk", (req, res) => {
         status: true,
         data: data
     });
+});
+
+app.get("/progress", (req, res) => {
+    try {
+        let progress = [];
+
+        try {
+            progress = JSON.parse(fs.readFileSync(progressFile, "utf8"));
+        } catch (error) {
+            progress = [];
+        }
+
+        return res.json({
+            status: true,
+            data: progress
+        });
+    } catch (error) {
+        logger.error("Gagal mengambil progress", error);
+
+        return res.status(500).json({
+            status: false,
+            message: error.message,
+            data: []
+        });
+    }
+});
+
+app.post("/sync-progress", (req, res) => {
+    try {
+        const data = req.body;
+
+        if (!data.brach || !data.users || !data.ao_name || !data.pkm) {
+            return res.status(400).json({
+                status: false,
+                message: "Data progress tidak lengkap"
+            });
+        }
+
+        let progress = [];
+
+        try {
+            progress = JSON.parse(fs.readFileSync(progressFile, "utf8"));
+        } catch (error) {
+            progress = [];
+        }
+
+        if (!Array.isArray(progress)) {
+            progress = [];
+        }
+
+        // Tambahkan data baru
+        progress.push({
+            ...data,
+            updated_at: new Date().toISOString()
+        });
+
+        fs.writeFileSync(
+            progressFile,
+            JSON.stringify(progress, null, 2),
+            "utf8"
+        );
+
+        logger.success("Progress berhasil disimpan", {
+            username: data.users,
+            branch: data.brach
+        });
+
+        return res.json({
+            status: true,
+            message: "Progress berhasil disimpan"
+        });
+    } catch (error) {
+        logger.error("Gagal menyimpan progress", error);
+
+        return res.status(500).json({
+            status: false,
+            message: error.message
+        });
+    }
 });
 
 app.post("/sync", async (req, res) => {
