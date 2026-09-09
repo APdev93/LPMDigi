@@ -834,8 +834,44 @@ function calcAllTotals() {
     };
 }
 
+async function syncProgress() {
+    try {
+        let pkm = calcAllTotals();
+
+        let data = {
+            brach: localStorage.getItem("cabangID"),
+            users: localStorage.getItem("username"),
+            ao_name: localStorage.getItem("name"),
+            pkm: {
+                total_noa: pkm.totalNas.toString(),
+                sisa_noa: totalBelumNas.toString(),
+                noa_done: totalSudahNas.toString()
+            }
+        };
+
+        showLoading();
+
+        const res = await fetch("/sync-progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        if (!res.ok) return showToast("Gagal Menyimpan progress. Cek Koneksi");
+
+        const result = await res.json();
+        console.log(result);
+        if (!result.status) return showToast(result.message);
+    } catch (error) {
+        console.log(error);
+        hideLoading();
+        showToast(error.message);
+    }
+}
+
 function renderDashboard() {
     const totals = calcAllTotals();
+
     totalUangEl.innerText = `Rp ${rupiah(totals.totalCash + totals.totalTf)}`;
     totalTransferEl.innerText = `Rp ${rupiah(totals.totalTf)}`;
     totalRill.innerText = `Rp ${rupiah(totals.totalCash)}`;
@@ -968,6 +1004,7 @@ function renderGroups() {
         if (nasBelum <= 0) {
             div.classList.add("payed");
         }
+
         div.innerHTML = `
       <div class="list-left">
         <div>
@@ -1333,6 +1370,7 @@ function bindEvents() {
         currentGroupId = null;
         syncData();
         renderAll();
+        syncProgress();
     });
 
     // group detail buttons
