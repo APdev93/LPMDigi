@@ -4,6 +4,8 @@ const axios = require("axios");
 const ejs = require("ejs");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
+const { normalizeUsername, getLicense, issueToken, redeemToken, createSession, verifySession, getAdminOverview, revokeLicense } = require("./lib/activation");
 const {
     saveData,
     readData,
@@ -11,6 +13,17 @@ const {
     deleteAllDatabase,
     logger
 } = require("./lib/utils");
+
+
+const envPath = path.join(__dirname, ".env");
+if (fs.existsSync(envPath)) {
+    for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+        const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+        if (match && process.env[match[1]] === undefined) {
+            process.env[match[1]] = match[2].replace(/^(["'])(.*)\1$/, "$2");
+        }
+    }
+}
 
 const app = express();
 app.use(bodyParser.json());
@@ -72,6 +85,36 @@ const baseUrl = "http://pkmmekaar.kresnasaraswati.id/v1/pkm";
 const apk_version = "0.0.18-026-prod @ 2024-06-19";
 const cookie =
     "SERVERID=DCPRDNEWAPPPKM12; TS0196d619=01a219d6f17966e8f97ccebf374a091581ba16d1cf86ce1a78d9d62826a7ba9db75dbc5debc3f3deec3a28428d0e320c4b40728618e25f44e1d2d32d1c2cae1425f0b85f66";
+
+// Melindungi API utama berdasarkan username yang sudah berhasil login dan memiliki lisensi aktif.
+function requireActiveLicense(req, res, next) {
+    const username = normalizeUsername(
+        req.params.username || req.body?.username || req.body?.users
+    );
+
+    if (!username) {
+        return res.status(400).json({ status: false, message: "Username wajib diisi" });
+    }
+
+    try {
+        const sessionToken = req.get("x-license-session") || "";
+        if (!verifySession(sessionToken, username)) {
+            return res.status(401).json({ status: false, code: "INVALID_LICENSE_SESSION", message: "Sesi aplikasi tidak valid. Silakan login kembali" });
+        }
+        const license = getLicense(username);
+        if (!license.isActive) {
+            return res.status(403).json({
+                status: false,
+                code: "ACTIVATION_REQUIRED",
+                message: "Lisensi belum aktif atau sudah kedaluwarsa"
+            });
+        }
+        next();
+    } catch (error) {
+        logger.error("License check failed", { message: error.message });
+        return res.status(500).json({ status: false, message: "Gagal memeriksa lisensi" });
+    }
+}
 app.get("/", (req, res) => {
     res.render("index.html");
 });
@@ -124,7 +167,7 @@ app.get("/progress", (req, res) => {
     }
 });
 
-app.post("/sync-progress", (req, res) => {
+app.post("/sync-progress", requireActiveLicense, (req, res) => {
     try {
         const data = req.body;
 
@@ -215,7 +258,7 @@ app.post("/sync-progress", (req, res) => {
     }
 });
 
-app.post("/sync", async (req, res) => {
+app.post("/sync", requireActiveLicense, async (req, res) => {
     let { name, username, branch, data } = req.body;
     logger.info("Sync request", { username });
     try {
@@ -231,7 +274,7 @@ app.post("/sync", async (req, res) => {
     }
 });
 
-app.post("/delete-data", async (req, res) => {
+app.post("/delete-data", requireActiveLicense, async (req, res) => {
     let { username, branch } = req.body;
 
     logger.warning("Delete data request", { username, branch });
@@ -251,7 +294,7 @@ app.post("/delete-data", async (req, res) => {
     }
 });
 
-app.get("/data/:branch/:username", async (req, res) => {
+app.get("/data/:branch/:username", requireActiveLicense, async (req, res) => {
     let { username, branch } = req.params;
     logger.info("Get data request", { username });
     try {
@@ -270,33 +313,119 @@ app.get("/data/:branch/:username", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    logger.info("Login request", { username });
+    const normalizedUsername = normalizeUsername(username);
+    logger.info("Login request", { username: normalizedUsername });
+
+    if (!normalizedUsername || typeof password !== "string" || !password) {
+        return res.status(400).json({ responseStatus: false, message: "Username dan password wajib diisi" });
+    }
+
     try {
-        let payload = {
-            username,
-            password,
-            apk_version
-        };
+        const payload = { username: normalizedUsername, password, apk_version };
+        const headers = { "Content-Type": "application/json", Cookie: cookie };
+        const response = await axios.post(`${baseUrl}/AuthLogin`, payload, { headers });
+        const result = response.data || {};
 
-        let headers = {
-            "Content-Type": "application/json",
-            Cookie: cookie
-        };
+        // Status aktivasi hanya dicek setelah autentikasi eksternal berhasil.
+        if (result.responseStatus === true && result.token && result.data) {
+            const license = getLicense(normalizedUsername);
+            logger.success("External login success", { username: normalizedUsername, isActive: license.isActive });
+            return res.json({
+                ...result,
+                activationRequired: !license.isActive,
+                license: {
+                    isActive: license.isActive,
+                    expiresAt: license.expiresAt
+                },
+                licenseSession: license.isActive ? createSession(normalizedUsername) : null
+            });
+        }
 
-        let response = await axios.post(`${baseUrl}/AuthLogin`, payload, {
-            headers
-        });
-        //console.log(response);
-        logger.success("Login success", { username });
-        return res.json(response.data);
+        return res.status(response.status || 200).json(result);
     } catch (error) {
-        logger.error("Login failed", error);
-        console.log("ERROR:", error.response?.data || error.message);
-        return res.json(error.response?.data || error.message);
+        logger.error("Login failed", { username: normalizedUsername, message: error.message });
+        return res.status(error.response?.status || 502).json(
+            error.response?.data || { responseStatus: false, message: "Gagal menghubungi server login" }
+        );
     }
 });
 
-app.get("/collect-list/:cabang/:username", async (req, res) => {
+// User menukarkan token setelah berhasil login ke endpoint eksternal.
+app.post("/activation/activate", (req, res) => {
+    const { username, token } = req.body || {};
+    if (typeof username !== "string" || typeof token !== "string") {
+        return res.status(400).json({ status: false, message: "Username dan token wajib diisi" });
+    }
+
+    try {
+        const result = redeemToken(username, token);
+        if (!result.ok) return res.status(400).json({ status: false, message: result.message });
+        return res.json({ status: true, message: "Aktivasi berhasil", isActive: true, expiresAt: result.expiresAt, licenseSession: result.sessionToken });
+    } catch (error) {
+        logger.error("Activation failed", { message: error.message });
+        return res.status(500).json({ status: false, message: "Gagal memproses aktivasi" });
+    }
+});
+
+// Dashboard admin. Semua data/API admin tetap memerlukan ADMIN_KEY.
+function requireAdmin(req, res, next) {
+    const configuredKey = process.env.ADMIN_KEY;
+    const suppliedKey = req.get("x-admin-key") || "";
+    if (!configuredKey) {
+        return res.status(503).json({ status: false, message: "ADMIN_KEY belum dikonfigurasi di server" });
+    }
+    const a = Buffer.from(configuredKey);
+    const b = Buffer.from(suppliedKey);
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+        return res.status(403).json({ status: false, message: "Akses admin ditolak" });
+    }
+    next();
+}
+
+app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
+app.get("/admin/overview", requireAdmin, (req, res) => {
+    try { return res.json({ status: true, ...getAdminOverview() }); }
+    catch (error) {
+        logger.error("Admin overview failed", { message: error.message });
+        return res.status(500).json({ status: false, message: "Gagal memuat data dashboard" });
+    }
+});
+app.post("/admin/licenses/revoke", requireAdmin, (req, res) => {
+    const { username } = req.body || {};
+    if (typeof username !== "string" || !username.trim()) {
+        return res.status(400).json({ status: false, message: "Username wajib diisi" });
+    }
+    try {
+        const revoked = revokeLicense(username);
+        return res.json({ status: true, revoked, message: revoked ? "Lisensi berhasil dinonaktifkan" : "Lisensi untuk username ini tidak ditemukan" });
+    } catch (error) {
+        logger.error("License revoke failed", { message: error.message });
+        return res.status(500).json({ status: false, message: "Gagal menonaktifkan lisensi" });
+    }
+});
+
+// Endpoint admin dilindungi ADMIN_KEY dari environment, bukan dari frontend.
+app.post("/admin/tokens", requireAdmin, (req, res) => {
+    const { username } = req.body || {};
+    if (typeof username !== "string" || !username.trim()) {
+        return res.status(400).json({ status: false, message: "Username target wajib diisi" });
+    }
+
+    try {
+        const result = issueToken(username);
+        return res.status(201).json({
+            status: true,
+            username: result.username,
+            activationToken: result.token,
+            redeemBefore: result.expiresAt
+        });
+    } catch (error) {
+        logger.error("Token generation failed", { message: error.message });
+        return res.status(500).json({ status: false, message: "Gagal membuat token" });
+    }
+});
+
+app.get("/collect-list/:cabang/:username", requireActiveLicense, async (req, res) => {
     let { cabang, username } = req.params;
 
     logger.info("Fetch collect list", { username, cabang });
@@ -347,7 +476,7 @@ app.get("/collect-list/:cabang/:username", async (req, res) => {
     }
 });
 
-app.get("/group-list/:cabang/:username", async (req, res) => {
+app.get("/group-list/:cabang/:username", requireActiveLicense, async (req, res) => {
     let { cabang, username } = req.params;
 
     let Authorization = req.headers["authorization"];
