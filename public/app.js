@@ -1,4 +1,65 @@
 const STORAGE_KEY = "kelompok";
+
+// Handler global untuk sesi lisensi yang tidak valid/kedaluwarsa.
+let licenseSessionExpiredPopup = false;
+const nativeFetch = window.fetch.bind(window);
+
+async function handleInvalidLicenseSession() {
+    if (licenseSessionExpiredPopup) return;
+    licenseSessionExpiredPopup = true;
+
+    const message =
+        "Sesi sudah habis, silahkan melakukan pembayaran bulanan untuk melanjutkan sesi.";
+    try {
+        if (window.Swal && typeof window.Swal.fire === "function") {
+            await window.Swal.fire({
+                title: "Sesi Sudah Habis",
+                text: message,
+                icon: "warning",
+                confirmButtonText: "Konfirmasi",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: true,
+                showCancelButton: false
+            });
+        } else {
+            // Fallback jika CDN SweetAlert2 gagal dimuat.
+            window.alert("Sesi Sudah Habis\n\n" + message);
+        }
+    } catch (error) {
+        console.error("Gagal menampilkan popup sesi lisensi:", error);
+        window.alert("Sesi Sudah Habis\n\n" + message);
+    }
+
+    // Selalu bersihkan storage dan arahkan ke login setelah konfirmasi.
+    try {
+        window.localStorage.clear();
+    } catch (_) {}
+    try {
+        window.sessionStorage.clear();
+    } catch (_) {}
+    window.location.replace("/login");
+}
+
+async function inspectLicenseSessionResponse(response) {
+    if (!response || response.status !== 401) return false;
+    try {
+        const body = await response.clone().json();
+        if (body && body.code === "INVALID_LICENSE_SESSION") {
+            void handleInvalidLicenseSession();
+            return true;
+        }
+    } catch (error) {
+        // Abaikan respons 401 yang bukan JSON berisi kode sesi lisensi.
+    }
+    return false;
+}
+
+window.fetch = async function (...args) {
+    const response = await nativeFetch(...args);
+    void inspectLicenseSessionResponse(response);
+    return response;
+};
 const namaUnit = document.getElementById("branch");
 const namaUser = document.getElementById("name");
 const cabangID = localStorage.getItem("cabangID");
@@ -161,7 +222,9 @@ async function getSavedData() {
             `/data/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("auth")
+                    Authorization: localStorage.getItem("auth"),
+                    "x-license-session":
+                        localStorage.getItem("licenseSession") || ""
                 }
             }
         );
@@ -186,7 +249,9 @@ async function getKelompok() {
             `/group-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("auth")
+                    Authorization: localStorage.getItem("auth"),
+                    "x-license-session":
+                        localStorage.getItem("licenseSession") || ""
                 }
             }
         );
@@ -204,7 +269,9 @@ async function getNasabah() {
             `/collect-list/${localStorage.getItem("cabangID")}/${localStorage.getItem("username")}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("auth")
+                    Authorization: localStorage.getItem("auth"),
+                    "x-license-session":
+                        localStorage.getItem("licenseSession") || ""
                 }
             }
         );
@@ -356,7 +423,11 @@ async function syncData() {
 
         const res = await fetch("/sync", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "x-license-session":
+                    localStorage.getItem("licenseSession") || ""
+            },
             body: JSON.stringify({ name, username, branch, data })
         });
 
@@ -396,7 +467,11 @@ clearBtn.addEventListener("click", () => {
 
             const res = await fetch("/delete-data", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-license-session":
+                        localStorage.getItem("licenseSession") || ""
+                },
                 body: JSON.stringify({ username, branch })
             });
 
@@ -853,10 +928,16 @@ async function syncProgress() {
 
         const res = await fetch("/sync-progress", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "x-license-session":
+                    localStorage.getItem("licenseSession") || ""
+            },
             body: JSON.stringify(data)
         });
 
+        // Pemeriksaan langsung untuk request simpan progress (tidak hanya mengandalkan handler global).
+        if (await inspectLicenseSessionResponse(res)) return;
         if (!res.ok) return showToast("Gagal Menyimpan progress. Cek Koneksi");
 
         const result = await res.json();

@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex,nofollow" />
+        <meta name="theme-color" content="#14213d" />
+        <title>Admin Dashboard — LPM Digi</title>
+
+        <style>
+            :root {
+                color-scheme: light;
+                --bg: #f4f7fb;
+                --card: #ffffff;
+                --ink: #182230;
+                --muted: #667085;
+                --line: #e5eaf1;
+                --blue: #2563eb;
+                --blue-dark: #1d4ed8;
+                --navy: #14213d;
+                --green: #16803c;
+                --red: #b42318;
+                --amber: #a15c00;
+                --radius: 16px;
+                --shadow: 0 8px 28px rgb(28 42 68 / 7%);
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            html {
+                min-width: 320px;
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--ink);
+                font:
+                    14px/1.55 Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    Arial,
+                    sans-serif;
+            }
+
+            button,
+            input {
+                font: inherit;
+            }
+
+            button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                min-height: 42px;
+                padding: 10px 14px;
+                border: 1px solid transparent;
+                border-radius: 10px;
+                background: var(--blue);
+                color: #fff;
+                font-weight: 650;
+                line-height: 1.25;
+                text-align: center;
+                cursor: pointer;
+                transition:
+                    background-color 0.15s ease,
+                    border-color 0.15s ease,
+                    transform 0.15s ease;
+            }
+
+            button:hover:not(:disabled) {
+                background: var(--blue-dark);
+            }
+
+            button:active:not(:disabled) {
+                transform: translateY(1px);
+            }
+
+            button:focus-visible,
+            input:focus-visible {
+                outline: 3px solid rgb(37 99 235 / 25%);
+                outline-offset: 2px;
+            }
+
+            button:disabled {
+                opacity: 0.55;
+                cursor: wait;
+            }
+
+            .secondary {
+                background: #eef2ff;
+                color: #2447a5;
+            }
+
+            .secondary:hover:not(:disabled) {
+                background: #e0e7ff;
+            }
+
+            .danger {
+                background: #fff0ef;
+                color: var(--red);
+            }
+
+            .danger:hover:not(:disabled) {
+                background: #ffe0dd;
+            }
+
+            .shell {
+                width: 100%;
+                max-width: 1180px;
+                min-width: 0;
+                margin-inline: auto;
+                padding: 28px 20px;
+            }
+
+            #dashboard {
+                display: block;
+                width: 100%;
+                min-width: 0;
+            }
+
+            #dashboard > *,
+            .metrics,
+            .main-grid,
+            .main-grid > .panel {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            #dashboard > .panel {
+                width: 100%;
+            }
+
+            .top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 18px;
+                margin-bottom: 24px;
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+
+            .logo {
+                display: grid;
+                flex: 0 0 44px;
+                place-items: center;
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+                background: var(--navy);
+                color: #fff;
+                font-size: 17px;
+                font-weight: 800;
+            }
+
+            .brand h1 {
+                margin: 0;
+                font-size: clamp(18px, 2.2vw, 22px);
+                line-height: 1.25;
+                letter-spacing: -0.025em;
+            }
+
+            .brand p {
+                margin: 4px 0 0;
+                color: var(--muted);
+                font-size: 13px;
+            }
+
+            .panel {
+                min-width: 0;
+                padding: 20px;
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: var(--card);
+                box-shadow: var(--shadow);
+            }
+
+            .panel h2 {
+                margin: 0 0 5px;
+                font-size: 17px;
+                line-height: 1.35;
+            }
+
+            .muted {
+                color: var(--muted);
+            }
+
+            .login {
+                width: min(100%, 430px);
+                margin: clamp(24px, 9vh, 90px) auto;
+            }
+
+            .login h2 {
+                margin-top: 26px;
+            }
+
+            label {
+                display: block;
+                margin: 15px 0 7px;
+                font-weight: 650;
+            }
+
+            input {
+                display: block;
+                width: 100%;
+                min-width: 0;
+                min-height: 44px;
+                padding: 11px 12px;
+                border: 1px solid #d4dce7;
+                border-radius: 10px;
+                outline: none;
+                background: #fff;
+                color: var(--ink);
+            }
+
+            input:focus {
+                border-color: var(--blue);
+                box-shadow: 0 0 0 3px rgb(37 99 235 / 9%);
+            }
+
+            input::placeholder {
+                color: #98a2b3;
+            }
+
+            .full {
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            .error {
+                min-height: 20px;
+                margin-top: 12px;
+                color: var(--red);
+                overflow-wrap: anywhere;
+            }
+
+            .hidden {
+                display: none !important;
+            }
+
+            .metrics {
+                display: grid;
+                width: 100%;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 14px;
+                margin-bottom: 16px;
+            }
+
+            .metric {
+                padding: 18px;
+            }
+
+            .metric .label {
+                color: var(--muted);
+                font-size: 13px;
+            }
+
+            .metric .value {
+                margin-top: 6px;
+                font-size: clamp(23px, 2.5vw, 29px);
+                font-weight: 800;
+                letter-spacing: -0.04em;
+                line-height: 1.2;
+                overflow-wrap: anywhere;
+            }
+
+            .metric .hint {
+                margin-top: 5px;
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            .main-grid {
+                display: grid;
+                width: 100%;
+                grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.6fr);
+                align-items: start;
+                gap: 16px;
+            }
+
+            .history-panel {
+                display: block;
+                width: 100%;
+                min-width: 0;
+            }
+
+            .panel-head {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 14px;
+                margin-bottom: 16px;
+            }
+
+            .panel-head p {
+                margin: 4px 0 0;
+            }
+
+            .form-row {
+                display: flex;
+                gap: 8px;
+            }
+
+            .form-row input {
+                flex: 1;
+            }
+
+            .token-result {
+                margin-top: 14px;
+                padding: 13px;
+                border: 1px solid #b7e4c7;
+                border-radius: 12px;
+                background: #effaf3;
+            }
+
+            .token-result strong {
+                display: block;
+                margin-bottom: 7px;
+            }
+
+            .token-value {
+                padding: 9px;
+                border: 1px dashed #9acbaa;
+                border-radius: 8px;
+                background: #fff;
+                font-family:
+                    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                font-size: 13px;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                user-select: text;
+            }
+
+            .note {
+                margin: 10px 0 0;
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            .tabs {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+                margin: 14px 0;
+            }
+
+            .tab {
+                min-height: 36px;
+                padding: 8px 12px;
+                background: #f0f3f8;
+                color: #455468;
+                font-size: 13px;
+            }
+
+            .tab:hover:not(:disabled) {
+                background: #e4e9f1;
+            }
+
+            .tab.active {
+                background: var(--navy);
+                color: #fff;
+            }
+
+            .table-wrap {
+                display: block;
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                overflow: auto;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                overscroll-behavior-x: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                width: 100%;
+                min-width: 570px;
+                border-collapse: collapse;
+                background: #fff;
+            }
+
+            th,
+            td {
+                padding: 12px;
+                border-bottom: 1px solid var(--line);
+                text-align: left;
+                vertical-align: middle;
+            }
+
+            th {
+                background: #f8fafc;
+                color: #667085;
+                font-size: 11px;
+                font-weight: 750;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            td {
+                overflow-wrap: anywhere;
+            }
+
+            tr:last-child td {
+                border-bottom: 0;
+            }
+
+            .status {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 8px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+            .active-status,
+            .used {
+                background: #e8f7ed;
+                color: var(--green);
+            }
+
+            .inactive,
+            .expired {
+                background: #fff0ef;
+                color: var(--red);
+            }
+
+            .available {
+                background: #fff4db;
+                color: var(--amber);
+            }
+
+            .empty {
+                padding: 28px 14px;
+                color: var(--muted);
+                text-align: center;
+            }
+
+            .small-btn {
+                min-height: 34px;
+                padding: 7px 10px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .footer {
+                padding: 22px 10px 8px;
+                color: var(--muted);
+                font-size: 12px;
+                text-align: center;
+            }
+
+            .toast {
+                position: fixed;
+                z-index: 20;
+                right: 16px;
+                bottom: max(16px, env(safe-area-inset-bottom));
+                left: 16px;
+                width: max-content;
+                max-width: min(520px, calc(100vw - 32px));
+                margin-inline: auto;
+                padding: 12px 16px;
+                border-radius: 12px;
+                background: var(--navy);
+                color: #fff;
+                box-shadow: 0 8px 30px rgb(0 0 0 / 15%);
+                overflow-wrap: anywhere;
+            }
+
+            @media (max-width: 900px) {
+                .shell {
+                    width: 100%;
+                    max-width: 760px;
+                    padding: 20px 16px;
+                }
+
+                #dashboard > .panel {
+                    width: 100%;
+                }
+
+                .metrics {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .main-grid {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+            }
+
+            @media (max-width: 560px) {
+                .shell {
+                    width: 100%;
+                    max-width: 520px;
+                    padding: 14px 12px;
+                }
+
+                #dashboard,
+                #dashboard > *,
+                .metrics,
+                .main-grid,
+                .main-grid > .panel {
+                    width: 100%;
+                    min-width: 0;
+                    max-width: 100%;
+                }
+
+                .top {
+                    align-items: stretch;
+                    flex-direction: column;
+                    gap: 14px;
+                    margin-bottom: 18px;
+                }
+
+                .top > div:last-child {
+                    display: grid !important;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    width: 100%;
+                }
+
+                .top > div:last-child button {
+                    width: 100%;
+                }
+
+                .panel {
+                    padding: 15px;
+                    border-radius: 14px;
+                }
+
+                .login {
+                    margin-block: 5vh;
+                }
+
+                .metrics {
+                    gap: 10px;
+                }
+
+                .metric {
+                    padding: 14px;
+                }
+
+                .metric .label {
+                    font-size: 12px;
+                }
+
+                .metric .value {
+                    font-size: 23px;
+                }
+
+                .metric .hint {
+                    font-size: 11px;
+                }
+
+                .form-row {
+                    flex-direction: column;
+                }
+
+                .form-row button {
+                    width: 100%;
+                }
+
+                .panel-head {
+                    flex-direction: column;
+                }
+
+                .panel-head > button {
+                    width: 100%;
+                }
+
+                .tabs {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .tab {
+                    width: 100%;
+                }
+
+                table {
+                    min-width: 560px;
+                }
+
+                .footer {
+                    padding-top: 18px;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    scroll-behavior: auto !important;
+                    transition-duration: 0.01ms !important;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <main class="shell">
+            <section id="loginPanel" class="panel login">
+                <div class="brand">
+                    <div class="logo">LP</div>
+                    <div>
+                        <h1>Admin LPM Digi</h1>
+                        <p>Panel aktivasi dan lisensi</p>
+                    </div>
+                </div>
+
+                <h2>Masuk sebagai admin</h2>
+                <p class="muted">Masukkan superpassword untuk melanjutkan.</p>
+
+                <form id="adminLogin">
+                    <label for="adminKey">Admin password</label>
+                    <input
+                        id="adminKey"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        placeholder="Masukkan ADMIN_KEY"
+                    />
+                    <button class="full" type="submit">Buka dashboard</button>
+                    <div id="loginError" class="error" role="alert"></div>
+                </form>
+            </section>
+
+            <section id="dashboard" class="hidden">
+                <header class="top">
+                    <div class="brand">
+                        <div class="logo">LP</div>
+                        <div>
+                            <h1>Admin Dashboard</h1>
+                            <p>Kelola token aktivasi dan lisensi pengguna</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px">
+                        <button class="secondary" id="refreshBtn" type="button">
+                            ↻ Muat ulang
+                        </button>
+                        <button class="danger" id="logoutBtn" type="button">
+                            Keluar
+                        </button>
+                    </div>
+                </header>
+
+                <div class="metrics">
+                    <article class="panel metric">
+                        <div class="label">Pengguna tercatat</div>
+                        <div class="value" id="totalUsers">—</div>
+                        <div class="hint">
+                            Akun yang pernah memiliki lisensi
+                        </div>
+                    </article>
+
+                    <article class="panel metric">
+                        <div class="label">Lisensi aktif</div>
+                        <div class="value" id="activeLicenses">—</div>
+                        <div class="hint">
+                            Belum melewati tanggal kedaluwarsa
+                        </div>
+                    </article>
+
+                    <article class="panel metric">
+                        <div class="label">Total token dibuat</div>
+                        <div class="value" id="totalTokens">—</div>
+                        <div class="hint">Riwayat token aktivasi</div>
+                    </article>
+
+                    <article class="panel metric">
+                        <div class="label">Token tersedia</div>
+                        <div class="value" id="availableTokens">—</div>
+                        <div class="hint">
+                            Belum digunakan dan belum kedaluwarsa
+                        </div>
+                    </article>
+                </div>
+
+                <div class="main-grid">
+                    <section class="panel">
+                        <h2>Buat token aktivasi</h2>
+                        <p class="muted">
+                            Token hanya berlaku untuk username yang dipilih dan
+                            harus ditukarkan dalam 7 hari.
+                        </p>
+
+                        <form id="createTokenForm">
+                            <label for="targetUsername">Username tujuan</label>
+                            <input
+                                id="targetUsername"
+                                required
+                                maxlength="120"
+                                autocomplete="off"
+                                placeholder="Contoh: username123"
+                            />
+                            <button class="full" id="createBtn" type="submit">
+                                ＋ Buat token
+                            </button>
+                        </form>
+
+                        <div id="tokenResult" class="token-result hidden">
+                            <strong
+                                >Token berhasil dibuat — salin sekarang</strong
+                            >
+                            <div class="token-value" id="newToken"></div>
+                            <p class="note" id="tokenInfo"></p>
+                            <button
+                                class="secondary"
+                                id="copyTokenBtn"
+                                type="button"
+                                style="margin-top: 10px"
+                            >
+                                Salin token
+                            </button>
+                        </div>
+
+                        <p class="note">
+                            Demi keamanan, token mentah hanya ditampilkan saat
+                            dibuat. Setelah halaman ditutup, token tidak dapat
+                            ditampilkan ulang.
+                        </p>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Lisensi pengguna</h2>
+                                <p class="muted">
+                                    Pantau masa aktif dan nonaktifkan lisensi
+                                    bila diperlukan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Status</th>
+                                        <th>Kedaluwarsa</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="licensesBody">
+                                    <tr>
+                                        <td colspan="4" class="empty">
+                                            Memuat data…
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <section
+                    class="panel history-panel"
+                    style="margin-top: 16px; width: 100%; min-width: 0"
+                >
+                    <div class="panel-head">
+                        <div>
+                            <h2>Riwayat token</h2>
+                            <p class="muted">
+                                Token tidak menampilkan nilai rahasia yang sudah
+                                dibuat.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="tabs">
+                        <button
+                            class="tab active"
+                            data-filter="all"
+                            type="button"
+                        >
+                            Semua
+                        </button>
+                        <button
+                            class="tab"
+                            data-filter="available"
+                            type="button"
+                        >
+                            Tersedia
+                        </button>
+                        <button class="tab" data-filter="used" type="button">
+                            Sudah digunakan
+                        </button>
+                        <button class="tab" data-filter="expired" type="button">
+                            Kedaluwarsa
+                        </button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Dibuat</th>
+                                    <th>Batas penukaran</th>
+                                    <th>Status</th>
+                                    <th>Digunakan pada</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tokensBody">
+                                <tr>
+                                    <td colspan="5" class="empty">
+                                        Memuat data…
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <footer class="footer">
+                    LPM Digi · Dashboard admin · Data disimpan pada
+                    database/activation.json
+                </footer>
+            </section>
+        </main>
+
+        <div
+            id="toast"
+            class="toast hidden"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        <script>
+            (() => {
+                const $ = id => document.getElementById(id);
+
+                let adminKey =
+                    sessionStorage.getItem("lpmdigi_admin_key") || "";
+                let tokenFilter = "all";
+                let lastToken = "";
+                let toastTimer;
+
+                const esc = value =>
+                    String(value ?? "").replace(
+                        /[&<>"']/g,
+                        character =>
+                            ({
+                                "&": "&amp;",
+                                "<": "&lt;",
+                                ">": "&gt;",
+                                '"': "&quot;",
+                                "'": "&#39;"
+                            })[character]
+                    );
+
+                const date = value =>
+                    value
+                        ? new Date(value).toLocaleString("id-ID", {
+                              dateStyle: "medium",
+                              timeStyle: "short"
+                          })
+                        : "—";
+
+                const toast = message => {
+                    $("toast").textContent = message;
+                    $("toast").classList.remove("hidden");
+                    clearTimeout(toastTimer);
+                    toastTimer = setTimeout(
+                        () => $("toast").classList.add("hidden"),
+                        3000
+                    );
+                };
+
+                const api = async (url, options = {}) => {
+                    const response = await fetch(url, {
+                        ...options,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "x-admin-key": adminKey,
+                            ...(options.headers || {})
+                        }
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok || data.status === false) {
+                        throw new Error(data.message || "Permintaan gagal");
+                    }
+
+                    return data;
+                };
+
+                function showLogin(error = "") {
+                    $("dashboard").classList.add("hidden");
+                    $("loginPanel").classList.remove("hidden");
+                    $("loginError").textContent = error;
+                }
+
+                function showDashboard() {
+                    $("loginPanel").classList.add("hidden");
+                    $("dashboard").classList.remove("hidden");
+                }
+
+                async function loadDashboard() {
+                    try {
+                        const data = await api("/admin/overview");
+
+                        showDashboard();
+                        $("totalUsers").textContent = data.summary.totalUsers;
+                        $("activeLicenses").textContent =
+                            data.summary.activeLicenses;
+                        $("totalTokens").textContent = data.summary.totalTokens;
+                        $("availableTokens").textContent =
+                            data.summary.availableTokens;
+
+                        renderLicenses(data.licenses || []);
+                        renderTokens(data.tokens || []);
+                    } catch (error) {
+                        if (/ditolak|ADMIN_KEY|admin/i.test(error.message)) {
+                            sessionStorage.removeItem("lpmdigi_admin_key");
+                            adminKey = "";
+                            showLogin(error.message);
+                        } else {
+                            toast(error.message);
+                        }
+                    }
+                }
+
+                function renderLicenses(items) {
+                    const body = $("licensesBody");
+
+                    if (!items.length) {
+                        body.innerHTML =
+                            '<tr><td colspan="4" class="empty">Belum ada lisensi pengguna.</td></tr>';
+                        return;
+                    }
+
+                    body.innerHTML = items
+                        .map(
+                            item => `
+          <tr>
+            <td><strong>${esc(item.username)}</strong></td>
+            <td>
+              <span class="status ${item.isActive ? "active-status" : "inactive"}">
+                ${item.isActive ? "Aktif" : "Tidak aktif"}
+              </span>
+            </td>
+            <td>${esc(date(item.expiresAt))}</td>
+            <td>
+              ${
+                  item.isActive
+                      ? `<button class="danger small-btn" data-revoke="${esc(item.username)}" type="button">Nonaktifkan</button>`
+                      : "—"
+              }
+            </td>
+          </tr>
+        `
+                        )
+                        .join("");
+                }
+
+                function renderTokens(items) {
+                    const body = $("tokensBody");
+                    const filtered =
+                        tokenFilter === "all"
+                            ? items
+                            : items.filter(item => item.status === tokenFilter);
+
+                    if (!filtered.length) {
+                        body.innerHTML =
+                            '<tr><td colspan="5" class="empty">Tidak ada token pada kategori ini.</td></tr>';
+                        return;
+                    }
+
+                    const labels = {
+                        available: "Tersedia",
+                        used: "Sudah digunakan",
+                        expired: "Kedaluwarsa"
+                    };
+
+                    body.innerHTML = filtered
+                        .map(
+                            item => `
+          <tr>
+            <td><strong>${esc(item.username)}</strong></td>
+            <td>${esc(date(item.createdAt))}</td>
+            <td>${esc(date(item.expiresAt))}</td>
+            <td>
+              <span class="status ${esc(item.status)}">
+                ${labels[item.status] || esc(item.status)}
+              </span>
+            </td>
+            <td>${esc(date(item.usedAt))}</td>
+          </tr>
+        `
+                        )
+                        .join("");
+                }
+
+                $("adminLogin").addEventListener("submit", async event => {
+                    event.preventDefault();
+                    adminKey = $("adminKey").value.trim();
+
+                    if (!adminKey) return;
+
+                    $("loginError").textContent = "Memeriksa akses…";
+
+                    try {
+                        await api("/admin/overview");
+                        sessionStorage.setItem("lpmdigi_admin_key", adminKey);
+                        $("adminKey").value = "";
+                        $("loginError").textContent = "";
+                        await loadDashboard();
+                    } catch (error) {
+                        adminKey = "";
+                        $("loginError").textContent = error.message;
+                    }
+                });
+
+                $("createTokenForm").addEventListener("submit", async event => {
+                    event.preventDefault();
+
+                    const username = $("targetUsername").value.trim();
+                    if (!username) return;
+
+                    $("createBtn").disabled = true;
+                    $("createBtn").textContent = "Membuat…";
+
+                    try {
+                        const data = await api("/admin/tokens", {
+                            method: "POST",
+                            body: JSON.stringify({ username })
+                        });
+
+                        lastToken = data.activationToken;
+                        $("newToken").textContent = lastToken;
+                        $("tokenInfo").textContent =
+                            `Username: ${data.username} · Batas penukaran: ${date(data.redeemBefore)}`;
+                        $("tokenResult").classList.remove("hidden");
+                        $("targetUsername").value = "";
+                        toast(
+                            "Token berhasil dibuat. Salin sebelum meninggalkan halaman."
+                        );
+                        await loadDashboard();
+                    } catch (error) {
+                        toast(error.message);
+                    } finally {
+                        $("createBtn").disabled = false;
+                        $("createBtn").textContent = "＋ Buat token";
+                    }
+                });
+
+                $("copyTokenBtn").addEventListener("click", async () => {
+                    try {
+                        await navigator.clipboard.writeText(lastToken);
+                        toast("Token disalin.");
+                    } catch {
+                        toast(
+                            "Gagal menyalin otomatis; tekan lama token lalu salin."
+                        );
+                    }
+                });
+
+                $("licensesBody").addEventListener("click", async event => {
+                    const button = event.target.closest("[data-revoke]");
+                    if (!button) return;
+
+                    const username = button.getAttribute("data-revoke");
+
+                    if (
+                        !confirm(
+                            `Nonaktifkan lisensi untuk ${username}? Sesi aktifnya juga akan dicabut.`
+                        )
+                    ) {
+                        return;
+                    }
+
+                    button.disabled = true;
+
+                    try {
+                        const data = await api("/admin/licenses/revoke", {
+                            method: "POST",
+                            body: JSON.stringify({ username })
+                        });
+
+                        toast(data.message);
+                        await loadDashboard();
+                    } catch (error) {
+                        toast(error.message);
+                        button.disabled = false;
+                    }
+                });
+
+                document.querySelectorAll("[data-filter]").forEach(button => {
+                    button.addEventListener("click", () => {
+                        tokenFilter = button.dataset.filter;
+
+                        document
+                            .querySelectorAll("[data-filter]")
+                            .forEach(item => {
+                                item.classList.toggle(
+                                    "active",
+                                    item === button
+                                );
+                            });
+
+                        loadDashboard();
+                    });
+                });
+
+                $("refreshBtn").addEventListener("click", loadDashboard);
+
+                $("logoutBtn").addEventListener("click", () => {
+                    sessionStorage.removeItem("lpmdigi_admin_key");
+                    adminKey = "";
+                    lastToken = "";
+                    $("tokenResult").classList.add("hidden");
+                    showLogin();
+                });
+
+                if (adminKey) {
+                    loadDashboard();
+                } else {
+                    showLogin();
+                }
+            })();
+        </script>
+    </body>
+</html>

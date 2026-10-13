@@ -23,74 +23,73 @@ body {
 }
 
 #toastContainer {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  bottom: 30px;
-  left: 0;
-  z-index: 9999;
-  pointer-events: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    z-index: 9999;
+    pointer-events: none;
 }
 
 .toast p {
-  margin:0!important;
-  font-size:13;
+    margin: 0 !important;
+    font-size: 13;
 }
 
 .toast {
-  min-width: 100px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background-color: #0a314e;
-  text-align: center;
-  color: white;
+    min-width: 100px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background-color: #0a314e;
+    text-align: center;
+    color: white;
 
-  opacity: 0;
-  transform: translateY(100px);
+    opacity: 0;
+    transform: translateY(100px);
 
-  animation: fadeIn 0.35s ease forwards;
+    animation: fadeIn 0.35s ease forwards;
 }
 
 .toast.hide {
-  animation: fadeOut 0.35s ease forwards;
+    animation: fadeOut 0.35s ease forwards;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(100px);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-  to {
-    opacity: 0;
-    transform: translateY(100px);
-  }
+    to {
+        opacity: 0;
+        transform: translateY(100px);
+    }
 }
 #version {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 #version p {
-  font-size: 12px;
-  color: var(--muted)
+    font-size: 12px;
+    color: var(--muted);
 }
-
 
 #date {
     font-size: 13px;
@@ -123,7 +122,7 @@ body {
     font-size: 14px;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
-    white-space: nowrap;  
+    white-space: nowrap;
 }
 .nasabah-table th {
     font-weight: 600;
@@ -144,11 +143,11 @@ body {
 }
 
 .green {
-  color:green
+    color: green;
 }
 
 .red {
-  color: red
+    color: red;
 }
 /* Pagination */
 .pagination {
@@ -206,6 +205,32 @@ body {
     color: #fff !important;
     border-radius: 12px !important;
     padding: 8px 20px !important;
+}
+
+.swal2-popup {
+    box-sizing: border-box !important;
+    width: min(90vw, 420px) !important;
+    max-width: 90vw !important;
+    padding: 1.5rem !important;
+    overflow: hidden !important;
+}
+
+.swal2-popup .swal2-input {
+    display: block;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 1em 0 0 !important;
+}
+
+.swal2-popup input {
+    box-sizing: border-box !important;
+}
+
+.swal2-popup .swal2-actions {
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 /* === NASABAH CARD LIGHT === */
