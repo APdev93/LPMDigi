@@ -1,0 +1,51 @@
+{
+  "licenses": {
+    "ao19-91226": {
+      "isActive": true,
+      "activatedAt": "2026-11-08T23:53:43.476Z",
+      "expiresAt": "2026-11-25T23:53:43.476Z"
+    }
+  },
+  "tokens": [
+    {
+      "id": "369b6797-e701-4508-89f3-3c243e2d7171",
+      "username": "ao19-91226",
+      "tokenHash": "25881e8d57d146442cf7f41bf467b9b158bf5bf02e511fda97ce5ba0972fec58",
+      "createdAt": "2026-10-13T01:54:50.237Z",
+      "expiresAt": "2026-10-20T01:54:50.237Z",
+      "usedAt": "2026-10-13T01:55:44.278Z"
+    },
+    {
+      "id": "1f0ad25a-e0cb-458d-9fc2-864b12220e85",
+      "username": "ao19-91226",
+      "tokenHash": "5ff920a5e1c2ff2e1685ecb3023d1e98a7f8bc20642d22d5ae3c35e8f5e8470c",
+      "createdAt": "2026-10-13T02:07:04.213Z",
+      "expiresAt": "2026-10-20T02:07:04.213Z",
+      "usedAt": "2026-10-13T02:07:11.501Z"
+    },
+    {
+      "id": "d3bf2203-3e30-4740-b07f-07563925f735",
+      "username": "ao19-91226",
+      "tokenHash": "e78311b3cde31bc7daaa19b9ad4da26cbb9b9c85b3de4c8d8b69852215aa7697",
+      "createdAt": "2026-10-13T02:09:39.316Z",
+      "expiresAt": "2026-10-20T02:09:39.316Z",
+      "usedAt": "2026-10-13T02:09:48.845Z"
+    },
+    {
+      "id": "b9b55df1-2a0b-49cc-ac8b-4824e123d9b9",
+      "username": "ao19-91226",
+      "tokenHash": "5fe5181fc4f295c9ccea44eb5787c9ed6463f622ad896b891cc957d24e5a004f",
+      "createdAt": "2026-11-08T23:51:19.439Z",
+      "expiresAt": "2026-11-15T23:51:19.439Z",
+      "usedAt": "2026-11-08T23:53:43.476Z"
+    }
+  ],
+  "sessions": [
+    {
+      "tokenHash": "aa8f0dce1a5ab2e028356392ac9c5a09160d3237820621acbc74643d0e33eb12",
+      "username": "ao19-91226",
+      "createdAt": "2026-11-08T23:53:43.484Z",
+      "expiresAt": "2026-11-09T11:53:43.484Z"
+    }
+  ]
+}
