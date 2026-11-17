@@ -5,7 +5,16 @@ const ejs = require("ejs");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
-const { normalizeUsername, getLicense, issueToken, redeemToken, createSession, verifySession, getAdminOverview, revokeLicense } = require("./lib/activation");
+const {
+    normalizeUsername,
+    getLicense,
+    issueToken,
+    redeemToken,
+    createSession,
+    verifySession,
+    getAdminOverview,
+    revokeLicense
+} = require("./lib/activation");
 const {
     saveData,
     readData,
@@ -14,11 +23,12 @@ const {
     logger
 } = require("./lib/utils");
 
-
 const envPath = path.join(__dirname, ".env");
 if (fs.existsSync(envPath)) {
     for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
-        const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+        const match = line.match(
+            /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/
+        );
         if (match && process.env[match[1]] === undefined) {
             process.env[match[1]] = match[2].replace(/^(["'])(.*)\1$/, "$2");
         }
@@ -81,11 +91,9 @@ const startAutoDeleteScheduler = () => {
     scheduleDelete();
 };
 
-const baseUrl = "http://pkmmekaar.kresnasaraswati.id/v1/pkm";
-const apk_version = "0.0.18-026-prod @ 2024-06-19";
-const cookie =
-    "SERVERID=DCPRDNEWAPPPKM12; TS0196d619=01a219d6f17966e8f97ccebf374a091581ba16d1cf86ce1a78d9d62826a7ba9db75dbc5debc3f3deec3a28428d0e320c4b40728618e25f44e1d2d32d1c2cae1425f0b85f66";
-
+const baseUrl = "https://mekdistaging.pnm.co.id/dc-penggabungan/v1/pkm";
+const apk_version = "0.0.14-023-piloting @ 2024-05-06";
+const cookie = "SERVERID=10.61.6.126";
 // Melindungi API utama berdasarkan username yang sudah berhasil login dan memiliki lisensi aktif.
 function requireActiveLicense(req, res, next) {
     const username = normalizeUsername(
@@ -93,13 +101,19 @@ function requireActiveLicense(req, res, next) {
     );
 
     if (!username) {
-        return res.status(400).json({ status: false, message: "Username wajib diisi" });
+        return res
+            .status(400)
+            .json({ status: false, message: "Username wajib diisi" });
     }
 
     try {
         const sessionToken = req.get("x-license-session") || "";
         if (!verifySession(sessionToken, username)) {
-            return res.status(401).json({ status: false, code: "INVALID_LICENSE_SESSION", message: "Sesi aplikasi tidak valid. Silakan login kembali" });
+            return res.status(401).json({
+                status: false,
+                code: "INVALID_LICENSE_SESSION",
+                message: "Sesi aplikasi tidak valid. Silakan login kembali"
+            });
         }
         const license = getLicense(username);
         if (!license.isActive) {
@@ -112,7 +126,9 @@ function requireActiveLicense(req, res, next) {
         next();
     } catch (error) {
         logger.error("License check failed", { message: error.message });
-        return res.status(500).json({ status: false, message: "Gagal memeriksa lisensi" });
+        return res
+            .status(500)
+            .json({ status: false, message: "Gagal memeriksa lisensi" });
     }
 }
 app.get("/", (req, res) => {
@@ -129,6 +145,10 @@ app.get("/tes", (req, res) => {
 
 app.get("/kolase", (req, res) => {
     res.render("kolase.html");
+});
+
+app.get("/jatem", (req, res) => {
+    res.render("jatem.html");
 });
 
 app.get("/master-produk", (req, res) => {
@@ -317,19 +337,32 @@ app.post("/login", async (req, res) => {
     logger.info("Login request", { username: normalizedUsername });
 
     if (!normalizedUsername || typeof password !== "string" || !password) {
-        return res.status(400).json({ responseStatus: false, message: "Username dan password wajib diisi" });
+        return res.status(400).json({
+            responseStatus: false,
+            message: "Username dan password wajib diisi"
+        });
     }
 
     try {
-        const payload = { username: normalizedUsername, password, apk_version };
+        const payload = {
+            username: normalizedUsername,
+            password,
+            apk_version,
+            gmt: "8"
+        };
         const headers = { "Content-Type": "application/json", Cookie: cookie };
-        const response = await axios.post(`${baseUrl}/AuthLogin`, payload, { headers });
+        const response = await axios.post(`${baseUrl}/AuthLogin`, payload, {
+            headers
+        });
         const result = response.data || {};
 
         // Status aktivasi hanya dicek setelah autentikasi eksternal berhasil.
         if (result.responseStatus === true && result.token && result.data) {
             const license = getLicense(normalizedUsername);
-            logger.success("External login success", { username: normalizedUsername, isActive: license.isActive });
+            logger.success("External login success", {
+                username: normalizedUsername,
+                isActive: license.isActive
+            });
             return res.json({
                 ...result,
                 activationRequired: !license.isActive,
@@ -337,15 +370,23 @@ app.post("/login", async (req, res) => {
                     isActive: license.isActive,
                     expiresAt: license.expiresAt
                 },
-                licenseSession: license.isActive ? createSession(normalizedUsername) : null
+                licenseSession: license.isActive
+                    ? createSession(normalizedUsername)
+                    : null
             });
         }
 
         return res.status(response.status || 200).json(result);
     } catch (error) {
-        logger.error("Login failed", { username: normalizedUsername, message: error.message });
+        logger.error("Login failed", {
+            username: normalizedUsername,
+            message: error.message
+        });
         return res.status(error.response?.status || 502).json(
-            error.response?.data || { responseStatus: false, message: "Gagal menghubungi server login" }
+            error.response?.data || {
+                responseStatus: false,
+                message: "Gagal menghubungi server login"
+            }
         );
     }
 });
@@ -354,16 +395,29 @@ app.post("/login", async (req, res) => {
 app.post("/activation/activate", (req, res) => {
     const { username, token } = req.body || {};
     if (typeof username !== "string" || typeof token !== "string") {
-        return res.status(400).json({ status: false, message: "Username dan token wajib diisi" });
+        return res
+            .status(400)
+            .json({ status: false, message: "Username dan token wajib diisi" });
     }
 
     try {
         const result = redeemToken(username, token);
-        if (!result.ok) return res.status(400).json({ status: false, message: result.message });
-        return res.json({ status: true, message: "Aktivasi berhasil", isActive: true, expiresAt: result.expiresAt, licenseSession: result.sessionToken });
+        if (!result.ok)
+            return res
+                .status(400)
+                .json({ status: false, message: result.message });
+        return res.json({
+            status: true,
+            message: "Aktivasi berhasil",
+            isActive: true,
+            expiresAt: result.expiresAt,
+            licenseSession: result.sessionToken
+        });
     } catch (error) {
         logger.error("Activation failed", { message: error.message });
-        return res.status(500).json({ status: false, message: "Gagal memproses aktivasi" });
+        return res
+            .status(500)
+            .json({ status: false, message: "Gagal memproses aktivasi" });
     }
 });
 
@@ -372,35 +426,55 @@ function requireAdmin(req, res, next) {
     const configuredKey = process.env.ADMIN_KEY;
     const suppliedKey = req.get("x-admin-key") || "";
     if (!configuredKey) {
-        return res.status(503).json({ status: false, message: "ADMIN_KEY belum dikonfigurasi di server" });
+        return res.status(503).json({
+            status: false,
+            message: "ADMIN_KEY belum dikonfigurasi di server"
+        });
     }
     const a = Buffer.from(configuredKey);
     const b = Buffer.from(suppliedKey);
     if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-        return res.status(403).json({ status: false, message: "Akses admin ditolak" });
+        return res
+            .status(403)
+            .json({ status: false, message: "Akses admin ditolak" });
     }
     next();
 }
 
-app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
+app.get("/admin", (req, res) =>
+    res.sendFile(path.join(__dirname, "public", "admin.html"))
+);
 app.get("/admin/overview", requireAdmin, (req, res) => {
-    try { return res.json({ status: true, ...getAdminOverview() }); }
-    catch (error) {
+    try {
+        return res.json({ status: true, ...getAdminOverview() });
+    } catch (error) {
         logger.error("Admin overview failed", { message: error.message });
-        return res.status(500).json({ status: false, message: "Gagal memuat data dashboard" });
+        return res
+            .status(500)
+            .json({ status: false, message: "Gagal memuat data dashboard" });
     }
 });
 app.post("/admin/licenses/revoke", requireAdmin, (req, res) => {
     const { username } = req.body || {};
     if (typeof username !== "string" || !username.trim()) {
-        return res.status(400).json({ status: false, message: "Username wajib diisi" });
+        return res
+            .status(400)
+            .json({ status: false, message: "Username wajib diisi" });
     }
     try {
         const revoked = revokeLicense(username);
-        return res.json({ status: true, revoked, message: revoked ? "Lisensi berhasil dinonaktifkan" : "Lisensi untuk username ini tidak ditemukan" });
+        return res.json({
+            status: true,
+            revoked,
+            message: revoked
+                ? "Lisensi berhasil dinonaktifkan"
+                : "Lisensi untuk username ini tidak ditemukan"
+        });
     } catch (error) {
         logger.error("License revoke failed", { message: error.message });
-        return res.status(500).json({ status: false, message: "Gagal menonaktifkan lisensi" });
+        return res
+            .status(500)
+            .json({ status: false, message: "Gagal menonaktifkan lisensi" });
     }
 });
 
@@ -408,7 +482,9 @@ app.post("/admin/licenses/revoke", requireAdmin, (req, res) => {
 app.post("/admin/tokens", requireAdmin, (req, res) => {
     const { username } = req.body || {};
     if (typeof username !== "string" || !username.trim()) {
-        return res.status(400).json({ status: false, message: "Username target wajib diisi" });
+        return res
+            .status(400)
+            .json({ status: false, message: "Username target wajib diisi" });
     }
 
     try {
@@ -421,95 +497,105 @@ app.post("/admin/tokens", requireAdmin, (req, res) => {
         });
     } catch (error) {
         logger.error("Token generation failed", { message: error.message });
-        return res.status(500).json({ status: false, message: "Gagal membuat token" });
+        return res
+            .status(500)
+            .json({ status: false, message: "Gagal membuat token" });
     }
 });
 
-app.get("/collect-list/:cabang/:username", requireActiveLicense, async (req, res) => {
-    let { cabang, username } = req.params;
+app.get(
+    "/collect-list/:cabang/:username",
+    requireActiveLicense,
+    async (req, res) => {
+        let { cabang, username } = req.params;
 
-    logger.info("Fetch collect list", { username, cabang });
+        logger.info("Fetch collect list", { username, cabang });
 
-    let Authorization = req.headers["authorization"];
+        let Authorization = req.headers["authorization"];
 
-    try {
-        let response = await axios.get(
-            `${baseUrl}/GetCollectionList/${cabang}/${username}`,
-            {
-                headers: {
-                    Cookie: cookie,
-                    Authorization: Authorization
+        try {
+            let response = await axios.get(
+                `${baseUrl}/GetCollectionList/${cabang}/${username}`,
+                {
+                    headers: {
+                        Cookie: cookie,
+                        Authorization: Authorization
+                    }
                 }
-            }
-        );
+            );
 
-        let data = response.data.data
-            .filter(item => item.StatusPAR === "NO")
-            .map(item => ({
-                id: item.AccountID,
-                IdKelompok: item.GroupID,
-                namaKelompok: item.GroupName,
-                idProduk: item.ProductID,
-                nama: item.ClientName,
-                rill: item.Rill,
-                ke: item.Ke,
-                flapond: item.DisburseAmount,
-                up: item.UPAmount,
-                jumlahAngsuran: item.InstallmentAmount,
-                angsuranSebelumnya: item.AngsuranSebelumnya,
-                hariPertemuan: item.MeetingDay,
-                status: "none"
+            let data = response.data.data
+                .filter(item => item.StatusPAR === "NO")
+                .map(item => ({
+                    id: item.AccountID,
+                    IdKelompok: item.GroupID,
+                    namaKelompok: item.GroupName,
+                    idProduk: item.ProductID,
+                    nama: item.ClientName,
+                    rill: item.Rill,
+                    ke: item.Ke,
+                    flapond: item.DisburseAmount,
+                    up: item.UPAmount,
+                    jumlahAngsuran: item.InstallmentAmount,
+                    angsuranSebelumnya: item.AngsuranSebelumnya,
+                    hariPertemuan: item.MeetingDay,
+                    status: "none"
+                }));
+
+            logger.success("Collect list fetched", {
+                total: data.length
+            });
+
+            return res.json({
+                responseCode: response.data.responseCode,
+                responseDescription: response.data.responseDescription,
+                data
+            });
+        } catch (error) {
+            logger.error("Collect list failed", error);
+            return res.json(error.response?.data || error.message);
+        }
+    }
+);
+
+app.get(
+    "/group-list/:cabang/:username",
+    requireActiveLicense,
+    async (req, res) => {
+        let { cabang, username } = req.params;
+
+        let Authorization = req.headers["authorization"];
+
+        try {
+            let response = await axios.get(
+                `${baseUrl}/GetListGroup/${cabang}/${username}`,
+                {
+                    headers: {
+                        Cookie: cookie,
+                        Authorization: Authorization
+                    }
+                }
+            );
+
+            let data = response.data.data.map(item => ({
+                id: item.GroupID,
+                nama: item.GroupName,
+                hariPertemuan: item.MeetingDay
             }));
 
-        logger.success("Collect list fetched", {
-            total: data.length
-        });
+            console.log("jumlah data:", data.length);
 
-        return res.json({
-            responseCode: response.data.responseCode,
-            responseDescription: response.data.responseDescription,
-            data
-        });
-    } catch (error) {
-        logger.error("Collect list failed", error);
-        return res.json(error.response?.data || error.message);
+            return res.json({
+                responseCode: response.data.responseCode,
+                responseDescription: response.data.responseDescription,
+                data
+            });
+        } catch (error) {
+            console.log("ERROR:", error.response?.data || error.message);
+            return res.json(error.response?.data || error.message);
+        }
     }
-});
-
-app.get("/group-list/:cabang/:username", requireActiveLicense, async (req, res) => {
-    let { cabang, username } = req.params;
-
-    let Authorization = req.headers["authorization"];
-
-    try {
-        let response = await axios.get(
-            `${baseUrl}/GetListGroup/${cabang}/${username}`,
-            {
-                headers: {
-                    Cookie: cookie,
-                    Authorization: Authorization
-                }
-            }
-        );
-
-        let data = response.data.data.map(item => ({
-            id: item.GroupID,
-            nama: item.GroupName,
-            hariPertemuan: item.MeetingDay
-        }));
-
-        console.log("jumlah data:", data.length);
-
-        return res.json({
-            responseCode: response.data.responseCode,
-            responseDescription: response.data.responseDescription,
-            data
-        });
-    } catch (error) {
-        console.log("ERROR:", error.response?.data || error.message);
-        return res.json(error.response?.data || error.message);
-    }
-});
+);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
