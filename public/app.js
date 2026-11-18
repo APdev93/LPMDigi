@@ -1673,10 +1673,6 @@ async function init() {
         hideLoading();
     }
 
-    setInterval(() => {
-        checkSession();
-    }, 30000);
-
     if (localStorage.getItem("isSync") !== "1") {
         try {
             showLoading();
